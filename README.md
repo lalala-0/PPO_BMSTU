@@ -90,10 +90,9 @@
 ## Технологический стек
 
 - Тип приложения: Web MPA
-- Язык: С++
-- Среда разработки: QtCreator 
-- СУБД: PostgreSQL + PgAdmin4
-
+- Backend: Go
+- Frontend: HTML + CSS + TS
+- Database: PostgreSQL
 
 ## Верхнеуровневое разбиение на компоненты
 
