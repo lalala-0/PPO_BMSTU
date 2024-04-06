@@ -1,0 +1,215 @@
+INFO SERVICE: Successfully created new participant participant="&{ID:00000000-0000-0000-0000-000000000000 FIO:Test Category:1 sports category Gender:male Birthday:2002-11-10 23:00:00 +0000 UTC Coach:Test}"
+ERRO SERVICE: Invalid fio fio=""
+ERRO SERVICE: Invalid category category="1 category"
+ERRO SERVICE: Invalid gender gender=o
+ERRO SERVICE: Invalid coach coach=""
+ERRO SERVICE: Invalid fio fio=""
+INFO SERVICE: Successfully created new participant participant="&{ID:00000000-0000-0000-0000-000000000000 FIO: Category: Gender: Birthday:0001-01-01 00:00:00 +0000 UTC Coach:}"
+INFO SERVICE: Successfully created new participant participant="&{ID:00000000-0000-0000-0000-000000000000 FIO:Test Category:1 sports category Gender:male Birthday:2002-11-10 23:00:00 +0000 UTC Coach:Test}"
+ERRO SERVICE: Invalid fio fio=""
+ERRO SERVICE: Invalid category category="1 category"
+ERRO SERVICE: Invalid gender gender=o
+ERRO SERVICE: Invalid coach coach=""
+ERRO SERVICE: Invalid birthDay birthDay="2023-11-10 23:00:00 +0000 UTC"
+INFO SERVICE: Successfully created new participant participant="&{ID:00000000-0000-0000-0000-000000000000 FIO: Category: Gender: Birthday:0001-01-01 00:00:00 +0000 UTC Coach:}"
+INFO SERVICE: Successfully created new participant participant="&{ID:00000000-0000-0000-0000-000000000000 FIO:Test Category:1 sports category Gender:male Birthday:2002-11-10 23:00:00 +0000 UTC Coach:Test}"
+ERRO SERVICE: Invalid fio fio=""
+ERRO SERVICE: Invalid category category="1 category"
+ERRO SERVICE: Invalid gender gender=o
+ERRO SERVICE: Invalid coach coach=""
+ERRO SERVICE: Invalid birthDay birthDay="2023-11-10 23:00:00 +0000 UTC"
+INFO SERVICE: Successfully created new participant participant="&{ID:00000000-0000-0000-0000-000000000000 FIO: Category: Gender: Birthday:0001-01-01 00:00:00 +0000 UTC Coach:}"
+INFO SERVICE: Successfully got user with GetJudgeByID id=2c329b9d-a52e-4067-92ba-42940fdb3896
+ERRO SERVICE: GetJudgeByID method failed id=f7ae7e6b-74a7-4b4d-8e80-9de53df546c3 error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Successfully got user with GetJudgeByID id=9f0d1f60-8295-450f-9500-3cb6b989c788
+ERRO SERVICE: GetJudgeByID method failed id=9e196e97-c30b-4aba-ab96-7e949ba88f79 error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Successfully got user with GetJudgeByID id=040ffd19-6990-4b3e-9fec-278aff9008ac
+INFO SERVICE: Successfully got user with GetJudgeByID id=8a7572aa-df8e-4888-aab4-be9253b4d13f
+INFO SERVICE: Successfully deleted judge id=6ef18bb1-8d43-45df-9529-dc062fa19b98
+ERRO SERVICE: GetJudgeDataByID method failed id=53402d06-4681-4c28-ac92-46ce2dc59cc6 error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Validating data
+INFO SERVICE: Creating new judge: Test
+INFO SERVICE: Successfully updated judge coach judge="&{ID:eb38a8f3-86d4-4e4c-9214-9fdb6b8ea61a FIO:Test Login:Test Password:hash Role:1 Post:mmm}"
+ERRO SERVICE: GetJudgeByID method failed id=88f6af64-0a2c-4467-8cf8-13831715246e error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid password password=123
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid fio fio=""
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid role role=10
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid login login=""
+INFO SERVICE: Validating data
+INFO SERVICE: Checking if judge with login Test exists
+INFO SERVICE: Checking if Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Creating new judge: Test
+INFO SERVICE: Successfully created new user with  id=863ce159-e0ef-4510-9ff8-fe5cb48aadb0
+INFO SERVICE: Validating data
+INFO SERVICE: Checking if judge with login Test exists
+INFO SERVICE: Checking if Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid fio fio=""
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid login login=""
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid fio fio=""
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid password password=123
+INFO SERVICE: Checking if Judge with login abcdef exists
+INFO SERVICE: Checking if Judge with login exists login=abcdef
+INFO SERVICE: Judge with login exists login=abcdef
+INFO SERVICE: Checking if password is correct for Judge with login abcdef
+INFO SERVICE: Successfully logged in Judge with login login=abcdef
+INFO SERVICE: Checking if Judge with login notFound exists
+INFO SERVICE: Checking if Judge with login exists login=notFound
+INFO SERVICE: Judge with login does not exist login=notFound
+INFO SERVICE: Judge with login does not exist login=notFound
+INFO SERVICE: Checking if Judge with login abcdef exists
+INFO SERVICE: Checking if Judge with login exists login=abcdef
+INFO SERVICE: Judge with login exists login=abcdef
+INFO SERVICE: Checking if password is correct for Judge with login abcdef
+INFO SERVICE: Password is incorrect for Judge with login login=abcdef
+INFO SERVICE: Successfully got user with GetJudgeByID id=f479a2f8-a9a8-485b-8e2c-66f487275146
+ERRO SERVICE: GetJudgeByID method failed id=df037add-7892-443c-a0b1-a23494ffe45b error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Successfully got user with GetJudgeByID id=8e0b73a9-7466-471e-be25-ba840e0260c3
+ERRO SERVICE: GetJudgeByID method failed id=9620ce9d-b081-471e-ba2b-7daf09f240cb error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Successfully got user with GetJudgeByID id=2435310c-23ab-48de-971a-3cbd679efac4
+INFO SERVICE: Successfully got user with GetJudgeByID id=afa1b9e9-2f18-44e8-9100-2a57febba31a
+INFO SERVICE: Successfully deleted judge id=5b2b98dc-b37e-4b89-a597-c5aed6b26ca9
+ERRO SERVICE: GetJudgeDataByID method failed id=d538dd3b-180c-4349-846b-05cb6c0826ad error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Validating data
+INFO SERVICE: Creating new judge: Test
+INFO SERVICE: Successfully updated judge coach judge="&{ID:1a3ba6a9-c209-44d2-b9e0-5081c9b711b8 FIO:Test Login:Test Password:hash Role:1 Post:mmm}"
+ERRO SERVICE: GetJudgeByID method failed id=1bb3cfc0-2564-4870-acd0-7ddba32e78b3 error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid password password=123
+INFO SERVICE: Validating data
+INFO SERVICE: Creating new judge: etrgb
+INFO SERVICE: Validating data
+INFO SERVICE: Checking if judge with login Test exists
+INFO SERVICE: Checking if Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Creating new judge: Test
+INFO SERVICE: Successfully created new user with  id=5f503120-ea67-402f-89f6-970191ff9cd0
+INFO SERVICE: Validating data
+INFO SERVICE: Checking if judge with login Test exists
+INFO SERVICE: Checking if Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid fio fio=""
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid login login=""
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid fio fio=""
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid password password=123
+INFO SERVICE: Checking if Judge with login abcdef exists
+INFO SERVICE: Checking if Judge with login exists login=abcdef
+INFO SERVICE: Judge with login exists login=abcdef
+INFO SERVICE: Checking if password is correct for Judge with login abcdef
+INFO SERVICE: Successfully logged in Judge with login login=abcdef
+INFO SERVICE: Checking if Judge with login notFound exists
+INFO SERVICE: Checking if Judge with login exists login=notFound
+INFO SERVICE: Judge with login does not exist login=notFound
+INFO SERVICE: Judge with login does not exist login=notFound
+INFO SERVICE: Checking if Judge with login abcdef exists
+INFO SERVICE: Checking if Judge with login exists login=abcdef
+INFO SERVICE: Judge with login exists login=abcdef
+INFO SERVICE: Checking if password is correct for Judge with login abcdef
+INFO SERVICE: Password is incorrect for Judge with login login=abcdef
+INFO SERVICE: Successfully got user with GetJudgeByID id=11860de1-9500-4aed-a7de-159dbd6fadee
+ERRO SERVICE: GetJudgeByID method failed id=0162aa9d-5330-4780-8c1d-a093dc26fe0b error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Successfully got user with GetJudgeByID id=0a3eec47-97b4-45db-ad67-9ff26bddb337
+ERRO SERVICE: GetJudgeByID method failed id=e3761c8f-80d9-4317-98eb-5d1c51168050 error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Successfully got user with GetJudgeByID id=b24f46ab-52e5-49b3-b545-0e4ff38f0926
+INFO SERVICE: Successfully got user with GetJudgeByID id=425d0503-f1e8-406b-acb8-785c98e01a84
+INFO SERVICE: Successfully deleted judge id=0d6e4d08-33cc-41cc-b861-afbd260f33ef
+ERRO SERVICE: GetJudgeDataByID method failed id=b3479a66-29c3-403e-9cf0-2e03f741dddf error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Validating data
+INFO SERVICE: Creating new judge: Test
+INFO SERVICE: Successfully updated judge coach judge="&{ID:76b686bb-9b7f-42bd-91f1-d916b3c2e458 FIO:Test Login:Test Password:hash Role:1 Post:mmm}"
+ERRO SERVICE: GetJudgeByID method failed id=79ecd8c0-5269-458c-af16-3ea4a8b23bad error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid password password=123
+INFO SERVICE: Validating data
+INFO SERVICE: Creating new judge: etrgb
+INFO SERVICE: Validating data
+INFO SERVICE: Checking if judge with login Test exists
+INFO SERVICE: Checking if Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Creating new judge: Test
+INFO SERVICE: Successfully created new user with  id=69abcaa5-1102-41d3-a080-c35e2300926b
+INFO SERVICE: Validating data
+INFO SERVICE: Checking if judge with login Test exists
+INFO SERVICE: Checking if Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid fio fio=""
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid login login=""
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid role role=10
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid password password=123
+INFO SERVICE: Checking if Judge with login abcdef exists
+INFO SERVICE: Checking if Judge with login exists login=abcdef
+INFO SERVICE: Judge with login exists login=abcdef
+INFO SERVICE: Checking if password is correct for Judge with login abcdef
+INFO SERVICE: Successfully logged in Judge with login login=abcdef
+INFO SERVICE: Checking if Judge with login notFound exists
+INFO SERVICE: Checking if Judge with login exists login=notFound
+INFO SERVICE: Judge with login does not exist login=notFound
+INFO SERVICE: Judge with login does not exist login=notFound
+INFO SERVICE: Checking if Judge with login abcdef exists
+INFO SERVICE: Checking if Judge with login exists login=abcdef
+INFO SERVICE: Judge with login exists login=abcdef
+INFO SERVICE: Checking if password is correct for Judge with login abcdef
+INFO SERVICE: Password is incorrect for Judge with login login=abcdef
+INFO SERVICE: Successfully got user with GetJudgeByID id=c4ed9f4d-95e0-43b4-b07b-40f34cfbaa74
+ERRO SERVICE: GetJudgeByID method failed id=c6c84fae-6824-4614-b2d7-8912e40268f0 error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Successfully got user with GetJudgeByID id=d02453d6-c7e5-4d13-94e9-624e8ef32bc5
+ERRO SERVICE: GetJudgeByID method failed id=6eed0197-fdcd-48c7-aeb3-ac68411b6d96 error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Successfully got user with GetJudgeByID id=b8ff8da9-edd7-4e26-b36b-a3689182afab
+INFO SERVICE: Successfully got user with GetJudgeByID id=3f40fac7-6e44-49ff-bbc5-0ca482f76bec
+INFO SERVICE: Successfully deleted judge id=68b3a363-0940-4353-9338-4a3e8ec452a6
+ERRO SERVICE: GetJudgeDataByID method failed id=be927f93-4752-481d-ae5a-4f8de40442c0 error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Validating data
+INFO SERVICE: Creating new judge: Test
+INFO SERVICE: Validating data
+INFO SERVICE: Checking if judge with login Test exists
+INFO SERVICE: Checking if Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Creating new judge: Test
+INFO SERVICE: Successfully created new user with  id=9de75eb2-65ef-410e-a9a1-3889941c3b2d
+INFO SERVICE: Validating data
+INFO SERVICE: Checking if judge with login Test exists
+INFO SERVICE: Checking if Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid fio fio=""
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid login login=""
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid role role=10
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid password password=123
+INFO SERVICE: Checking if Judge with login abcdef exists
+INFO SERVICE: Checking if Judge with login exists login=abcdef
+INFO SERVICE: Judge with login exists login=abcdef
+INFO SERVICE: Checking if password is correct for Judge with login abcdef
+INFO SERVICE: Successfully logged in Judge with login login=abcdef
+INFO SERVICE: Checking if Judge with login notFound exists
+INFO SERVICE: Checking if Judge with login exists login=notFound
+INFO SERVICE: Judge with login does not exist login=notFound
+INFO SERVICE: Judge with login does not exist login=notFound
+INFO SERVICE: Checking if Judge with login abcdef exists
+INFO SERVICE: Checking if Judge with login exists login=abcdef
+INFO SERVICE: Judge with login exists login=abcdef
+INFO SERVICE: Checking if password is correct for Judge with login abcdef
+INFO SERVICE: Password is incorrect for Judge with login login=abcdef

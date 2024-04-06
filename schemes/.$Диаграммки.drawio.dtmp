@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2024-03-30T22:48:22.415Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.1.0 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="k7HjR5saQ3TpLB2N_5th" version="24.1.0" type="device" pages="5">
+<mxfile host="Electron" modified="2024-03-30T22:48:38.430Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.1.0 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="fKJeXsokvf1D-xAGxj1Z" version="24.1.0" type="device" pages="5">
   <diagram name="Use-Case" id="mpCG4nqABnEXAu5Zk4kd">
     <mxGraphModel dx="526" dy="654" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -109,7 +109,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="Fl9EhhzhbdVhB_F1dUq7" name="ER">
-    <mxGraphModel dx="1925" dy="245" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2127" dy="426" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -291,7 +291,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="_1F1drqvbYiEeVU9XwEX-1" value="Класс яхты" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="-1329" y="706" width="120" height="50" as="geometry" />
+          <mxGeometry x="-1329" y="692" width="120" height="50" as="geometry" />
         </mxCell>
         <mxCell id="GdoC4uo1tYWlQhzH0mUr-1" value="Дата" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="-925" y="392" width="120" height="40" as="geometry" />
@@ -534,7 +534,7 @@
           <mxGeometry x="-1258" y="560" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="XxSxTeM3SAMyd8lgYqmW-9" value="&lt;u&gt;ID&lt;/u&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-1329" y="652" width="120" height="40" as="geometry" />
+          <mxGeometry x="-1329" y="641" width="120" height="40" as="geometry" />
         </mxCell>
         <mxCell id="XxSxTeM3SAMyd8lgYqmW-10" value="" style="shape=link;html=1;rounded=0;" edge="1" parent="1" source="Zi5NuFt4ENAQGyKdmMdX-68" target="XxSxTeM3SAMyd8lgYqmW-3">
           <mxGeometry relative="1" as="geometry">
@@ -739,7 +739,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="M9vSLt_AdGPuEwEQNObD-1" value="Номер на парусе" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-1331" y="759.5" width="120" height="50" as="geometry" />
+          <mxGeometry x="-1331" y="753.5" width="120" height="50" as="geometry" />
         </mxCell>
         <mxCell id="M9vSLt_AdGPuEwEQNObD-4" value="" style="endArrow=none;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="XxSxTeM3SAMyd8lgYqmW-3" target="M9vSLt_AdGPuEwEQNObD-1">
           <mxGeometry relative="1" as="geometry">
