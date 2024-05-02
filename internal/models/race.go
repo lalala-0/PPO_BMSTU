@@ -10,5 +10,5 @@ type Race struct {
 	RatingID uuid.UUID
 	Date     time.Time
 	Number   int
-	Class    string
+	Class    int
 }

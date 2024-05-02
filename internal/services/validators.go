@@ -17,7 +17,12 @@ func validLogin(login string) bool {
 func validRole(role int) bool {
 	return role == 1 || role == 2
 }
-
+func validProtestRole(role int) bool {
+	return role == 1 || role == 2 || role == 3
+}
+func validFlag(role int) bool {
+	return role == 1 || role == 0
+}
 func validPassword(password string) bool {
 	if len(password) < 8 {
 		return false
@@ -40,8 +45,8 @@ func validSailNum(num int) bool {
 func validBlowoutCnt(num int) bool {
 	return num >= 0
 }
-func validClass(class string) bool {
-	return len(class) > 0
+func validClass(class int) bool {
+	return class > 0 && class < 12
 }
 
 func validRuleNum(num int) bool {
@@ -52,19 +57,16 @@ func validStatus(status int) bool {
 	return status == models.PendingReview || status == models.Reviewed
 }
 
-func validCategory(category string) bool {
-	return category == "Master of Sports of Russia of international class" ||
-		category == "Master of Sports of Russia" ||
-		category == "Candidate for Master of Sports" ||
-		category == "1 sports category" ||
-		category == "2 sports category" ||
-		category == "3 sports category" ||
-		category == "1 junior category" ||
-		category == "2 junior category"
+func validCategory(category int) bool {
+	return category >= 1 && category <= 8
 }
 
-func validGender(gender string) bool {
-	return gender == "male" || gender == "female"
+func validSpecCircumstance(category int) bool {
+	return category >= 1 && category <= 13
+}
+
+func validGender(gender int) bool {
+	return gender == 1 || gender == 2
 }
 
 func validBirthDay(birthdate time.Time) bool {

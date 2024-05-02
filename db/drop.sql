@@ -1,0 +1,10 @@
+drop table if exists participants cascade;
+drop table if exists ratings cascade;
+drop table if exists crews cascade;
+drop table if exists races cascade;
+drop table if exists judges cascade;
+drop table if exists protests cascade;
+drop table if exists crew_protest cascade;
+drop table if exists crew_race cascade;
+drop table if exists participant_crew cascade;
+drop table if exists judge_rating cascade;

@@ -6,6 +6,7 @@ import (
 
 type Rating struct {
 	ID         uuid.UUID
-	Class      string
+	Name       string
+	Class      int
 	BlowoutCnt int
 }

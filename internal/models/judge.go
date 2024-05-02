@@ -12,3 +12,8 @@ type Judge struct {
 	Role     int
 	Post     string
 }
+
+//
+//// Role vars
+//const MainJudge = 1
+//const NotMainJudge = 2
