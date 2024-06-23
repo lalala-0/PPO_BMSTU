@@ -37,7 +37,7 @@ func (s *Services) setupRouter(app *registry.App) *gin.Engine {
 	router.LoadHTMLGlob("templates/**/*")
 
 	router.GET("/", s.index)
-	router.GET("/ratings", s.ratings)
+	//router.GET("/ratings", s.ratings)
 
 	authGroup := router.Group("/auth")
 	{

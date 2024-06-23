@@ -2568,3 +2568,7 @@
 2024/06/23 17:51:44 FATA <config/postgres_connector.go:34> POSTGRES! Error in method ping
 2024/06/23 17:54:35 INFO <registry/registry.go:90> Success initialization of new Logger!
 2024/06/23 17:54:35 FATA <config/postgres_connector.go:34> POSTGRES! Error in method ping
+2024/06/23 18:10:01 INFO <registry/registry.go:90> Success initialization of new Logger!
+2024/06/23 18:10:01 FATA <config/postgres_connector.go:34> POSTGRES! Error in method ping
+2024/06/23 18:10:14 INFO <registry/registry.go:90> Success initialization of new Logger!
+2024/06/23 18:10:14 FATA <config/postgres_connector.go:34> POSTGRES! Error in method ping
