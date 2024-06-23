@@ -2572,3 +2572,53 @@
 2024/06/23 18:10:01 FATA <config/postgres_connector.go:34> POSTGRES! Error in method ping
 2024/06/23 18:10:14 INFO <registry/registry.go:90> Success initialization of new Logger!
 2024/06/23 18:10:14 FATA <config/postgres_connector.go:34> POSTGRES! Error in method ping
+2024/06/23 18:12:20 INFO <registry/registry.go:90> Success initialization of new Logger!
+2024/06/23 18:12:20 INFO <config/postgres_connector.go:40> POSTGRES! Successfully init postgreSQL
+2024/06/23 18:12:20 INFO <repository/PostgresConnection.go:29> POSTGRES! Successfully create postgres repository fields
+2024/06/23 18:12:20 INFO <registry/registry.go:50> Success initialization of repositories
+2024/06/23 18:12:20 INFO <registry/registry.go:65> Success initialization of services
+2024/06/23 18:12:25 ERRO <services/RatingService.go:155> SERVICE: GetAllRatings method failed error="DB ERROR: Select operation was not successful"
+2024/06/23 18:13:09 INFO <services/RatingService.go:159> SERVICE: Successfully got rating with GetAllRatings
+2024/06/23 18:13:11 INFO <services/RatingService.go:159> SERVICE: Successfully got rating with GetAllRatings
+2024/06/23 18:13:12 INFO <services/RatingService.go:159> SERVICE: Successfully got rating with GetAllRatings
+2024/06/23 18:13:30 INFO <registry/registry.go:90> Success initialization of new Logger!
+2024/06/23 18:13:30 INFO <config/postgres_connector.go:40> POSTGRES! Successfully init postgreSQL
+2024/06/23 18:13:30 INFO <repository/PostgresConnection.go:29> POSTGRES! Successfully create postgres repository fields
+2024/06/23 18:13:30 INFO <registry/registry.go:50> Success initialization of repositories
+2024/06/23 18:13:30 INFO <registry/registry.go:65> Success initialization of services
+2024/06/23 18:13:32 INFO <services/RatingService.go:159> SERVICE: Successfully got rating with GetAllRatings
+2024/06/23 18:13:48 INFO <registry/registry.go:90> Success initialization of new Logger!
+2024/06/23 18:13:48 INFO <config/postgres_connector.go:40> POSTGRES! Successfully init postgreSQL
+2024/06/23 18:13:48 INFO <repository/PostgresConnection.go:29> POSTGRES! Successfully create postgres repository fields
+2024/06/23 18:13:48 INFO <registry/registry.go:50> Success initialization of repositories
+2024/06/23 18:13:48 INFO <registry/registry.go:65> Success initialization of services
+2024/06/23 18:13:53 INFO <registry/registry.go:90> Success initialization of new Logger!
+2024/06/23 18:13:53 INFO <config/postgres_connector.go:40> POSTGRES! Successfully init postgreSQL
+2024/06/23 18:13:53 INFO <repository/PostgresConnection.go:29> POSTGRES! Successfully create postgres repository fields
+2024/06/23 18:13:53 INFO <registry/registry.go:50> Success initialization of repositories
+2024/06/23 18:13:53 INFO <registry/registry.go:65> Success initialization of services
+2024/06/23 18:14:49 INFO <registry/registry.go:90> Success initialization of new Logger!
+2024/06/23 18:14:49 INFO <config/postgres_connector.go:40> POSTGRES! Successfully init postgreSQL
+2024/06/23 18:14:49 INFO <repository/PostgresConnection.go:29> POSTGRES! Successfully create postgres repository fields
+2024/06/23 18:14:49 INFO <registry/registry.go:50> Success initialization of repositories
+2024/06/23 18:14:49 INFO <registry/registry.go:65> Success initialization of services
+2024/06/23 18:15:41 INFO <registry/registry.go:90> Success initialization of new Logger!
+2024/06/23 18:15:41 INFO <config/postgres_connector.go:40> POSTGRES! Successfully init postgreSQL
+2024/06/23 18:15:41 INFO <repository/PostgresConnection.go:29> POSTGRES! Successfully create postgres repository fields
+2024/06/23 18:15:41 INFO <registry/registry.go:50> Success initialization of repositories
+2024/06/23 18:15:41 INFO <registry/registry.go:65> Success initialization of services
+2024/06/23 18:17:27 INFO <registry/registry.go:90> Success initialization of new Logger!
+2024/06/23 18:17:27 INFO <config/postgres_connector.go:40> POSTGRES! Successfully init postgreSQL
+2024/06/23 18:17:27 INFO <repository/PostgresConnection.go:29> POSTGRES! Successfully create postgres repository fields
+2024/06/23 18:17:27 INFO <registry/registry.go:50> Success initialization of repositories
+2024/06/23 18:17:27 INFO <registry/registry.go:65> Success initialization of services
+2024/06/23 18:18:53 INFO <registry/registry.go:90> Success initialization of new Logger!
+2024/06/23 18:18:54 INFO <config/postgres_connector.go:40> POSTGRES! Successfully init postgreSQL
+2024/06/23 18:18:54 INFO <repository/PostgresConnection.go:29> POSTGRES! Successfully create postgres repository fields
+2024/06/23 18:18:54 INFO <registry/registry.go:50> Success initialization of repositories
+2024/06/23 18:18:54 INFO <registry/registry.go:65> Success initialization of services
+2024/06/23 18:20:44 INFO <registry/registry.go:90> Success initialization of new Logger!
+2024/06/23 18:20:44 INFO <config/postgres_connector.go:40> POSTGRES! Successfully init postgreSQL
+2024/06/23 18:20:44 INFO <repository/PostgresConnection.go:29> POSTGRES! Successfully create postgres repository fields
+2024/06/23 18:20:44 INFO <registry/registry.go:50> Success initialization of repositories
+2024/06/23 18:20:44 INFO <registry/registry.go:65> Success initialization of services

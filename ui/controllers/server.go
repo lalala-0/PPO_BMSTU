@@ -34,7 +34,7 @@ func (s *Services) setupRouter(app *registry.App) *gin.Engine {
 	store := sessions.NewCookieStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
 
-	router.LoadHTMLGlob("templates/**/*")
+	router.LoadHTMLGlob("ui/templates/**/*")
 
 	router.GET("/", s.index)
 	//router.GET("/ratings", s.ratings)
