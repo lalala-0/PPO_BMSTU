@@ -10,4 +10,5 @@ type ICrewResInRaceRepository interface {
 	Delete(raceID uuid.UUID, crewID uuid.UUID) error
 	Update(crewResInRace *models.CrewResInRace) (*models.CrewResInRace, error)
 	GetCrewResByRaceIDAndCrewID(raceID uuid.UUID, crewID uuid.UUID) (*models.CrewResInRace, error)
+	GetAllCrewResInRace(raceID uuid.UUID) ([]models.CrewResInRace, error)
 }

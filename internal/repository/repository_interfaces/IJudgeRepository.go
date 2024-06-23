@@ -12,5 +12,6 @@ type IJudgeRepository interface {
 	GetJudgeDataByID(id uuid.UUID) (*models.Judge, error)
 	GetJudgeDataByProtestID(protestID uuid.UUID) (*models.Judge, error)
 	GetJudgesDataByRatingID(ratingID uuid.UUID) ([]models.Judge, error)
+	GetAllJudges() ([]models.Judge, error)
 	GetJudgeDataByLogin(login string) (*models.Judge, error)
 }

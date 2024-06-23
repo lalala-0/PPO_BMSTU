@@ -172,7 +172,7 @@ func (r RaceService) MakeStartProcedure(raceID uuid.UUID, falseStartYachtList ma
 					rc = err
 				}
 				if rc == nil {
-					r.logger.Info("SERVICE: Successfully created new raceSailing")
+					r.logger.Info("SERVICE: Successfully start procedure")
 				}
 			}
 		}
@@ -249,5 +249,51 @@ func (r RaceService) MakeFinishProcedure(raceID uuid.UUID, finishersList map[int
 			}
 		}
 	}
+
+	allCrewResInRace, err := r.CrewResInRaceRepository.GetAllCrewResInRace(raceID)
+	if err != nil {
+		return err
+	}
+
+	for _, crewRes := range allCrewResInRace {
+		if crewRes.Points == 0 {
+			crewRes.SpecCircumstance = models.DNF
+			crewRes.Points = len(allCrewResInRace) + 1
+		} else if crewRes.SpecCircumstance != 0 {
+			crewRes.Points = len(allCrewResInRace) + 1
+		}
+
+		_, err := r.CrewResInRaceRepository.Update(&crewRes)
+		if err != nil {
+			r.logger.Error("SERVICE: UpdateRaceSailing method failed", "error", err)
+			rc = err
+		}
+
+	}
+	if rc == nil {
+		r.logger.Info("SERVICE: Successfully finish procedure")
+	}
+
 	return rc
+}
+
+func (r RaceService) GetAllCrewResInRace(race *models.Race) ([]models.CrewResInRace, error) {
+	crews, err := r.CrewRepository.GetCrewsDataByRatingID(race.RatingID)
+	if err != nil {
+		r.logger.Error("SERVICE: GetAllJudges method failed", "error", err)
+		return nil, err
+	}
+
+	var allResInRaces []models.CrewResInRace
+	for _, crew := range crews {
+		resInRace, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(race.ID, crew.ID)
+		if err != nil {
+			r.logger.Error("SERVICE: GetAllJudges method failed", "error", err)
+			return nil, err
+		}
+		allResInRaces = append(allResInRaces, *resInRace)
+	}
+
+	r.logger.Info("SERVICE: Successfully got All Judges")
+	return allResInRaces, nil
 }

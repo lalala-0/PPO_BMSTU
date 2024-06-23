@@ -151,6 +151,21 @@ var testCrewRepositoryGetCrewDataBySailNumAndRatingIDSuccess = []struct {
 	},
 }
 
+var testCrewRepositoryGetCrewDataBySailNumAndRatingIDFailed = []struct {
+	TestName    string
+	InputData   uuid.UUID
+	CheckOutput func(t *testing.T, err error)
+}{
+	{
+		TestName:  "get by Sail Number And Rating ID DoesNotExist test",
+		InputData: uuid.New(),
+		CheckOutput: func(t *testing.T, err error) {
+			require.Error(t, err)
+			require.Equal(t, repository_errors.DoesNotExist, err)
+		},
+	},
+}
+
 func TestCrewRepositoryGetCrewDataBySailNumAndRatingID(t *testing.T) {
 	dbContainer, db := SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
@@ -165,16 +180,17 @@ func TestCrewRepositoryGetCrewDataBySailNumAndRatingID(t *testing.T) {
 
 	for _, test := range testCrewRepositoryGetByIDSuccess {
 		rating := createRating(&fields)
-		createdCrew, err := crewRepository.Create(
-			&models.Crew{
-				RatingID: rating.ID,
-				SailNum:  123,
-				Class:    2,
-			},
-		)
+		crew := createCrew(&fields, rating.ID)
 
-		receivedCrew, err := crewRepository.GetCrewDataBySailNumAndRatingID(createdCrew.SailNum, rating.ID)
-		test.CheckOutput(t, createdCrew, receivedCrew, err)
+		receivedCrew, err := crewRepository.GetCrewDataBySailNumAndRatingID(crew.SailNum, crew.RatingID)
+		test.CheckOutput(t, crew, receivedCrew, err)
+	}
+
+	for _, test := range testCrewRepositoryGetByIDFailed {
+		rating := createRating(&fields)
+
+		_, err := crewRepository.GetCrewDataBySailNumAndRatingID(123, rating.ID)
+		test.CheckOutput(t, err)
 	}
 }
 

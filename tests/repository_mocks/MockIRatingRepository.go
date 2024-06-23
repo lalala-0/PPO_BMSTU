@@ -126,8 +126,23 @@ func (m *MockIRatingRepository) GetAllRatings() ([]models.Rating, error) {
 	return ret0, ret1
 }
 
-// GetRatingDataByID indicates an expected call of GetRatingDataByID.
+// GetAllRatings indicates an expected call of GetAllRatings.
 func (mr *MockIRatingRepositoryMockRecorder) GetAllRatings() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllRatings", reflect.TypeOf((*MockIRatingRepository)(nil).GetAllRatings))
+}
+
+// GetRatingTable mocks base method.
+func (m *MockIRatingRepository) GetRatingTable(id uuid.UUID) ([]models.RatingTableLine, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRatingTable", id)
+	ret0, _ := ret[0].([]models.RatingTableLine)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRatingTable indicates an expected call of GetRatingTable.
+func (mr *MockIRatingRepositoryMockRecorder) GetRatingTable(id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRatingTable", reflect.TypeOf((*MockIRatingRepository)(nil).GetRatingTable), id)
 }

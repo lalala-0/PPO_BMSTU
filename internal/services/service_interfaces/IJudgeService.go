@@ -7,10 +7,11 @@ import (
 
 type IJudgeService interface {
 	Login(login, password string) (*models.Judge, error)
-	CreateProfile(judgeID uuid.UUID, fio string, login string, password string, role int) (*models.Judge, error)
+	CreateProfile(judgeID uuid.UUID, fio string, login string, password string, role int, post string) (*models.Judge, error)
 	DeleteProfile(id uuid.UUID) error
 	UpdateProfile(judgeID uuid.UUID, fio string, login string, password string, role int) (*models.Judge, error)
 	GetJudgeDataByID(id uuid.UUID) (*models.Judge, error)
 	GetJudgeDataByProtestID(protestID uuid.UUID) (*models.Judge, error)
 	GetJudgesDataByRatingID(ratingID uuid.UUID) ([]models.Judge, error)
+	GetAllJudges() ([]models.Judge, error)
 }

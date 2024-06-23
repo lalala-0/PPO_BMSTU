@@ -13,4 +13,5 @@ type IRatingRepository interface {
 	AttachJudgeToRating(ratingID uuid.UUID, judgeID uuid.UUID) error
 	DetachJudgeFromRating(ratingID uuid.UUID, judgeID uuid.UUID) error
 	GetAllRatings() ([]models.Rating, error)
+	GetRatingTable(id uuid.UUID) ([]models.RatingTableLine, error)
 }

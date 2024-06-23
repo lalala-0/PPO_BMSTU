@@ -148,3 +148,14 @@ func (c CrewService) ReplaceParticipantStatusInCrew(participantID uuid.UUID, cre
 	c.logger.Info("SERVICE: Successfully replaced participant pid in crew cid", "pid", participantID, "cid", crewID)
 	return nil
 }
+
+func (c CrewService) GetCrewsDataByRatingID(id uuid.UUID) ([]models.Crew, error) {
+	crews, err := c.CrewRepository.GetCrewsDataByRatingID(id)
+	if err != nil {
+		c.logger.Error("SERVICE: GetCrewsDataByRatingID method failed", "error", err)
+		return nil, err
+	}
+
+	c.logger.Info("SERVICE: Successfully got crews by rating id")
+	return crews, nil
+}

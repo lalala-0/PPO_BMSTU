@@ -59,6 +59,21 @@ func (mr *MockIJudgeRepositoryMockRecorder) DeleteProfile(id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteProfile", reflect.TypeOf((*MockIJudgeRepository)(nil).DeleteProfile), id)
 }
 
+// GetAllJudges mocks base method.
+func (m *MockIJudgeRepository) GetAllJudges() ([]models.Judge, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllJudges")
+	ret0, _ := ret[0].([]models.Judge)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllJudges indicates an expected call of GetAllJudges.
+func (mr *MockIJudgeRepositoryMockRecorder) GetAllJudges() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllJudges", reflect.TypeOf((*MockIJudgeRepository)(nil).GetAllJudges))
+}
+
 // GetJudgeDataByID mocks base method.
 func (m *MockIJudgeRepository) GetJudgeDataByID(id uuid.UUID) (*models.Judge, error) {
 	m.ctrl.T.Helper()

@@ -2,14 +2,14 @@
   "postgres": {
     "host": "127.0.0.1",
     "user": "postgres",
-    "password": "root",
+    "password": "7625",
     "port": "5432",
     "dbname": "ppo"
   },
 
-  "mode" : "tech",
+  "mode"    : "cmd",
   "loglevel": "info",
   "logfile" : "info.log",
-  "port": ":8080",
-  "address": "127.0.0.1"
+  "port"    : ":8080",
+  "address" : "127.0.0.1"
 }

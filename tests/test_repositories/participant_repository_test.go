@@ -136,7 +136,7 @@ var testParticipantRepositoryUpdateSuccess = []struct {
 		InputData: &models.Participant{
 			ID:       uuid.New(),
 			FIO:      "test1",
-			Gender:   models.Female,
+			Gender:   models.Male,
 			Category: models.Junior1category,
 			Coach:    "Test1",
 			Birthday: time.Date(2008, time.November, 10, 23, 0, 0, 0, time.UTC),

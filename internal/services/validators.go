@@ -45,6 +45,7 @@ func validSailNum(num int) bool {
 func validBlowoutCnt(num int) bool {
 	return num >= 0
 }
+
 func validClass(class int) bool {
 	return class > 0 && class < 12
 }

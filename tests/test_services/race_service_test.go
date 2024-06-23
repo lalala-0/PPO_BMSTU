@@ -614,6 +614,9 @@ var testRaceMakeFinishProcedureSuccess = []struct {
 			fields.crewRepoMock.EXPECT().GetCrewDataBySailNumAndRatingID(gomock.Any(), gomock.Any()).Return(&models.Crew{ID: uuid.New()}, nil)
 			fields.crewResInRaceRepoMock.EXPECT().GetCrewResByRaceIDAndCrewID(gomock.Any(), gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
+
+			fields.crewResInRaceRepoMock.EXPECT().GetAllCrewResInRace(gomock.Any()).Return([]models.CrewResInRace{{RaceID: uuid.New()}}, nil)
+			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 		},
 		checkOutput: func(t *testing.T, crewResInRace *models.CrewResInRace, err error) {
 			assert.NoError(t, err)
@@ -683,6 +686,9 @@ var testRaceMakeFinishProcedureFail = []struct {
 			fields.crewResInRaceRepoMock.EXPECT().GetCrewResByRaceIDAndCrewID(gomock.Any(), gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 			fields.crewRepoMock.EXPECT().GetCrewDataBySailNumAndRatingID(gomock.Any(), gomock.Any()).Return(&models.Crew{ID: uuid.New()}, nil)
+
+			fields.crewResInRaceRepoMock.EXPECT().GetAllCrewResInRace(gomock.Any()).Return([]models.CrewResInRace{{RaceID: uuid.New()}}, nil)
+			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 		},
 		checkOutput: func(t *testing.T, crewResInRace *models.CrewResInRace, err error) {
 			assert.Error(t, err)
@@ -721,6 +727,9 @@ var testRaceMakeFinishProcedureFail = []struct {
 			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 			fields.crewRepoMock.EXPECT().GetCrewDataBySailNumAndRatingID(gomock.Any(), gomock.Any()).Return(&models.Crew{ID: uuid.New()}, nil)
 			fields.crewResInRaceRepoMock.EXPECT().GetCrewResByRaceIDAndCrewID(gomock.Any(), gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
+
+			fields.crewResInRaceRepoMock.EXPECT().GetAllCrewResInRace(gomock.Any()).Return([]models.CrewResInRace{{RaceID: uuid.New()}}, nil)
+			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 		},
 		checkOutput: func(t *testing.T, crewResInRace *models.CrewResInRace, err error) {
 			assert.Error(t, err)
@@ -760,6 +769,9 @@ var testRaceMakeFinishProcedureFail = []struct {
 			fields.crewRepoMock.EXPECT().GetCrewDataBySailNumAndRatingID(gomock.Any(), gomock.Any()).Return(&models.Crew{ID: uuid.New()}, nil)
 			fields.crewResInRaceRepoMock.EXPECT().GetCrewResByRaceIDAndCrewID(gomock.Any(), gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(nil, repository_errors.UpdateError)
+
+			fields.crewResInRaceRepoMock.EXPECT().GetAllCrewResInRace(gomock.Any()).Return([]models.CrewResInRace{{RaceID: uuid.New()}}, nil)
+			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 		},
 		checkOutput: func(t *testing.T, crewResInRace *models.CrewResInRace, err error) {
 			assert.Error(t, err)

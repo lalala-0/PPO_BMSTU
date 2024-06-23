@@ -143,3 +143,22 @@ func (w ParticipantRepository) GetParticipantsDataByProtestID(id uuid.UUID) ([]m
 	}
 	return participantModels, nil
 }
+
+func (w ParticipantRepository) GetAllParticipants() ([]models.Participant, error) {
+	query := `SELECT * FROM participants;`
+	var participantDB []ParticipantDB
+	err := w.db.Select(&participantDB, query)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, repository_errors.DoesNotExist
+	} else if err != nil {
+		return nil, repository_errors.SelectError
+	}
+
+	var participantModels []models.Participant
+	for i := range participantDB {
+		participant := copyParticipantResultToModel(&participantDB[i])
+		participantModels = append(participantModels, *participant)
+	}
+	return participantModels, nil
+}

@@ -346,3 +346,69 @@ func TestJudgeRepositoryGetJudgesDataByRatingID(t *testing.T) {
 		test.CheckOutput(t, createdJudges, receivedJudges, err)
 	}
 }
+
+var testJudgeRepositoryGetAllJudges = []struct {
+	TestName    string
+	CheckOutput func(t *testing.T, createdJudges []models.Judge, receivedJudges []models.Judge, err error)
+}{
+	{
+		TestName: "Get all Judges success test",
+		CheckOutput: func(t *testing.T, createdJudges []models.Judge, receivedJudges []models.Judge, err error) {
+			require.NoError(t, err)
+			require.Equal(t, len(createdJudges), len(receivedJudges))
+		},
+	},
+}
+
+func TestJudgeRepositoryGetAllJudges(t *testing.T) {
+	dbContainer, db := SetupTestDatabase()
+	defer func(dbContainer testcontainers.Container, ctx context.Context) {
+		err := dbContainer.Terminate(ctx)
+		if err != nil {
+			return
+		}
+	}(dbContainer, context.Background())
+
+	fields := repository.PostgresConnection{DB: db}
+	judgeRepository := repository.CreateJudgeRepository(&fields)
+
+	for _, test := range testJudgeRepositoryGetAllJudges {
+		rating := createRating(&fields)
+
+		createdJudges := []models.Judge{
+			{
+				ID:       uuid.New(),
+				FIO:      "Test",
+				Login:    "Te1st",
+				Password: "tes2t123",
+				Post:     "Tes1	t",
+				Role:     1,
+			},
+			{
+				ID:       uuid.New(),
+				FIO:      "Test1",
+				Login:    "Test",
+				Password: "test123",
+				Post:     "Test",
+				Role:     1,
+			},
+			{
+				ID:       uuid.New(),
+				FIO:      "Test2",
+				Login:    "Tes222t",
+				Password: "test123",
+				Post:     "Test",
+				Role:     1,
+			},
+		}
+
+		for i, _ := range createdJudges {
+			j, err := judgeRepository.CreateProfile(&createdJudges[i])
+			require.NoError(t, err)
+			attachJudgeToRating(&fields, j.ID, rating.ID)
+		}
+
+		receivedJudges, err := judgeRepository.GetAllJudges()
+		test.CheckOutput(t, createdJudges, receivedJudges, err)
+	}
+}

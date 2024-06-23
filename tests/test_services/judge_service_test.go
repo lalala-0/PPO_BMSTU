@@ -8,6 +8,7 @@ import (
 	"PPO_BMSTU/internal/services/service_interfaces"
 	mock_password_hash "PPO_BMSTU/tests/hasher_mocks"
 	mock_repository_interfaces "PPO_BMSTU/tests/repository_mocks"
+	"fmt"
 	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -17,13 +18,13 @@ import (
 )
 
 type judgeServiceFields struct {
-	workerRepoMock *mock_repository_interfaces.MockIJudgeRepository
-	logger         *log.Logger
-	hash           *mock_password_hash.MockPasswordHash
+	judgeRepoMock *mock_repository_interfaces.MockIJudgeRepository
+	logger        *log.Logger
+	hash          *mock_password_hash.MockPasswordHash
 }
 
 func initJudgeServiceFields(ctrl *gomock.Controller) *judgeServiceFields {
-	workerRepoMock := mock_repository_interfaces.NewMockIJudgeRepository(ctrl)
+	judgeRepoMock := mock_repository_interfaces.NewMockIJudgeRepository(ctrl)
 	f, err := os.OpenFile("tests.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatal(err)
@@ -31,14 +32,14 @@ func initJudgeServiceFields(ctrl *gomock.Controller) *judgeServiceFields {
 	logger := log.New(f)
 
 	return &judgeServiceFields{
-		workerRepoMock: workerRepoMock,
-		hash:           mock_password_hash.NewMockPasswordHash(ctrl),
-		logger:         logger,
+		judgeRepoMock: judgeRepoMock,
+		hash:          mock_password_hash.NewMockPasswordHash(ctrl),
+		logger:        logger,
 	}
 }
 
 func initJudgeService(fields *judgeServiceFields) service_interfaces.IJudgeService {
-	return services.NewJudgeService(fields.workerRepoMock, fields.hash, fields.logger)
+	return services.NewJudgeService(fields.judgeRepoMock, fields.hash, fields.logger)
 }
 
 var testJudgeGetByID = []struct {
@@ -57,7 +58,7 @@ var testJudgeGetByID = []struct {
 			id: uuid.New(),
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(&models.Judge{
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(&models.Judge{
 				FIO:   "Test",
 				Login: "Test",
 				Role:  1,
@@ -80,7 +81,7 @@ var testJudgeGetByID = []struct {
 			id: uuid.New(),
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
 		},
 		checkOutput: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
@@ -121,7 +122,7 @@ var testJudgeGetJudgeDataByProtestID = []struct {
 			id: uuid.New(),
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByProtestID(gomock.Any()).Return(&models.Judge{
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByProtestID(gomock.Any()).Return(&models.Judge{
 				FIO:   "Test",
 				Login: "Test",
 				Role:  1,
@@ -144,7 +145,7 @@ var testJudgeGetJudgeDataByProtestID = []struct {
 			id: uuid.New(),
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByProtestID(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByProtestID(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
 		},
 		checkOutput: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
@@ -177,7 +178,7 @@ var testJudgeGetJudgesDataByRatingID = []struct {
 	{
 		testName: "Success",
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgesDataByRatingID(gomock.Any()).Return([]models.Judge{
+			fields.judgeRepoMock.EXPECT().GetJudgesDataByRatingID(gomock.Any()).Return([]models.Judge{
 				{
 					FIO:   "Test",
 					Login: "Test",
@@ -208,7 +209,7 @@ var testJudgeGetJudgesDataByRatingID = []struct {
 	{
 		testName: "empty list",
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgesDataByRatingID(gomock.Any()).Return([]models.Judge{}, nil)
+			fields.judgeRepoMock.EXPECT().GetJudgesDataByRatingID(gomock.Any()).Return([]models.Judge{}, nil)
 		},
 		checkFunc: func(t *testing.T, workers []models.Judge, err error) {
 			assert.NoError(t, err)
@@ -245,8 +246,8 @@ var testJudgeDelete = []struct {
 		testName:  "Success",
 		inputData: struct{ id uuid.UUID }{id: uuid.New()},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(&models.Judge{}, nil)
-			fields.workerRepoMock.EXPECT().DeleteProfile(gomock.Any()).Return(nil)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(&models.Judge{}, nil)
+			fields.judgeRepoMock.EXPECT().DeleteProfile(gomock.Any()).Return(nil)
 		},
 		checkFunc: func(t *testing.T, err error) {
 			assert.NoError(t, err)
@@ -256,7 +257,7 @@ var testJudgeDelete = []struct {
 		testName:  "judge not found",
 		inputData: struct{ id uuid.UUID }{id: uuid.New()},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
 		},
 		checkFunc: func(t *testing.T, err error) {
 			assert.Error(t, err)
@@ -321,9 +322,9 @@ var testJudgeUpdateProfile = []struct {
 				Role:     2,
 				Password: "password321", //to
 			}
-			fields.workerRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(judge, nil)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(judge, nil)
 			fields.hash.EXPECT().GetHash(gomock.Any()).Return("hash", nil)
-			fields.workerRepoMock.EXPECT().UpdateProfile(judge).Return(judge, nil)
+			fields.judgeRepoMock.EXPECT().UpdateProfile(judge).Return(judge, nil)
 		},
 		checkFunc: func(t *testing.T, judge *models.Judge, err error) {
 			assert.NoError(t, err)
@@ -347,7 +348,7 @@ var testJudgeUpdateProfile = []struct {
 			password: "password123", //change password from
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
 		},
 		checkFunc: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
@@ -372,7 +373,7 @@ var testJudgeUpdateProfile = []struct {
 			password: "123", //change password from
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(&models.Judge{}, nil)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(&models.Judge{}, nil)
 		},
 		checkFunc: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
@@ -397,7 +398,7 @@ var testJudgeUpdateProfile = []struct {
 			password: "password123", //change password from
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(&models.Judge{}, nil)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(&models.Judge{}, nil)
 		},
 		checkFunc: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
@@ -422,7 +423,7 @@ var testJudgeUpdateProfile = []struct {
 			password: "password123", //change password from
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(&models.Judge{}, nil)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(&models.Judge{}, nil)
 		},
 		checkFunc: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
@@ -447,7 +448,7 @@ var testJudgeUpdateProfile = []struct {
 			password: "password123", //change password from
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(&models.Judge{}, nil)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(&models.Judge{}, nil)
 		},
 		checkFunc: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
@@ -496,9 +497,9 @@ var testJudgeCreateProfile = []struct {
 			password: "password123",
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByLogin(gomock.Any()).Return(nil, nil)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByLogin(gomock.Any()).Return(nil, nil)
 			fields.hash.EXPECT().GetHash(gomock.Any()).Return("hash", nil)
-			fields.workerRepoMock.EXPECT().CreateProfile(gomock.Any()).Return(&models.Judge{
+			fields.judgeRepoMock.EXPECT().CreateProfile(gomock.Any()).Return(&models.Judge{
 				ID:       uuid.New(),
 				FIO:      "Test",
 				Login:    "Test",
@@ -529,7 +530,7 @@ var testJudgeCreateProfile = []struct {
 			password: "password123",
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByLogin(gomock.Any()).Return(&models.Judge{}, nil)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByLogin(gomock.Any()).Return(&models.Judge{}, nil)
 		},
 		checkFunc: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
@@ -555,7 +556,7 @@ var testJudgeCreateProfile = []struct {
 		checkFunc: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
 			assert.Nil(t, judge)
-			assert.Equal(t, service_errors.InvalidFIO, err)
+			assert.Equal(t, fmt.Errorf("SERVICE: Invalid input data"), err)
 		},
 	},
 	{
@@ -576,7 +577,7 @@ var testJudgeCreateProfile = []struct {
 		checkFunc: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
 			assert.Nil(t, judge)
-			assert.Equal(t, service_errors.InvalidLogin, err)
+			assert.Equal(t, fmt.Errorf("SERVICE: Invalid input data"), err)
 		},
 	},
 	{
@@ -597,7 +598,7 @@ var testJudgeCreateProfile = []struct {
 		checkFunc: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
 			assert.Nil(t, judge)
-			assert.Equal(t, service_errors.InvalidRole, err)
+			assert.Equal(t, fmt.Errorf("SERVICE: Invalid input data"), err)
 		},
 	},
 	{
@@ -618,7 +619,7 @@ var testJudgeCreateProfile = []struct {
 		checkFunc: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
 			assert.Nil(t, judge)
-			assert.Equal(t, service_errors.InvalidPassword, err)
+			assert.Equal(t, fmt.Errorf("SERVICE: Invalid input data"), err)
 		},
 	},
 }
@@ -633,7 +634,7 @@ func TestJudgeServiceCreate(t *testing.T) {
 	for _, tt := range testJudgeCreateProfile {
 		tt.prepare(fields)
 		t.Run(tt.testName, func(t *testing.T) {
-			judge, err := service.CreateProfile(tt.inputData.judge.ID, tt.inputData.judge.FIO, tt.inputData.judge.Login, tt.inputData.password, tt.inputData.judge.Role)
+			judge, err := service.CreateProfile(tt.inputData.judge.ID, tt.inputData.judge.FIO, tt.inputData.judge.Login, tt.inputData.password, tt.inputData.judge.Role, tt.inputData.judge.Post)
 			tt.checkFunc(t, judge, err)
 		})
 	}
@@ -658,7 +659,7 @@ var testJudgeLogin = []struct {
 			password: "password123",
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByLogin(gomock.Any()).Return(&models.Judge{
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByLogin(gomock.Any()).Return(&models.Judge{
 				FIO:      "Test",
 				Login:    "abcdef",
 				Post:     "Test",
@@ -684,7 +685,7 @@ var testJudgeLogin = []struct {
 			password: "password123",
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByLogin(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByLogin(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
 		},
 		checkFunc: func(t *testing.T, judge *models.Judge, err error) {
 			assert.Error(t, err)
@@ -702,7 +703,7 @@ var testJudgeLogin = []struct {
 			password: "password123",
 		},
 		prepare: func(fields *judgeServiceFields) {
-			fields.workerRepoMock.EXPECT().GetJudgeDataByLogin(gomock.Any()).Return(&models.Judge{
+			fields.judgeRepoMock.EXPECT().GetJudgeDataByLogin(gomock.Any()).Return(&models.Judge{
 				FIO:   "Test",
 				Login: "qwerty",
 			}, nil)

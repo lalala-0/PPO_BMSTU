@@ -91,10 +91,10 @@ func (mr *MockIProtestRepositoryMockRecorder) GetProtestsDataByRaceID(raceID any
 }
 
 // GetProtestParticipantsIDByID mocks base method.
-func (m *MockIProtestRepository) GetProtestParticipantsIDByID(id uuid.UUID) (map[int]uuid.UUID, error) {
+func (m *MockIProtestRepository) GetProtestParticipantsIDByID(id uuid.UUID) (map[uuid.UUID]int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetProtestParticipantsIDByID", id)
-	ret0, _ := ret[0].(map[int]uuid.UUID)
+	ret0, _ := ret[0].(map[uuid.UUID]int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

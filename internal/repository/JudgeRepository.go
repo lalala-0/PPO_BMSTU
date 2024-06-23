@@ -130,6 +130,24 @@ func (w JudgeRepository) GetJudgesDataByRatingID(ratingID uuid.UUID) ([]models.J
 	return judgeModels, nil
 }
 
+func (w JudgeRepository) GetAllJudges() ([]models.Judge, error) {
+	query := `SELECT * FROM judges;`
+	var judgeDB []JudgeDB
+	err := w.db.Select(&judgeDB, query)
+
+	if err != nil {
+		return nil, repository_errors.SelectError
+	}
+
+	var judgeModels []models.Judge
+	for i := range judgeDB {
+		judge := copyJudgeResultToModel(&judgeDB[i])
+		judgeModels = append(judgeModels, *judge)
+	}
+
+	return judgeModels, nil
+}
+
 func (w JudgeRepository) GetJudgeDataByProtestID(protestID uuid.UUID) (*models.Judge, error) {
 	query := `SELECT * FROM judges WHERE id IN (SELECT judge_id FROM protests WHERE id = $1);`
 	judgeDB := &JudgeDB{}

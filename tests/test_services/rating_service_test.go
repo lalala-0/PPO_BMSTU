@@ -46,6 +46,7 @@ var testRatingServiceAddNewRating = []struct {
 	testName  string
 	inputData struct {
 		id         uuid.UUID
+		name       string
 		class      int
 		blowoutCnt int
 	}
@@ -56,10 +57,12 @@ var testRatingServiceAddNewRating = []struct {
 		testName: "create rating success test",
 		inputData: struct {
 			id         uuid.UUID
+			name       string
 			class      int
 			blowoutCnt int
 		}{
 			uuid.New(),
+			"Test",
 			models.Laser,
 			0,
 		},
@@ -75,10 +78,12 @@ var testRatingServiceAddNewRating = []struct {
 		testName: "invalid class",
 		inputData: struct {
 			id         uuid.UUID
+			name       string
 			class      int
 			blowoutCnt int
 		}{
 			uuid.New(),
+			"Test",
 			90,
 			0,
 		},
@@ -93,10 +98,12 @@ var testRatingServiceAddNewRating = []struct {
 		testName: "invalid blowout count",
 		inputData: struct {
 			id         uuid.UUID
+			name       string
 			class      int
 			blowoutCnt int
 		}{
 			uuid.New(),
+			"Test",
 			models.Laser,
 			-90,
 		},
@@ -111,10 +118,12 @@ var testRatingServiceAddNewRating = []struct {
 		testName: "rating creation error",
 		inputData: struct {
 			id         uuid.UUID
+			name       string
 			class      int
 			blowoutCnt int
 		}{
 			uuid.New(),
+			"Test",
 			models.Laser,
 			9,
 		},
@@ -139,7 +148,7 @@ func TestRatingService_CreateRating(t *testing.T) {
 	for _, tt := range testRatingServiceAddNewRating {
 		t.Run(tt.testName, func(t *testing.T) {
 			tt.prepare(fields)
-			rating, err := ratingService.AddNewRating(tt.inputData.id, tt.inputData.class, tt.inputData.blowoutCnt)
+			rating, err := ratingService.AddNewRating(tt.inputData.id, tt.inputData.name, tt.inputData.class, tt.inputData.blowoutCnt)
 			tt.checkOutput(t, rating, err)
 		})
 	}
@@ -261,6 +270,7 @@ var testRatingServiceUpdateRatingByID = []struct {
 	testName  string
 	inputData struct {
 		id         uuid.UUID
+		name       string
 		class      int
 		blowoutCnt int
 	}
@@ -271,10 +281,12 @@ var testRatingServiceUpdateRatingByID = []struct {
 		testName: "Success",
 		inputData: struct {
 			id         uuid.UUID
+			name       string
 			class      int
 			blowoutCnt int
 		}{
 			uuid.New(),
+			"Test",
 			models.Laser,
 			0,
 		},
@@ -299,10 +311,12 @@ var testRatingServiceUpdateRatingByID = []struct {
 		testName: "rating not found",
 		inputData: struct {
 			id         uuid.UUID
+			name       string
 			class      int
 			blowoutCnt int
 		}{
 			uuid.New(),
+			"Test",
 			models.Laser,
 			0,
 		},
@@ -318,10 +332,12 @@ var testRatingServiceUpdateRatingByID = []struct {
 		testName: "invalid class",
 		inputData: struct {
 			id         uuid.UUID
+			name       string
 			class      int
 			blowoutCnt int
 		}{
 			uuid.New(),
+			"Test",
 			900,
 			0,
 		},
@@ -342,10 +358,12 @@ var testRatingServiceUpdateRatingByID = []struct {
 		testName: "invalid class blow count",
 		inputData: struct {
 			id         uuid.UUID
+			name       string
 			class      int
 			blowoutCnt int
 		}{
 			uuid.New(),
+			"Test",
 			models.Laser,
 			-10,
 		},
@@ -375,7 +393,7 @@ func TestRatingServiceUpdateRatingByID(t *testing.T) {
 	for _, tt := range testRatingServiceUpdateRatingByID {
 		t.Run(tt.testName, func(t *testing.T) {
 			tt.prepare(fields)
-			rating, err := ratingService.UpdateRatingByID(tt.inputData.id, tt.inputData.class, tt.inputData.blowoutCnt)
+			rating, err := ratingService.UpdateRatingByID(tt.inputData.id, tt.inputData.name, tt.inputData.class, tt.inputData.blowoutCnt)
 			tt.checkOutput(t, rating, err)
 		})
 	}

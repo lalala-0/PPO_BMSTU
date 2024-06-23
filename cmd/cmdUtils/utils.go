@@ -1,6 +1,8 @@
 package cmdUtils
 
-import "unicode/utf8"
+import (
+	"unicode/utf8"
+)
 
 func TruncateString(str string, num int) string {
 	if utf8.RuneCountInString(str) <= num {
@@ -14,4 +16,10 @@ func TruncateString(str string, num int) string {
 		i++
 	}
 	return str
+}
+
+func ValidateNumber(num int, len int) bool {
+	num--
+	return num >= 0 && num < len
+
 }

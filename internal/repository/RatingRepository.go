@@ -8,6 +8,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"time"
 )
 
 type RatingDB struct {
@@ -15,6 +16,19 @@ type RatingDB struct {
 	Name       string    `db:"name"`
 	Class      int       `db:"class"`
 	BlowoutCnt int       `db:"blowout_cnt"`
+}
+
+type RatingTableDB struct {
+	CrewID               uuid.UUID `db:"id"`
+	SailNum              int       `db:"sail_num"`
+	ParticipantName      string    `db:"name"`
+	ParticipantBirthDate time.Time `db:"birthdate"`
+	ParticipantCategory  int       `db:"category"`
+	Points               int       `db:"points"`
+	RaceNumber           int       `db:"number"`
+	PointsSum            int       `db:"points_summ"`
+	Rank                 int       `db:"rang"`
+	CoachName            string    `db:"coach_name"`
 }
 
 type RatingRepository struct {
@@ -32,6 +46,57 @@ func copyRatingResultToModel(ratingDB *RatingDB) *models.Rating {
 		Class:      ratingDB.Class,
 		BlowoutCnt: ratingDB.BlowoutCnt,
 	}
+}
+
+func copyRatingTableResultToModel(ratingTableDB []RatingTableDB) []models.RatingTableLine {
+	var ratingLines []models.RatingTableLine
+
+	var participantNames []string
+	var participantBirthDates []time.Time
+	var participantCategories []int
+	var coachNames []string
+	resInRace := make(map[int]int)
+	for i, line := range ratingTableDB[0 : len(ratingTableDB)-1] {
+		participantNames = append(participantNames, line.ParticipantName)
+		participantBirthDates = append(participantBirthDates, line.ParticipantBirthDate)
+		participantCategories = append(participantCategories, line.ParticipantCategory)
+		coachNames = append(coachNames, line.CoachName)
+		resInRace[line.RaceNumber] = line.Points
+		if line.SailNum != ratingTableDB[i+1].SailNum {
+			ratingLines = append(ratingLines, models.RatingTableLine{
+				SailNum:               line.SailNum,
+				ParticipantNames:      participantNames,
+				ParticipantBirthDates: participantBirthDates,
+				ParticipantCategories: participantCategories,
+				ResInRace:             resInRace,
+				PointsSum:             line.PointsSum,
+				Rank:                  line.Rank,
+				CoachNames:            coachNames,
+			})
+			participantNames = make([]string, 0)
+			participantBirthDates = make([]time.Time, 0)
+			participantCategories = make([]int, 0)
+			coachNames = make([]string, 0)
+			resInRace = make(map[int]int, 0)
+		}
+	}
+	line := ratingTableDB[len(ratingTableDB)-1]
+	participantNames = append(participantNames, line.ParticipantName)
+	participantBirthDates = append(participantBirthDates, line.ParticipantBirthDate)
+	participantCategories = append(participantCategories, line.ParticipantCategory)
+	coachNames = append(coachNames, line.CoachName)
+	resInRace[line.RaceNumber] = line.RaceNumber
+	ratingLines = append(ratingLines, models.RatingTableLine{
+		SailNum:               line.SailNum,
+		ParticipantNames:      participantNames,
+		ParticipantBirthDates: participantBirthDates,
+		ParticipantCategories: participantCategories,
+		ResInRace:             resInRace,
+		PointsSum:             line.PointsSum,
+		Rank:                  line.Rank,
+		CoachNames:            coachNames,
+	})
+	return ratingLines
 }
 
 func (w RatingRepository) Create(rating *models.Rating) (*models.Rating, error) {
@@ -116,7 +181,7 @@ func (w RatingRepository) DetachJudgeFromRating(ratingID uuid.UUID, judgeID uuid
 func (w RatingRepository) GetAllRatings() ([]models.Rating, error) {
 	query := `SELECT * FROM ratings;`
 	ratingDB := []RatingDB{}
-	err := w.db.Get(ratingDB, query)
+	err := w.db.Select(&ratingDB, query)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository_errors.DoesNotExist
@@ -130,4 +195,44 @@ func (w RatingRepository) GetAllRatings() ([]models.Rating, error) {
 		ratingModels = append(ratingModels, *rating)
 	}
 	return ratingModels, nil
+}
+
+func (r RatingRepository) GetRatingTable(id uuid.UUID) ([]models.RatingTableLine, error) {
+	query :=
+		`select c.id, c.sail_num, cp.name, cp.birthdate, category, points, number, points_summ, dense_rank() OVER (order BY points_summ) as rang, coach_name
+		from crews as c
+		join(
+		select crew_id, pc.name, pc.birthdate, pc.category, pc.gender, pc.coach_name
+			from participant_crew
+			join(select id, name, birthdate, category, gender, coach_name
+				from participants
+				)as pc on pc.id = participant_crew.participant_id
+				) as cp on c.id = cp.crew_id
+				join(
+				select points, crew_id, race_id, rc.number
+					from crew_race
+					join (select id, number
+						from races as r
+						group by r.id
+						)as rc on crew_race.race_id = rc.id
+						GROUP BY crew_id, points, crew_id, race_id, rc.number
+						)as cr on c.id = cr.crew_id
+						join( select sum(points) as points_summ , crew_id
+							from crew_race
+							GROUP BY crew_id, points
+							)as ps on c.id = ps.crew_id
+							where rating_id = $1
+							order by rang, number, points_summ;
+	`
+	ratingTableDB := []RatingTableDB{}
+	err := r.db.Select(&ratingTableDB, query, id)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, repository_errors.DoesNotExist
+	} else if err != nil {
+		return nil, repository_errors.SelectError
+	}
+
+	ratingTable := copyRatingTableResultToModel(ratingTableDB)
+	return ratingTable, nil
 }

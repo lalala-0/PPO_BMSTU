@@ -11,6 +11,7 @@ import (
 )
 
 type CrewResInRaceDB struct {
+	ID               uuid.UUID `db:"id"`
 	CrewID           uuid.UUID `db:"crew_id"`
 	RaceID           uuid.UUID `db:"race_id"`
 	Points           int       `db:"points"`
@@ -74,7 +75,7 @@ func (w CrewResInRaceRepository) Update(crewResInRace *models.CrewResInRace) (*m
 }
 
 func (w CrewResInRaceRepository) GetCrewResByRaceIDAndCrewID(raceID uuid.UUID, crewID uuid.UUID) (*models.CrewResInRace, error) {
-	query := `SELECT race_id, crew_id, points, spec_circumstance FROM crew_race WHERE race_id = $1 and crew_id = $2;`
+	query := `SELECT * FROM crew_race WHERE race_id = $1 and crew_id = $2;`
 	crewResInRaceDB := &CrewResInRaceDB{}
 	err := w.db.Get(crewResInRaceDB, query, raceID, crewID)
 
@@ -86,5 +87,24 @@ func (w CrewResInRaceRepository) GetCrewResByRaceIDAndCrewID(raceID uuid.UUID, c
 
 	crewResInRaceModels := copyCrewResInRaceResultToModel(crewResInRaceDB)
 
+	return crewResInRaceModels, nil
+}
+
+func (c CrewResInRaceRepository) GetAllCrewResInRace(raceID uuid.UUID) ([]models.CrewResInRace, error) {
+	query := `SELECT * FROM crew_race WHERE race_id = $1;`
+	var crewResInRaceDB []CrewResInRaceDB
+	err := c.db.Select(&crewResInRaceDB, query, raceID)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, repository_errors.DoesNotExist
+	} else if err != nil {
+		return nil, repository_errors.SelectError
+	}
+
+	var crewResInRaceModels []models.CrewResInRace
+	for i := range crewResInRaceDB {
+		crewResInRace := copyCrewResInRaceResultToModel(&crewResInRaceDB[i])
+		crewResInRaceModels = append(crewResInRaceModels, *crewResInRace)
+	}
 	return crewResInRaceModels, nil
 }

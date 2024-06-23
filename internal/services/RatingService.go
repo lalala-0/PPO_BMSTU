@@ -23,13 +23,14 @@ func NewRatingService(RatingRepository repository_interfaces.IRatingRepository, 
 	}
 }
 
-func (r RatingService) AddNewRating(ratingID uuid.UUID, class int, blowoutCnt int) (*models.Rating, error) {
+func (r RatingService) AddNewRating(ratingID uuid.UUID, name string, class int, blowoutCnt int) (*models.Rating, error) {
 	if !validClass(class) || !validBlowoutCnt(blowoutCnt) {
 		r.logger.Error("SERVICE: Invalid input data", "class", class, "BlowoutCnt", blowoutCnt)
 		return nil, fmt.Errorf("SERVICE: Invalid input data")
 	}
 	rating := &models.Rating{
 		ID:         ratingID,
+		Name:       name,
 		Class:      class,
 		BlowoutCnt: blowoutCnt,
 	}
@@ -82,7 +83,7 @@ func (r RatingService) DeleteRatingByID(id uuid.UUID) error {
 	return nil
 }
 
-func (r RatingService) UpdateRatingByID(ratingID uuid.UUID, class int, blowoutCnt int) (*models.Rating, error) {
+func (r RatingService) UpdateRatingByID(ratingID uuid.UUID, name string, class int, blowoutCnt int) (*models.Rating, error) {
 	rating, err := r.RatingRepository.GetRatingDataByID(ratingID)
 	ratingCopy := rating
 
@@ -96,6 +97,7 @@ func (r RatingService) UpdateRatingByID(ratingID uuid.UUID, class int, blowoutCn
 		return nil, fmt.Errorf("SERVICE: Invalid input data")
 	}
 
+	rating.Name = name
 	rating.Class = class
 	rating.BlowoutCnt = blowoutCnt
 
@@ -156,4 +158,16 @@ func (r RatingService) GetAllRatings() ([]models.Rating, error) {
 
 	r.logger.Info("SERVICE: Successfully got rating with GetAllRatings")
 	return rating, nil
+}
+
+func (r RatingService) GetRatingTable(id uuid.UUID) ([]models.RatingTableLine, error) {
+	ratingTable, err := r.RatingRepository.GetRatingTable(id)
+
+	if err != nil {
+		r.logger.Error("SERVICE: GetRatingTable method failed", "error", err)
+		return nil, err
+	}
+
+	r.logger.Info("SERVICE: Successfully got rating table with GetRatingTable")
+	return ratingTable, nil
 }

@@ -103,3 +103,18 @@ func (mr *MockICrewResInRaceRepositoryMockRecorder) GetCrewResByRaceIDAndCrewID(
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCrewResByRaceIDAndCrewID", reflect.TypeOf((*MockICrewResInRaceRepository)(nil).GetCrewResByRaceIDAndCrewID), raceID, crewID)
 }
+
+// GetAllCrewResInRace mocks base method.
+func (m *MockICrewResInRaceRepository) GetAllCrewResInRace(raceID uuid.UUID) ([]models.CrewResInRace, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllCrewResInRace", raceID)
+	ret0, _ := ret[0].([]models.CrewResInRace)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllCrewResInRace indicates an expected call of GetAllCrewResInRace.
+func (mr *MockICrewResInRaceRepositoryMockRecorder) GetAllCrewResInRace(raceID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllCrewResInRace", reflect.TypeOf((*MockICrewResInRaceRepository)(nil).GetAllCrewResInRace), raceID)
+}

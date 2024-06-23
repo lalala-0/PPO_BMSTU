@@ -1008,7 +1008,7 @@ var testProtestServiceCompleteReview = []struct {
 		},
 		prepare: func(fields *protestServiceFields) {
 			fields.protestRepoMock.EXPECT().Update(gomock.Any()).Return(&models.Protest{ID: uuid.New()}, nil)
-			fields.protestRepoMock.EXPECT().GetProtestParticipantsIDByID(gomock.Any()).Return(make(map[int]uuid.UUID), nil)
+			fields.protestRepoMock.EXPECT().GetProtestParticipantsIDByID(gomock.Any()).Return(make(map[uuid.UUID]int), nil)
 			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{CrewID: uuid.New()}, nil)
 			fields.protestRepoMock.EXPECT().GetProtestDataByID(gomock.Any()).Return(&models.Protest{ID: uuid.New()}, nil)
 			//fields.crewResInRaceRepoMock.EXPECT().GetCrewResInRaceDataByID(gomock.Any()).Return(&models.CrewResInRace{CrewID: uuid.New()}, nil)
@@ -1051,7 +1051,7 @@ var testProtestServiceCompleteReview = []struct {
 		},
 		prepare: func(fields *protestServiceFields) {
 			fields.protestRepoMock.EXPECT().GetProtestDataByID(gomock.Any()).Return(&models.Protest{ID: uuid.New()}, nil)
-			fields.protestRepoMock.EXPECT().GetProtestParticipantsIDByID(gomock.Any()).Return(make(map[int]uuid.UUID), nil)
+			fields.protestRepoMock.EXPECT().GetProtestParticipantsIDByID(gomock.Any()).Return(make(map[uuid.UUID]int), nil)
 			fields.crewResInRaceRepoMock.EXPECT().GetCrewResByRaceIDAndCrewID(gomock.Any(), gomock.Any()).Return(&models.CrewResInRace{CrewID: uuid.New()}, nil)
 			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{CrewID: uuid.New()}, nil)
 			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{CrewID: uuid.New()}, nil)
@@ -1078,7 +1078,7 @@ var testProtestServiceCompleteReview = []struct {
 			//fields.protestRepoMock.EXPECT().Update(gomock.Any()).Return(&models.Protest{ID: uuid.New()}, nil)
 			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{CrewID: uuid.New()}, repository_errors.UpdateError)
 			fields.crewResInRaceRepoMock.EXPECT().GetCrewResByRaceIDAndCrewID(gomock.Any(), gomock.Any()).Return(&models.CrewResInRace{CrewID: uuid.New()}, nil)
-			fields.protestRepoMock.EXPECT().GetProtestParticipantsIDByID(gomock.Any()).Return(make(map[int]uuid.UUID), nil)
+			fields.protestRepoMock.EXPECT().GetProtestParticipantsIDByID(gomock.Any()).Return(make(map[uuid.UUID]int), nil)
 
 		},
 		checkOutput: func(t *testing.T, protest *models.Protest, err error) {
@@ -1101,7 +1101,7 @@ var testProtestServiceCompleteReview = []struct {
 			fields.protestRepoMock.EXPECT().GetProtestDataByID(gomock.Any()).Return(&models.Protest{ID: uuid.New()}, nil)
 			//fields.protestRepoMock.EXPECT().Update(gomock.Any()).Return(&models.Protest{ID: uuid.New()}, nil)
 			//fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{CrewID: uuid.New()}, nil)
-			fields.protestRepoMock.EXPECT().GetProtestParticipantsIDByID(gomock.Any()).Return(make(map[int]uuid.UUID), nil)
+			fields.protestRepoMock.EXPECT().GetProtestParticipantsIDByID(gomock.Any()).Return(make(map[uuid.UUID]int), nil)
 			fields.crewResInRaceRepoMock.EXPECT().GetCrewResByRaceIDAndCrewID(gomock.Any(), gomock.Any()).Return(&models.CrewResInRace{CrewID: uuid.New()}, repository_errors.SelectError)
 		},
 		checkOutput: func(t *testing.T, protest *models.Protest, err error) {
@@ -1123,6 +1123,71 @@ func TestProtestServiceCompleteReview(t *testing.T) {
 			tt.prepare(fields)
 			err := protestService.CompleteReview(tt.inputData.protestID, tt.inputData.protesteePoints, tt.inputData.comment)
 			tt.checkOutput(t, nil, err)
+		})
+	}
+}
+
+var testProtestServiceGetProtestParticipantsIDByID = []struct {
+	testName    string
+	inputData   struct{ protestID uuid.UUID }
+	prepare     func(fields *protestServiceFields)
+	checkOutput func(t *testing.T, participantIds map[uuid.UUID]int, err error)
+}{
+	{
+		testName:  "get protest participants ids by protest id success test",
+		inputData: struct{ protestID uuid.UUID }{uuid.New()},
+		prepare: func(fields *protestServiceFields) {
+			//fields.protestRepoMock.EXPECT().GetProtestDataByID(gomock.Any()).Return(&models.Protest{ID: uuid.New()}, nil)
+			//fields.protestRepoMock.EXPECT().GetProtestDataByID(gomock.Any()).Return(&models.Protest{ID: uuid.New()}, nil)
+			fields.protestRepoMock.EXPECT().GetProtestParticipantsIDByID(gomock.Any()).Return(make(map[uuid.UUID]int), nil)
+		},
+		checkOutput: func(t *testing.T, participantIds map[uuid.UUID]int, err error) {
+			assert.NoError(t, err)
+			assert.NotNil(t, participantIds)
+		},
+	},
+	{
+		testName:  "protest participants not found",
+		inputData: struct{ protestID uuid.UUID }{uuid.New()},
+		prepare: func(fields *protestServiceFields) {
+			//fields.protestRepoMock.EXPECT().GetProtestDataByID(gomock.Any()).Return(&models.Protest{ID: uuid.New()}, nil)
+			//fields.protestRepoMock.EXPECT().GetProtestDataByID(gomock.Any()).Return(&models.Protest{ID: uuid.New()}, nil)
+			fields.protestRepoMock.EXPECT().GetProtestParticipantsIDByID(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
+		},
+		checkOutput: func(t *testing.T, participantIds map[uuid.UUID]int, err error) {
+			assert.Error(t, err)
+			assert.Nil(t, participantIds)
+			assert.Equal(t, repository_errors.DoesNotExist, err)
+		},
+	},
+	{
+		testName:  "get protest participants by id error",
+		inputData: struct{ protestID uuid.UUID }{uuid.New()},
+		prepare: func(fields *protestServiceFields) {
+			//fields.protestRepoMock.EXPECT().GetProtestDataByID(gomock.Any()).Return(&models.Protest{ID: uuid.New()}, nil)
+			//fields.protestRepoMock.EXPECT().GetProtestDataByID(gomock.Any()).Return(&models.Protest{ID: uuid.New()}, nil)
+			fields.protestRepoMock.EXPECT().GetProtestParticipantsIDByID(gomock.Any()).Return(nil, repository_errors.SelectError)
+		},
+		checkOutput: func(t *testing.T, participantIds map[uuid.UUID]int, err error) {
+			assert.Error(t, err)
+			assert.Nil(t, participantIds)
+			assert.Equal(t, repository_errors.SelectError, err)
+		},
+	},
+}
+
+func TestProtestServiceGetProtestParticipantsIDByID(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	fields := initProtestServiceFields(ctrl)
+	protestService := initProtestService(fields)
+
+	for _, tt := range testProtestServiceGetProtestParticipantsIDByID {
+		t.Run(tt.testName, func(t *testing.T) {
+			tt.prepare(fields)
+			participantIds, err := protestService.GetProtestParticipantsIDByID(tt.inputData.protestID)
+			tt.checkOutput(t, participantIds, err)
 		})
 	}
 }

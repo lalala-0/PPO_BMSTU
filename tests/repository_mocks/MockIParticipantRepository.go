@@ -75,6 +75,21 @@ func (mr *MockIParticipantRepositoryMockRecorder) GetParticipantsDataByCrewID(id
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetParticipantsDataByCrewID", reflect.TypeOf((*MockIParticipantRepository)(nil).GetParticipantsDataByCrewID), id)
 }
 
+// GetAllParticipants mocks base method.
+func (m *MockIParticipantRepository) GetAllParticipants() ([]models.Participant, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllParticipants")
+	ret0, _ := ret[0].([]models.Participant)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllParticipants indicates an expected call of GetAllParticipants.
+func (mr *MockIParticipantRepositoryMockRecorder) GetAllParticipants(id uuid.UUID) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllParticipants", reflect.TypeOf((*MockIParticipantRepository)(nil).GetAllParticipants))
+}
+
 // GetParticipantDataByID mocks base method.
 func (m *MockIParticipantRepository) GetParticipantDataByID(id uuid.UUID) (*models.Participant, error) {
 	m.ctrl.T.Helper()

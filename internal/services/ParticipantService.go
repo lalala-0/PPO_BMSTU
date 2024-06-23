@@ -127,3 +127,14 @@ func (p ParticipantService) GetParticipantsDataByProtestID(protestID uuid.UUID) 
 	p.logger.Info("SERVICE: Successfully got participants by protest id", "participants", participants)
 	return participants, nil
 }
+
+func (p ParticipantService) GetAllParticipants() ([]models.Participant, error) {
+	participants, err := p.ParticipantRepository.GetAllParticipants()
+	if err != nil {
+		p.logger.Error("SERVICE: GetAllParticipants method failed", "error", err)
+		return nil, err
+	}
+
+	p.logger.Info("SERVICE: Successfully got all participants", "participants", participants)
+	return participants, nil
+}

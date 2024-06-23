@@ -8,6 +8,7 @@ import (
 	"PPO_BMSTU/internal/services/service_interfaces"
 	"PPO_BMSTU/password_hash"
 	"errors"
+	"fmt"
 	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 )
@@ -64,26 +65,11 @@ func (j JudgeService) Login(login, password string) (*models.Judge, error) {
 	return tempJudge, nil
 }
 
-func (j JudgeService) CreateProfile(judgeID uuid.UUID, fio string, login string, password string, role int) (*models.Judge, error) {
+func (j JudgeService) CreateProfile(judgeID uuid.UUID, fio string, login string, password string, role int, post string) (*models.Judge, error) {
 	j.logger.Info("SERVICE: Validating data")
-	if !validFIO(fio) {
-		j.logger.Error("SERVICE: Invalid fio", "fio", fio)
-		return nil, service_errors.InvalidFIO
-	}
-
-	if !validLogin(login) {
-		j.logger.Error("SERVICE: Invalid login", "login", login)
-		return nil, service_errors.InvalidLogin
-	}
-
-	if !validRole(role) {
-		j.logger.Error("SERVICE: Invalid role", "role", role)
-		return nil, service_errors.InvalidRole
-	}
-
-	if !validPassword(password) {
-		j.logger.Error("SERVICE: Invalid password", "password", password)
-		return nil, service_errors.InvalidPassword
+	if !validFIO(fio) || !validLogin(login) || !validRole(role) || !validPassword(password) {
+		j.logger.Error("SERVICE: Invalid input data", "fio", fio, "login", login, "role", role, "password", password)
+		return nil, fmt.Errorf("SERVICE: Invalid input data")
 	}
 
 	j.logger.Infof("SERVICE: Checking if judge with login %s exists", login)
@@ -112,6 +98,7 @@ func (j JudgeService) CreateProfile(judgeID uuid.UUID, fio string, login string,
 		Login:    login,
 		Password: password,
 		Role:     role,
+		Post:     post,
 	}
 
 	createdJudge, err := j.JudgeRepository.CreateProfile(judge)
@@ -174,11 +161,23 @@ func (j JudgeService) GetJudgesDataByRatingID(ratingID uuid.UUID) ([]models.Judg
 	judges, err := j.JudgeRepository.GetJudgesDataByRatingID(ratingID)
 
 	if err != nil {
-		j.logger.Error("SERVICE: GetJudgeByID method failed", "id", ratingID, "error", err)
+		j.logger.Error("SERVICE: GetJudgesByRatingID method failed", "id", ratingID, "error", err)
 		return nil, err
 	}
 
-	j.logger.Info("SERVICE: Successfully got user with GetJudgeByID", "id", ratingID)
+	j.logger.Info("SERVICE: Successfully got judges with GetJudgesByRatingID", "id", ratingID)
+	return judges, nil
+}
+
+func (j JudgeService) GetAllJudges() ([]models.Judge, error) {
+	judges, err := j.JudgeRepository.GetAllJudges()
+
+	if err != nil {
+		j.logger.Error("SERVICE: GetAllJudges method failed", "error", err)
+		return nil, err
+	}
+
+	j.logger.Info("SERVICE: Successfully got All Judges")
 	return judges, nil
 }
 

@@ -13,4 +13,5 @@ type IParticipantService interface {
 	GetParticipantDataByID(id uuid.UUID) (*models.Participant, error)
 	GetParticipantsDataByCrewID(crewID uuid.UUID) ([]models.Participant, error)
 	GetParticipantsDataByProtestID(protestID uuid.UUID) ([]models.Participant, error)
+	GetAllParticipants() ([]models.Participant, error)
 }

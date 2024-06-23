@@ -24,7 +24,7 @@ drop table if exists crews cascade;
 create table crews
 (
     id           uuid primary key default uuid_generate_v4(),
-    rating_id    uuid   references ratings (id),
+    rating_id    uuid   references ratings (id)  ON DELETE CASCADE,
     class         int,
     sail_num      int
 );
@@ -33,7 +33,7 @@ drop table if exists races cascade;
 create table races
 (
     id            uuid primary key default uuid_generate_v4(),
-    rating_id    uuid   references ratings (id),
+    rating_id    uuid   references ratings (id)  ON DELETE CASCADE,
     number serial,
     class int,
     date timestamp
@@ -54,9 +54,9 @@ drop table if exists protests cascade;
 create table protests
 (
     id       uuid primary key default uuid_generate_v4(),
-    race_id uuid references races (id),
-    rating_id  uuid references ratings (id),
-    judge_id  uuid references judges (id),
+    race_id uuid references races (id) ON DELETE CASCADE,
+    rating_id  uuid references ratings (id) ON DELETE CASCADE,
+    judge_id  uuid references judges (id) ON DELETE CASCADE,
     rule_num int ,
     review_date timestamp,
     status int,
@@ -67,8 +67,8 @@ drop table if exists crew_protest cascade;
 create table crew_protest
 (
     id      uuid primary key default uuid_generate_v4(),
-    crew_id uuid references crews (id),
-    protest_id  uuid references protests (id),
+    crew_id uuid references crews (id) ON DELETE CASCADE,
+    protest_id  uuid references protests (id) ON DELETE CASCADE,
     crew_status int
 );
 
@@ -76,8 +76,8 @@ drop table if exists crew_race cascade;
 create table crew_race
 (
     id      uuid primary key default uuid_generate_v4(),
-    crew_id uuid references crews (id),
-    race_id  uuid references races (id),
+    crew_id uuid references crews (id) ON DELETE CASCADE,
+    race_id  uuid references races (id) ON DELETE CASCADE,
     points int,
     spec_circumstance int
 );
@@ -86,8 +86,8 @@ drop table if exists participant_crew cascade;
 create table participant_crew
 (
     id       uuid primary key default uuid_generate_v4(),
-    participant_id uuid references participants (id),
-    crew_id  uuid references crews (id),
+    participant_id uuid references participants (id) ON DELETE CASCADE,
+    crew_id  uuid references crews (id) ON DELETE CASCADE,
     helmsman boolean,
     active boolean
 );
@@ -96,6 +96,6 @@ drop table if exists judge_rating cascade;
 create table judge_rating
 (
     id      uuid primary key default uuid_generate_v4(),
-    judge_id uuid references judges (id),
-    rating_id  uuid references ratings (id)
+    judge_id uuid references judges (id) ON DELETE CASCADE,
+    rating_id  uuid references ratings (id) ON DELETE CASCADE
 );

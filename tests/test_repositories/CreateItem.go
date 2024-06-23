@@ -12,7 +12,7 @@ func createParticipant(fields *repository.PostgresConnection) *models.Participan
 	query := `INSERT INTO participants(name, category, gender, birthdate, coach_name) VALUES ($1, $2, $3, $4, $5) RETURNING id;`
 
 	var participantID uuid.UUID
-	err := fields.DB.QueryRow(query, "test", models.Junior2category, 2, time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC), "Test").Scan(&participantID)
+	err := fields.DB.QueryRow(query, "test", models.Junior2category, true, time.Date(2003, time.November, 10, 23, 0, 0, 0, time.UTC), "Test").Scan(&participantID)
 
 	if err != nil {
 		return nil
@@ -24,7 +24,7 @@ func createParticipant(fields *repository.PostgresConnection) *models.Participan
 		Gender:   models.Female,
 		Category: models.Junior2category,
 		Coach:    "Test",
-		Birthday: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
+		Birthday: time.Date(2003, time.November, 10, 23, 0, 0, 0, time.UTC),
 	}
 }
 
@@ -50,7 +50,7 @@ func createCrew(fields *repository.PostgresConnection, ratingID uuid.UUID) *mode
 	query := `INSERT INTO crews(rating_id, class, sail_num) VALUES ($1, $2, $3) RETURNING id;`
 
 	var crewID uuid.UUID
-	err := fields.DB.QueryRow(query, ratingID, 123, 2).Scan(&crewID)
+	err := fields.DB.QueryRow(query, ratingID, 2, 123).Scan(&crewID)
 
 	if err != nil {
 		return nil
