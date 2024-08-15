@@ -1,0 +1,35 @@
+{{ define "createRating" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-8">
+        <h2>Cоздать рейтинг</h2>
+        {{ if .error }}
+        <div class="alert alert-danger">
+            {{ .error }}
+        </div>
+        {{ end }}
+        <form method="post">
+            <div class="form-group">
+                <label for="InputName">Название</label>
+                <input type="text" class="form-control" id="InputName" name="name"
+                       placeholder="Name" value="{{ .formData.Name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="InputClass">Класс яхт</label>
+                <select class="form-control" id="InputClass" name="class" required>
+                    {{ range $key, $value := .classMap }}
+                    <option value="{{ $key }}" {{ if eq $key $.formData.Class }}selected{{ end }}>{{ $value }}</option>
+                    {{ end }}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="InputBlowoutCnt">Количество выбрасываемых результатов</label>
+                <input type="number" class="form-control" id="InputBlowoutCnt" name="blowout_cnt"
+                       value="{{ .formData.BlowoutCnt }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2 mb-2">Создать рейтинг</button>
+        </form>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

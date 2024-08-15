@@ -27,7 +27,7 @@ func NewProtestService(ProtestRepository repository_interfaces.IProtestRepositor
 	}
 }
 
-func (p ProtestService) AddNewProtest(protestID uuid.UUID, raceID uuid.UUID, ratingID uuid.UUID, judgeID uuid.UUID, ruleNum int, reviewDate time.Time, comment string, protesteeSailNum int, protestorSailNum int, witnessesSailNum []int) (*models.Protest, error) {
+func (p ProtestService) AddNewProtest(raceID uuid.UUID, ratingID uuid.UUID, judgeID uuid.UUID, ruleNum int, reviewDate time.Time, comment string, protesteeSailNum int, protestorSailNum int, witnessesSailNum []int) (*models.Protest, error) {
 	if !validRuleNum(ruleNum) {
 		p.logger.Error("SERVICE: Invalid input data", "ruleNum", ruleNum)
 		return nil, fmt.Errorf("SERVICE: Invalid input data")
@@ -40,7 +40,6 @@ func (p ProtestService) AddNewProtest(protestID uuid.UUID, raceID uuid.UUID, rat
 	}
 
 	protest := &models.Protest{
-		ID:         protestID,
 		RaceID:     raceID,
 		RatingID:   ratingID,
 		JudgeID:    judgeID,
@@ -62,15 +61,15 @@ func (p ProtestService) AddNewProtest(protestID uuid.UUID, raceID uuid.UUID, rat
 		return nil, err
 	}
 
-	err = p.ProtestRepository.AttachCrewToProtest(protestee.ID, protestID, models.Protestee)
+	err = p.ProtestRepository.AttachCrewToProtest(protestee.ID, protest.ID, models.Protestee)
 	if err != nil {
 		p.logger.Error("SERVICE: AttachCrewToProtest method failed", "error", err)
 		return nil, err
 	}
 
-	err = p.ProtestRepository.AttachCrewToProtest(protestor.ID, protestID, models.Protestor)
+	err = p.ProtestRepository.AttachCrewToProtest(protestor.ID, protest.ID, models.Protestor)
 	if err != nil {
-		_ = p.ProtestRepository.DetachCrewFromProtest(protestee.ID, protestID)
+		_ = p.ProtestRepository.DetachCrewFromProtest(protestee.ID, protest.ID)
 		p.logger.Error("SERVICE: AttachCrewToProtest method failed", "error", err)
 		return nil, err
 	}
@@ -83,7 +82,7 @@ func (p ProtestService) AddNewProtest(protestID uuid.UUID, raceID uuid.UUID, rat
 			rc = err
 		}
 
-		err = p.ProtestRepository.AttachCrewToProtest(witness.ID, protestID, models.Witness)
+		err = p.ProtestRepository.AttachCrewToProtest(witness.ID, protest.ID, models.Witness)
 		if err != nil {
 			p.logger.Error("SERVICE: AttachCrewToProtest method failed", "error", err)
 			rc = err
@@ -272,7 +271,7 @@ func (p ProtestService) DetachCrewFromProtest(protestID uuid.UUID, sailNum int) 
 
 	crew, err := p.CrewRepository.GetCrewDataBySailNumAndRatingID(sailNum, protest.RatingID)
 	if err != nil {
-		p.logger.Error("SERVICE: GetProtestDataByID method failed", "id", protestID, "error", err)
+		p.logger.Error("SERVICE: GetCrewDataBySailNumAndRatingID method failed", "id", protest.RatingID, "error", err)
 		return err
 	}
 	err = p.ProtestRepository.DetachCrewFromProtest(protestID, crew.ID)

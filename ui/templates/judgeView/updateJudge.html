@@ -1,0 +1,35 @@
+{{ define "updateJudge" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-8">
+        <h2>Обновить судью</h2>
+        {{ if .error }}
+        <div class="alert alert-danger">
+            {{ .error }}
+        </div>
+        {{ end }}
+        <form method="post">
+            <div class="form-group">
+                <label for="inputFIO">ФИО</label>
+                <input type="text" class="form-control" id="InputFIO" name="fio"
+                       placeholder="FIO" value="{{ .formData.FIO }}" required>
+            </div>
+            <div class="form-group">
+                <label for="inputLogin">Логин</label>
+                <input type="text" class="form-control" id="InputLogin" name="login"
+                       placeholder="Login" value="{{ .formData.Login }}" required>
+            </div>
+            <div class="form-group">
+                <label for="InputRole">Роль</label>
+                <select class="form-control" id="InputRole" name="role" required>
+                    {{ range $key, $value := .judgeRoleMap }}
+                    <option value="{{ $key }}" {{ if eq $key $.formData.Role }}selected{{ end }}>{{ $value }}</option>
+                    {{ end }}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2 mb-2">Обновить судью</button>
+        </form>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

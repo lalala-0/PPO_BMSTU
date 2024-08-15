@@ -7,7 +7,7 @@ import (
 )
 
 type IProtestService interface {
-	AddNewProtest(protestID uuid.UUID, raceID uuid.UUID, ratingID uuid.UUID, judgeID uuid.UUID, ruleNum int, reviewDate time.Time, comment string, protesteeSailNum int, protestorSailNum int, witnessesSailNum []int) (*models.Protest, error)
+	AddNewProtest(raceID uuid.UUID, ratingID uuid.UUID, judgeID uuid.UUID, ruleNum int, reviewDate time.Time, comment string, protesteeSailNum int, protestorSailNum int, witnessesSailNum []int) (*models.Protest, error)
 	DeleteProtestByID(id uuid.UUID) error
 	UpdateProtestByID(protestID uuid.UUID, raceID uuid.UUID, judgeID uuid.UUID, ruleNum int, reviewDate time.Time, status int, comment string) (*models.Protest, error)
 	GetProtestDataByID(id uuid.UUID) (*models.Protest, error)

@@ -9,7 +9,6 @@ import (
 	"PPO_BMSTU/internal/models"
 	"PPO_BMSTU/internal/registry"
 	"fmt"
-	"github.com/google/uuid"
 )
 
 func DeleteProtest(service registry.Services, protest *models.Protest) error {
@@ -75,7 +74,7 @@ func CreateProtest(service registry.Services, race *models.Race) error {
 		i++
 	}
 
-	createdProtest, err := service.ProtestService.AddNewProtest(uuid.New(), race.ID, race.RatingID, judge.ID, ruleNum, reviewDate, comment, protesteeSailNum, protestorSailNum, witnessesSailNums)
+	createdProtest, err := service.ProtestService.AddNewProtest(race.ID, race.RatingID, judge.ID, ruleNum, reviewDate, comment, protesteeSailNum, protestorSailNum, witnessesSailNums)
 
 	if err != nil {
 		return err

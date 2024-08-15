@@ -74,7 +74,7 @@ var testJudgeGetByID = []struct {
 		},
 	},
 	{
-		testName: "judge not found",
+		testName: "judgeView not found",
 		inputData: struct {
 			id uuid.UUID
 		}{
@@ -138,7 +138,7 @@ var testJudgeGetJudgeDataByProtestID = []struct {
 		},
 	},
 	{
-		testName: "judge not found",
+		testName: "judgeView not found",
 		inputData: struct {
 			id uuid.UUID
 		}{
@@ -254,7 +254,7 @@ var testJudgeDelete = []struct {
 		},
 	},
 	{
-		testName:  "judge not found",
+		testName:  "judgeView not found",
 		inputData: struct{ id uuid.UUID }{id: uuid.New()},
 		prepare: func(fields *judgeServiceFields) {
 			fields.judgeRepoMock.EXPECT().GetJudgeDataByID(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
@@ -516,7 +516,7 @@ var testJudgeCreateProfile = []struct {
 		},
 	},
 	{
-		testName: "judge already exists",
+		testName: "judgeView already exists",
 		inputData: struct {
 			judge    *models.Judge
 			password string
@@ -676,7 +676,7 @@ var testJudgeLogin = []struct {
 		},
 	},
 	{
-		testName: "judge not found",
+		testName: "judgeView not found",
 		inputData: struct {
 			login    string
 			password string

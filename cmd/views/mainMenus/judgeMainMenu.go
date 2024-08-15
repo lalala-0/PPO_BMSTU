@@ -24,7 +24,7 @@ func JudgeLoginMenu(services registry.Services) error {
 						} else if judge.Role == models.NotMainJudge {
 							err = JudgesMainMenu(services, judge)
 						} else {
-							err = fmt.Errorf("Wrong judge role")
+							err = fmt.Errorf("Wrong judgeView role")
 						}
 					}
 					return err

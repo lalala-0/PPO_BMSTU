@@ -1,0 +1,47 @@
+{{ define "rating" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-10">
+        <h2>Информация о рейтинге</h2>
+
+        <p>Рейтинг: {{ .rating.Name }}</p>
+        <p>Класс: {{ .ratingView.Class }}</p>
+        <a href="/ratings/{{ .rating.ID }}/ratingTable" class="btn btn-primary">Посмотреть рейтинговую таблицу</a>
+
+        {{ if .judge }}
+        <h4>Действия над рейтингом: </h4>
+        <form method="post" action="/ratings/{{ .rating.ID }}/delete">
+            <button type="submit" class="btn btn-danger">Удалить рейтинг</button>
+        </form>
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/update">Изменить рейтинг</a>
+        {{ end }}
+
+        <h4>Список гонок: </h4>
+        <div class="d-flex flex-row flex-wrap mt-4 mb-4">
+            {{ range .races }}
+            <div class="num-item">
+                <a href="/ratings/{{ $.rating.ID }}/races/{{ .ID }}" class="btn btn-secondary">{{ .Number }}</a>
+            </div>
+            {{ end }}
+        </div>
+        {{ if .judge }}
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/create">Создать гонку</a>
+        {{ end }}
+
+        <h4>Список команд: </h4>
+        <div class="d-flex flex-row flex-wrap mt-4 mb-4">
+            {{ range .crews }}
+            <div class="num-item">
+                <a href="/ratings/{{ $.rating.ID }}/crews/{{ .ID }}" class="btn btn-secondary">{{ .SailNum }}</a>
+            </div>
+            {{ end }}
+        </div>
+        {{ if .judge }}
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/crews/create">Создать команду</a>
+        {{ end }}
+
+        <a href="/" class="btn btn-primary">Вернуться к списку рейтингов</a>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

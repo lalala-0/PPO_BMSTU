@@ -1,0 +1,26 @@
+{{ define "detachCrewParticipant" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-8">
+        <h2>Удалить участника из команды</h2>
+        {{ if .error }}
+        <div class="alert alert-danger">
+            {{ .error }}
+        </div>
+        {{ end }}
+        <form method="post">
+            <div class="form-group">
+                <label for="InputParticipantID">Участник</label>
+                <select class="form-control" id="InputParticipantID" name="participantID" required>
+                    {{ range .participants }}
+                    <option value="{{ .ID }}" {{ if eq $.formData.ParticipantID .ID }}selected{{ end }}>{{ .FIO }}</option>
+                    {{ end }}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-2 mb-2">Удалить участника из команды</button>
+        </form>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

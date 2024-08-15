@@ -1,0 +1,28 @@
+{{ define "completeProtest" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-8">
+        <h2>Завершить рассмотрение протеста</h2>
+        {{ if .error }}
+        <div class="alert alert-danger">
+            {{ .error }}
+        </div>
+        {{ end }}
+        <form method="post">
+            <div class="form-group">
+                <label for="inputResPoints">Количество баллов опротестованного</label>
+                <input type="number" class="form-control" id="inputResPoints" name="resPoints"
+                       value="{{ .formData.ResPoints }}" required>
+            </div>
+            <div class="form-group">
+                <label for="inputComment">Комментарий</label>
+                <input type="text" class="form-control" id="inputComment" name="comment"
+                       value="{{ .formData.Comment }}" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-2 mb-2">Завершить рассмотрение протеста</button>
+        </form>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

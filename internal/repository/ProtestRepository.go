@@ -115,7 +115,7 @@ func (w ProtestRepository) AttachCrewToProtest(crewID uuid.UUID, protestID uuid.
 	return nil
 }
 
-func (w ProtestRepository) DetachCrewFromProtest(crewID uuid.UUID, protestID uuid.UUID) error {
+func (w ProtestRepository) DetachCrewFromProtest(protestID uuid.UUID, crewID uuid.UUID) error {
 	query := `DELETE FROM crew_protest WHERE crew_id = $1 and protest_id = $2;`
 	_, err := w.db.Exec(query, crewID, protestID)
 

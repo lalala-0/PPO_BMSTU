@@ -88,26 +88,27 @@ def generate_crew(crewID, ratingID, ratingClass):
     return [crewID, ratingID, ratingClass, sailNum]
 
 
-def generate_race(raceID, ratingID, ratingClass):
+def generate_race(raceID, ratingID, ratingClass, num):
     with open(".\\data\\races_data.csv", mode="a", newline="") as file:
             date = g.generate_datetime()
             writer = csv.writer(file, delimiter=';')
             writer.writerow([
                 raceID,
                 ratingID,
+                num,
                 ratingClass,
                 date
             ])
     return [raceID, ratingID, ratingClass, date]
 
-def generate_crew_race(crew_receID, crewID, raceID, crew_num, step, cnt):
+def generate_crew_race(crew_receID, crewID, raceID, points):
     with open(".\\data\\crew_race_data.csv", mode="a", newline="") as file:
         writer = csv.writer(file, delimiter=';')
         writer.writerow([
             crew_receID,
             crewID,
             raceID,
-            g.generate_points(crew_num, step, cnt),
+            points,
             g.generate_spec_circ()
         ])
 
@@ -181,12 +182,18 @@ def Generate_ratings():
                 crews.append(generate_crew(crew_ids[crew_counter], rating_ids[i], rating_classes[i]))
                 crew_counter += 1
             for j in range(random.randint(2, 10)):
-                races.append(generate_race(race_ids[race_counter], rating_ids[i], rating_classes[i]))
+                races.append(generate_race(race_ids[race_counter], rating_ids[i], rating_classes[i], j+1))
                 race_counter += 1
             k = 0
+            points_list = []
+            for race in races:
+                numbers = list(range(1, len(crews)))
+                random.shuffle(numbers)
+                points_list.append(numbers)
+
             for crew in crews:
-                for race in races:
-                    generate_crew_race(crew_race_ids[crew_race_counter], crew[0], race[0], k, 123, len(crews))
+                for j in range(len(races)):
+                    generate_crew_race(crew_race_ids[crew_race_counter], crew[0], races[j][0], points_list[j][k-1])
                     crew_race_counter += 1
                 k += 1
             for race in races:
@@ -208,22 +215,24 @@ def Generate_ratings():
 def generate_judge_id():
     return random.choice(judge_ids)
 
-def generate_participant_crew(participant_crewID, crewID):
+def generate_participant_crew(participant_crewID, crewID, helmsman):
         with open(".\\data\\participant_crew_data.csv", mode="a", newline="") as file:
             writer = csv.writer(file, delimiter=';')
             writer.writerow([
                 participant_crewID,
                 generate_participant_id(),
                 crewID,
-                g.generate_bool(),
+                helmsman,
                 g.generate_bool()
             ])
 
 def Generate_participant_crews():
     participant_crew_counter = 0
     for i in range(crew_cnt):
+        helmsman = True
         for j in range(random.randint(1, 3)):
-            generate_participant_crew(participant_crew_ids[participant_crew_counter], crew_ids[i])
+            generate_participant_crew(participant_crew_ids[participant_crew_counter], crew_ids[i], helmsman)
+            helmsman = False
             participant_crew_counter += 1
     global participant_crew_cnt
     participant_crew_cnt = participant_crew_counter
@@ -268,7 +277,7 @@ def create_free_files():
     f.close()
     f = open(".\\data\\races_data.csv", mode="w", newline="")
     writer = csv.writer(f, delimiter=';')
-    writer.writerow(["id", "rating_id", "class", "date"])
+    writer.writerow(["id", "rating_id", "number", "class", "date"])
     f.close()
     f = open(".\\data\\crew_race_data.csv", mode="w", newline="")
     writer = csv.writer(f, delimiter=';')

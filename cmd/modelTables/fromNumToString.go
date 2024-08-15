@@ -27,18 +27,18 @@ func GenderToString(status int) (string, error) {
 	if status == models.Male {
 		return "Male", nil
 	} else if status == models.Female {
-		return "Жен.", nil
+		return "Female", nil
 	}
 	return "", fmt.Errorf("Некорректный пол", "status", status)
 }
 
 func ParticipantCategoryToString(category int) (string, error) {
 	if category == models.MasterInternational {
-		return "Мастер спорта России медунородного класса", nil
+		return "Мастер спорта России междунородного класса", nil
 	} else if category == models.MasterRussia {
 		return "Мастер спорта России", nil
 	} else if category == models.Candidate {
-		return "Кандидат в мастера спорта ", nil
+		return "Кандидат в мастера спорта", nil
 	} else if category == models.Sport1category {
 		return "1-ый спортивный разряд", nil
 	} else if category == models.Sport2category {
@@ -48,6 +48,7 @@ func ParticipantCategoryToString(category int) (string, error) {
 	} else if category == models.Junior1category {
 		return "1-ый юношеский разряд", nil
 	} else if category == models.Junior2category {
+
 		return "2-ой юношеский разряд", nil
 	}
 	return "", fmt.Errorf("Некорректный спортивный разряд", "category", category)

@@ -425,7 +425,7 @@ var testRatingServiceAttachJudgeToRating = []struct {
 		},
 	},
 	{
-		testName: "attach judge to rating error",
+		testName: "attach judgeView to rating error",
 		inputData: struct {
 			ratingID uuid.UUID
 			judgeID  uuid.UUID
@@ -485,7 +485,7 @@ var testRatingServiceDetachJudgeFromRating = []struct {
 		},
 	},
 	{
-		testName: "detach judge from rating error",
+		testName: "detach judgeView from rating error",
 		inputData: struct {
 			ratingID uuid.UUID
 			judgeID  uuid.UUID

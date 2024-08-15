@@ -1,0 +1,22 @@
+{{ define "judge" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-10">
+        <h2>Информация о судье</h2>
+
+        <p>ФИО: {{ .judgeView.FIO }}</p>
+        <p>Логин: {{ .judgeView.Login }}</p>
+        <p>Роль: {{ .judgeView.Role }}</p>
+        <p>Должность: {{ .judgeView.Post }}</p>
+
+        <h4>Действия над судьей: </h4>
+        <form method="post" action="/judges/{{ $.judgeData.ID }}/delete">
+            <button type="submit" class="btn btn-danger">Удалить судью</button>
+        </form>
+        <a class="btn btn-action" href="/judges/{{ $.judgeData.ID }}/update">Изменить профиль судьи</a>
+
+        <a href="/" class="btn btn-primary">Вернуться к панели управления судьи</a>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

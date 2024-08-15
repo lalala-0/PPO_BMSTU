@@ -1,0 +1,54 @@
+{{ define "race" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-10">
+        <h2>Гонка</h2>
+
+        <p>Гонка: {{ .race.Number }}</p>
+        <p>Рейтинг: {{ .rating.Name }}</p>
+        <p>Класс: {{ .ratingView.Class }}</p>
+        <p>Дата проведения: {{ .raceView.Date }}</p>
+
+        {{ if .judge }}
+        <h4>Действия над гонкой: </h4>
+        <form method="post" action="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/delete">
+            <button type="submit" class="btn btn-danger">Удалить гонку</button>
+        </form>
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/update">Изменить гонку</a>
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/start">Провести стартовую процедуру</a>
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/finish">Провести финишную процедуру</a>
+        {{ end }}
+
+        <h4>Список протестов: </h4>
+        <div class="container mt-4 mb-4">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Номер нарушенного правила</th>
+                    <th>Дата рассмотрения</th>
+                    <th>Статус</th>
+                    <th>Комментарий</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{ range .protests }}
+                <tr>
+                    <td><a href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ .ID }}" class="btn btn-secondary">>></a></td>
+                    <td>{{ .RuleNum }}</td>
+                    <td>{{ .ReviewDate }}</td>
+                    <td>{{ .Status }}</td>
+                    <td>{{ .Comment }}</td>
+                </tr>
+                {{ end }}
+                </tbody>
+            </table>
+        </div>
+        {{ if .judge }}
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/create">Создать протест</a>
+        {{ end }}
+        <a href="/ratings/{{ $.rating.ID }}" class="btn btn-primary">Вернуться к рейтингу</a>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

@@ -2,18 +2,14 @@
 
 <nav class="navbar navbar-light bg-light">
     <a class="navbar-brand" href="/">
-        My sail races system
     </a>
     <ul class="nav justify-content-end">
-        <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/ratings">Регаты</a>
-        </li>
         {{ if .judge }}
         <li class="nav-item">
-            <a class="nav-link" href="/judge">Панель управления</a>
+            <a class="nav-link" href="/judges">Панель управления</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/judge/profile">Профиль</a>
+            <a class="nav-link" href="/judges/{{ .judge.ID }}/profile">Профиль</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/auth/logout">Выйти</a>

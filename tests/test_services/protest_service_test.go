@@ -410,7 +410,7 @@ func TestProtestServiceCreate(t *testing.T) {
 
 			tt.prepare(fields)
 
-			protest, err := protestService.AddNewProtest(tt.inputData.protestID, tt.inputData.raceID, tt.inputData.ratingID, tt.inputData.judgeID, tt.inputData.ruleNum, tt.inputData.reviewDate, tt.inputData.comment, tt.inputData.protesteeSailNum, tt.inputData.protestorSailNum, tt.inputData.witnessesSailNum)
+			protest, err := protestService.AddNewProtest(tt.inputData.raceID, tt.inputData.ratingID, tt.inputData.judgeID, tt.inputData.ruleNum, tt.inputData.reviewDate, tt.inputData.comment, tt.inputData.protesteeSailNum, tt.inputData.protestorSailNum, tt.inputData.witnessesSailNum)
 			tt.checkOutput(t, protest, err)
 		})
 	}
@@ -425,7 +425,7 @@ func TestProtestServiceCreate(t *testing.T) {
 
 			tt.prepare(fields)
 
-			protest, err := protestService.AddNewProtest(tt.inputData.protestID, tt.inputData.raceID, tt.inputData.ratingID, tt.inputData.judgeID, tt.inputData.ruleNum, tt.inputData.reviewDate, tt.inputData.comment, tt.inputData.protesteeSailNum, tt.inputData.protestorSailNum, tt.inputData.witnessesSailNum)
+			protest, err := protestService.AddNewProtest(tt.inputData.raceID, tt.inputData.ratingID, tt.inputData.judgeID, tt.inputData.ruleNum, tt.inputData.reviewDate, tt.inputData.comment, tt.inputData.protesteeSailNum, tt.inputData.protestorSailNum, tt.inputData.witnessesSailNum)
 			tt.checkOutput(t, protest, err)
 		})
 	}

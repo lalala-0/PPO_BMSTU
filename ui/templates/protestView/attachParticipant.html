@@ -1,0 +1,34 @@
+{{ define "attachProtestParticipant" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-8">
+        <h2>Добавить участника протеста</h2>
+        {{ if .error }}
+        <div class="alert alert-danger">
+            {{ .error }}
+        </div>
+        {{ end }}
+        <form method="post">
+            <div class="form-group">
+                <label for="inputRole">Роль в протесте</label>
+                <select class="form-control" id="inputRole" name="role" required>
+                    {{ range $key, $value := .roleMap }}
+                    <option value="{{ $key }}" {{ if eq $key $.formData.Role }}selected{{ end }}>{{ $value }}</option>
+                    {{ end }}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="InputSailNum">Номер паруса</label>
+                <select class="form-control" id="InputSailNum" name="sailNum" required>
+                    {{ range .crews }}
+                    <option value="{{ .SailNum }}" {{ if eq $.formData.SailNum .SailNum }}selected{{ end }}>{{ .SailNum }}</option>
+                    {{ end }}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-2 mb-2">Добавить участника протеста </button>
+        </form>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

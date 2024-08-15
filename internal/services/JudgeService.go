@@ -72,17 +72,17 @@ func (j JudgeService) CreateProfile(judgeID uuid.UUID, fio string, login string,
 		return nil, fmt.Errorf("SERVICE: Invalid input data")
 	}
 
-	j.logger.Infof("SERVICE: Checking if judge with login %s exists", login)
+	j.logger.Infof("SERVICE: Checking if judgeView with login %s exists", login)
 	tempJudge, err := j.checkIfJudgeWithLoginExists(login)
 	if err != nil {
-		j.logger.Error("SERVICE: Error occurred during checking if judge with login exists")
+		j.logger.Error("SERVICE: Error occurred during checking if judgeView with login exists")
 		return nil, err
 	} else if tempJudge != nil {
 		j.logger.Info("SERVICE: Judge with login exists", "login", login)
 		return nil, service_errors.NotUnique
 	}
 
-	j.logger.Infof("SERVICE: Creating new judge: %s", fio)
+	j.logger.Infof("SERVICE: Creating new judgeView: %s", fio)
 	hashedPassword, err := j.hash.GetHash(password)
 	if err != nil {
 		j.logger.Error("SERVICE: Error occurred during password hashing")
@@ -91,7 +91,7 @@ func (j JudgeService) CreateProfile(judgeID uuid.UUID, fio string, login string,
 		password = hashedPassword
 	}
 
-	// creating judge
+	// creating judgeView
 	var judge = &models.Judge{
 		ID:       judgeID,
 		FIO:      fio,
@@ -129,7 +129,7 @@ func (j JudgeService) DeleteProfile(id uuid.UUID) error {
 		j.logger.Error("SERVICE: Delete method failed", "error", err)
 	}
 
-	j.logger.Info("SERVICE: Successfully deleted judge", "id", id)
+	j.logger.Info("SERVICE: Successfully deleted judgeView", "id", id)
 	return nil
 }
 
@@ -211,7 +211,7 @@ func (j JudgeService) UpdateProfile(judgeID uuid.UUID, fio string, login string,
 		return judge, service_errors.InvalidPassword
 	}
 
-	j.logger.Infof("SERVICE: Creating new judge: %s", fio)
+	j.logger.Infof("SERVICE: Creating new judgeView: %s", fio)
 	hashedPassword, err := j.hash.GetHash(password)
 	if err != nil {
 		j.logger.Error("SERVICE: Error occurred during password hashing")
@@ -232,6 +232,6 @@ func (j JudgeService) UpdateProfile(judgeID uuid.UUID, fio string, login string,
 		return judge, err
 	}
 
-	j.logger.Info("SERVICE: Successfully updated judge coach", "judge", judge)
+	j.logger.Info("SERVICE: Successfully updated judgeView coach", "judgeView", judge)
 	return judge, nil
 }

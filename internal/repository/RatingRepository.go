@@ -179,7 +179,7 @@ func (w RatingRepository) DetachJudgeFromRating(ratingID uuid.UUID, judgeID uuid
 }
 
 func (w RatingRepository) GetAllRatings() ([]models.Rating, error) {
-	query := `SELECT * FROM ratings;`
+	query := `SELECT * FROM ratings ORDER BY name;`
 	ratingDB := []RatingDB{}
 	err := w.db.Select(&ratingDB, query)
 
@@ -199,14 +199,14 @@ func (w RatingRepository) GetAllRatings() ([]models.Rating, error) {
 
 func (r RatingRepository) GetRatingTable(id uuid.UUID) ([]models.RatingTableLine, error) {
 	query :=
-		`select c.id, c.sail_num, cp.name, cp.birthdate, category, points, number, points_summ, dense_rank() OVER (order BY points_summ) as rang, coach_name
+		`select c.id, c.sail_num, cp.name, cp.birthdate, category, points, number, points_summ, dense_rank() OVER (order BY points_summ, id) as rang, coach_name
 		from crews as c
 		join(
 		select crew_id, pc.name, pc.birthdate, pc.category, pc.gender, pc.coach_name
 			from participant_crew
 			join(select id, name, birthdate, category, gender, coach_name
 				from participants
-				)as pc on pc.id = participant_crew.participant_id
+				)as pc on pc.id = participant_crew.participant_id and participant_crew.helmsman
 				) as cp on c.id = cp.crew_id
 				join(
 				select points, crew_id, race_id, rc.number
@@ -216,21 +216,21 @@ func (r RatingRepository) GetRatingTable(id uuid.UUID) ([]models.RatingTableLine
 						group by r.id
 						)as rc on crew_race.race_id = rc.id
 						GROUP BY crew_id, points, crew_id, race_id, rc.number
+						order by rc.number 
 						)as cr on c.id = cr.crew_id
 						join( select sum(points) as points_summ , crew_id
 							from crew_race
-							GROUP BY crew_id, points
-							)as ps on c.id = ps.crew_id
-							where rating_id = $1
-							order by rang, number, points_summ;
+							GROUP BY crew_id
+							)as ps on c.id = ps.crew_id		
+		where rating_id = $1
+		order by rang, sail_num, number;
 	`
 	ratingTableDB := []RatingTableDB{}
 	err := r.db.Select(&ratingTableDB, query, id)
-
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, repository_errors.DoesNotExist
-	} else if err != nil {
+	if err != nil {
 		return nil, repository_errors.SelectError
+	} else if len(ratingTableDB) == 0 {
+		return nil, repository_errors.DoesNotExist
 	}
 
 	ratingTable := copyRatingTableResultToModel(ratingTableDB)

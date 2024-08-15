@@ -20,7 +20,6 @@ func NewMiddleware(registry registry.App) *Middleware {
 
 func (m *Middleware) JudgeMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// before request
 		session := sessions.Default(c)
 		sessionID := session.Get("judgeID")
 		if sessionID == nil {

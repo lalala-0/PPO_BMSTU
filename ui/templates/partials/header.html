@@ -75,6 +75,27 @@
         .card-mod:hover .card-side-mod.back {
             transform: rotateY(0deg);
         }
+
+        /* В вашем файле стилей */
+        .btn-action {
+            background-color: #6495ED;
+            color: white;              /* Белый цвет текста */
+            border: none;              /* Без границ */
+            padding: 10px 20px;        /* Внутренние отступы */
+            text-align: center;        /* Выравнивание текста по центру */
+            text-decoration: none;     /* Без подчеркивания */
+            display: inline-block;     /* Инлайн-блок для корректного отображения */
+            font-size: 16px;           /* Размер шрифта */
+            border-radius: 5px;        /* Скругленные углы */
+            transition: background-color 0.3s; /* Плавный переход для фона */
+        }
+
+
+        .num-item {
+            width: 60px; /* Фиксированная ширина ячейки */
+            margin: 5px;  /* Отступы между ячейками */
+            text-align: center; /* Центрирование текста внутри ячейки */
+        }
     </style>
 
     <title>Система учета парусных гонок | {{.title}}</title>

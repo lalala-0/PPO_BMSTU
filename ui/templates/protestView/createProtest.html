@@ -1,0 +1,54 @@
+{{ define "createProtest" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-8">
+        <h2>Cоздать протест</h2>
+        {{ if .error }}
+        <div class="alert alert-danger">
+            {{ .error }}
+        </div>
+        {{ end }}
+        <form method="post">
+            <div class="form-group">
+                <label for="inputRuleNum">Номер нарушенного правила</label>
+                <input type="number" class="form-control" id="inputRuleNum" name="ruleNum"
+                       value="{{ .formData.RuleNum }}" required>
+            </div>
+            <div class="form-group">
+                <label for="inputReviewDate">Дата рассмотрения</label>
+                <input type="datetime-local" class="form-control" id="inputReviewDate" name="reviewDate"
+                       placeholder="YYYY-MM-DDTHH:MM" value="{{ .formData.ReviewDate }}" required>
+            </div>
+            <div class="form-group">
+                <label for="inputComment">Комментарий</label>
+                <input type="text" class="form-control" id="inputComment" name="comment"
+                       value="{{ .formData.Comment }}" required>
+            </div>
+            <div class="form-group">
+                <label for="InputProtestee">Номер паруса опротестованной яхты</label>
+                <select class="form-control" id="InputProtestee" name="protestee" required>
+                    {{ range .crews }}
+                    <option value="{{ .SailNum }}" {{ if eq $.formData.ProtesteeSailNum .SailNum }}selected{{ end }}>{{ .SailNum }}</option>
+                    {{ end }}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="InputProtestor">Номер паруса протестующей яхты</label>
+                <select class="form-control" id="InputProtestor" name="protestor" required>
+                    {{ range .crews }}
+                    <option value="{{ .SailNum }}" {{ if eq $.formData.ProtestorSailNum .SailNum }}selected{{ end }}>{{ .SailNum }}</option>
+                    {{ end }}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="InputWitnesses">Номер паруса яхт-свидетелей (выберите от 1 до 5)</label>
+                <input type="text" class="form-control" id="InputWitnesses" name="witnesses" required>
+                <small class="form-text text-muted">Введите номера парусов через запятую. Возможные варианты: {{ range .crews }}{{ .SailNum }}, {{ end }}</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-2 mb-2">Создать протест</button>
+        </form>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

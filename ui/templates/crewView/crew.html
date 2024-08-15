@@ -1,0 +1,56 @@
+{{ define "crew" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-10">
+        <h2>Информация о команде</h2>
+
+        <p>Номер на парусе: {{ .crew.SailNum }}</p>
+        <p>Рейтинг: {{ .rating.Name }}</p>
+        <p>Класс: {{ .ratingView.Class }}</p>
+
+        {{ if .judge }}
+        <h4>Действия над командой: </h4>
+        <form method="post" action="/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/delete">
+            <button type="submit" class="btn btn-danger">Удалить команду</button>
+        </form>
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/update">Изменить команду</a>
+        {{ end }}
+
+        <h4>Список участников: </h4>
+
+        <div class="container mt-4 mb-4">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>ФИО</th>
+                    <th>Категория</th>
+                    <th>Пол</th>
+                    <th>Дата Рождения</th>
+                    <th>Тренер</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{ range .participantsView }}
+                <tr>
+                    <td><a href="/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/participants/{{ .ID }}" class="btn btn-secondary">>></a></td>
+                    <td>{{ .FIO }}</td>
+                    <td>{{ .Category }}</td>
+                    <td>{{ .Gender }}</td>
+                    <td>{{ .Birthday }}</td>
+                    <td>{{ .Coach }}</td>
+                </tr>
+                {{ end }}
+                </tbody>
+            </table>
+        </div>
+        {{ if .judge }}
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/attach">Добавить участника в команду</a>
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/detach">Удалить участника из команды</a>
+        {{ end }}
+
+        <a href="/ratings/{{ .rating.ID }}" class="btn btn-primary">Вернуться к рейтингу</a>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

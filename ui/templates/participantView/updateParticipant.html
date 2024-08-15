@@ -1,0 +1,40 @@
+{{ define "updateParticipant" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-8">
+        <h2>Обновить участника</h2>
+        {{ if .error }}
+        <div class="alert alert-danger">
+            {{ .error }}
+        </div>
+        {{ end }}
+        <form method="post">
+            <div class="form-group">
+                <label for="inputFIO">ФИО</label>
+                <input type="text" class="form-control" id="InputFIO" name="fio"
+                       placeholder="FIO" value="{{ .formData.FIO }}" required>
+            </div>
+            <div class="form-group">
+                <label for="InputCategory">Категория</label>
+                <select class="form-control" id="InputCategory" name="category" required>
+                    {{ range $key, $value := .categoryMap }}
+                    <option value="{{ $key }}" {{ if eq $key $.formData.Category }}selected{{ end }}>{{ $value }}</option>
+                    {{ end }}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="inputBirthday">Дата рождения</label>
+                <input type="datetime-local" class="form-control" id="inputBirthday" name="birthday"
+                       placeholder="YYYY-MM-DDTHH:MM" value="{{ .formData.Birthday }}" required>
+            </div>
+            <div class="form-group">
+                <label for="inputCoach">ФИО тренера</label>
+                <input type="text" class="form-control" id="inputCoach" name="coach"
+                       placeholder="Coach" value="{{ .formData.Coach }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2 mb-2">Обновить участника</button>
+        </form>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

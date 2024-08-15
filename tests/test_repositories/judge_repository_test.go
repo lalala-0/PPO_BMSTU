@@ -214,7 +214,7 @@ func TestJudgeRepositoryDelete(t *testing.T) {
 	}
 }
 
-//UpdateProfile(judge *models.Judge) (*models.Judge, error)
+//UpdateProfile(judgeView *models.Judge) (*models.Judge, error)
 
 var testJudgeRepositoryUpdateSuccess = []struct {
 	TestName  string

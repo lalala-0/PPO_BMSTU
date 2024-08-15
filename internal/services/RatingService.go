@@ -132,7 +132,7 @@ func (r RatingService) AttachJudgeToRating(ratingID uuid.UUID, judgeID uuid.UUID
 		return err
 	}
 
-	r.logger.Info("SERVICE: Successfully attach judge jid to rating rid", "jid", judgeID, "rid", ratingID)
+	r.logger.Info("SERVICE: Successfully attach judgeView jid to rating rid", "jid", judgeID, "rid", ratingID)
 	return nil
 }
 
@@ -144,7 +144,7 @@ func (r RatingService) DetachJudgeFromRating(ratingID uuid.UUID, judgeID uuid.UU
 		return err
 	}
 
-	r.logger.Info("SERVICE: Successfully detached judge jid from rating rid", "jid", judgeID, "rid", ratingID)
+	r.logger.Info("SERVICE: Successfully detached judgeView jid from rating rid", "jid", judgeID, "rid", ratingID)
 	return nil
 }
 

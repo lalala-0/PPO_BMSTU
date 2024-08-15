@@ -1,0 +1,27 @@
+{{ define "createRace" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-8">
+        <h2>Cоздать гонку</h2>
+        {{ if .error }}
+        <div class="alert alert-danger">
+            {{ .error }}
+        </div>
+        {{ end }}
+        <form method="post">
+            <div class="form-group">
+                <label for="inputDate">Дата</label>
+                <input type="datetime-local" class="form-control" id="inputDate" name="date"
+                       placeholder="YYYY-MM-DDTHH:MM" value="{{ .formData.Date }}" required>
+            </div>
+            <div class="form-group">
+                <label for="inputNumber">Номер</label>
+                <input type="number" class="form-control" id="inputNumber" name="number"
+                       value="{{ .formData.Number }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2 mb-2">Создать гонку</button>
+        </form>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

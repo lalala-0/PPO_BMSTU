@@ -1,0 +1,32 @@
+{{ define "updateProtest" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-8">
+        <h2>Обновить протест</h2>
+        {{ if .error }}
+        <div class="alert alert-danger">
+            {{ .error }}
+        </div>
+        {{ end }}
+        <form method="post">
+            <div class="form-group">
+                <label for="inputReviewDate">Дата рассмотрения протеста</label>
+                <input type="datetime-local" class="form-control" id="inputReviewDate" name="reviewDate"
+                       placeholder="YYYY-MM-DDTHH:MM" value="{{ .formData.ReviewDate }}" required>
+            </div>
+            <div class="form-group">
+                <label for="inputRuleNum">Номер нарушенного правила</label>
+                <input type="number" class="form-control" id="inputRuleNum" name="ruleNum"
+                       value="{{ .formData.RuleNum }}" required>
+            </div>
+            <div class="form-group">
+                <label for="inputComment">Комментарий</label>
+                <input type="text" class="form-control" id="inputComment" name="comment"
+                       value="{{ .formData.Comment }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2 mb-2">Обновить протест</button>
+        </form>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

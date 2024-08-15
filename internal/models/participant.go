@@ -15,8 +15,8 @@ type Participant struct {
 }
 
 //// Gender vars
-//const Male = true
-//const Female = false
+//const Male = 1
+//const Female = 2
 //
 //// Category vars
 //const MasterInternational = 1 //"Master of Sports of Russia of international class"

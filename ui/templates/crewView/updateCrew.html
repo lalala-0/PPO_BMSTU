@@ -1,0 +1,30 @@
+</html>{{ define "updateCrew" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-8">
+        <h2>Обновить команду</h2>
+        {{ if .error }}
+        <div class="alert alert-danger">
+            {{ .error }}
+        </div>
+        {{ end }}
+        <form method="post">
+            <div class="form-group">
+                <label for="InputClass">Класс яхт</label>
+                <select class="form-control" id="InputClass" name="class" required>
+                    {{ range $key, $value := .classMap }}
+                    <option value="{{ $key }}" {{ if eq $key $.formData.Class }}selected{{ end }}>{{ $value }}</option>
+                    {{ end }}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="InputSailNum">Номер на парусе</label>
+                <input type="number" class="form-control" id="InputSailNum" name="sailNum"
+                       value="{{ .formData.SailNum }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2 mb-2">Обновить команду</button>
+        </form>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

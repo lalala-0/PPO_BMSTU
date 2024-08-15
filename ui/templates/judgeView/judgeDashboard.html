@@ -1,0 +1,133 @@
+{{ define "judgeDashboard" }}
+{{ template "template_start" . }}
+
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-10">
+        <h2>{{ .title }}</h2>
+
+        <h4>Список участников: </h4>
+        <div class="container mt-4 mb-4">
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-bordered" id="participantsTable">
+                    <thead>
+                    <tr>
+                        <th><input type="text" id="searchFIO" class="form-control" placeholder="Поиск по ФИО"></th>
+                        <th><input type="text" id="searchCategory" class="form-control" placeholder="Поиск по категории"></th>
+                        <th><input type="text" id="searchGender" class="form-control" placeholder="Поиск по полу"></th>
+                        <th><input type="text" id="searchBirthday" class="form-control" placeholder="Поиск по дате рождения"></th>
+                        <th><input type="text" id="searchCoach" class="form-control" placeholder="Поиск по тренеру"></th>
+                    </tr>
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Категория</th>
+                        <th>Пол</th>
+                        <th>Дата рождения</th>
+                        <th>Тренер</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{ range .participantsView }}
+                    <tr>
+                        <td><a href="/participants/{{ .ID }}" class="btn btn-secondary">{{ .FIO }}</a></td>
+                        <td>{{ .Category }}</td>
+                        <td>{{ .Gender }}</td>
+                        <td>{{ .Birthday }}</td>
+                        <td>{{ .Coach }}</td>
+                    </tr>
+                    {{ end }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <a class="btn btn-action" href="/participants/create">Создать участника</a>
+
+        {{ if .mainJudge }}
+        <h4>Список судей: </h4>
+        <div class="container mt-4 mb-4">
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-bordered" id="judgesTable">
+                    <thead>
+                    <tr>
+                        <th><input type="text" id="searchJudgeFIO" class="form-control" placeholder="Поиск по ФИО"></th>
+                        <th><input type="text" id="searchLogin" class="form-control" placeholder="Поиск по логину"></th>
+                        <th><input type="text" id="searchRole" class="form-control" placeholder="Поиск по роли"></th>
+                        <th><input type="text" id="searchPost" class="form-control" placeholder="Поиск по должности"></th>
+                    </tr>
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Логин</th>
+                        <th>Роль</th>
+                        <th>Должность</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{ range .judgesView }}
+                    <tr>
+                        <td><a href="/judges/{{ .ID }}" class="btn btn-secondary">{{ .FIO }}</a></td>
+                        <td>{{ .Login }}</td>
+                        <td>{{ .Role }}</td>
+                        <td>{{ .Post }}</td>
+                    </tr>
+                    {{ end }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <a class="btn btn-action" href="/judges/create">Создать судью</a>
+        {{ end }}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const participantsInputs = [
+            { id: 'searchFIO', col: 0 },
+            { id: 'searchCategory', col: 1 },
+            { id: 'searchGender', col: 2 },
+            { id: 'searchBirthday', col: 3 },
+            { id: 'searchCoach', col: 4 },
+        ];
+        const judgesInputs = [
+            { id: 'searchJudgeFIO', col: 0 },
+            { id: 'searchLogin', col: 1 },
+            { id: 'searchRole', col: 2 },
+            { id: 'searchPost', col: 3 },
+        ];
+
+        participantsInputs.forEach(input => {
+            document.getElementById(input.id).addEventListener('input', function () {
+                filterTable('participantsTable', participantsInputs);
+            });
+        });
+
+        judgesInputs.forEach(input => {
+            document.getElementById(input.id).addEventListener('input', function () {
+                filterTable('judgesTable', judgesInputs);
+            });
+        });
+
+        function filterTable(tableId, inputs) {
+            const table = document.getElementById(tableId);
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 2; i < rows.length; i++) { // Начинаем с 2, чтобы пропустить заголовки таблицы
+                const cells = rows[i].getElementsByTagName('td');
+                let rowContainsText = true;
+
+                for (let j = 0; j < inputs.length; j++) {
+                    const input = document.getElementById(inputs[j].id).value.toLowerCase();
+                    if (cells[inputs[j].col].textContent.toLowerCase().includes(input) === false) {
+                        rowContainsText = false;
+                        break;
+                    }
+                }
+
+                rows[i].style.display = rowContainsText ? '' : 'none';
+            }
+        }
+    });
+</script>
+
+{{ template "template_end" }}
+{{ end }}
+z

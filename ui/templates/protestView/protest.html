@@ -1,0 +1,50 @@
+{{ define "protest" }}
+{{ template "template_start" . }}
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-10">
+        <h2>Информация о протесте</h2>
+        <p>Номер нарушенного правила: {{ .protestView.RuleNum }}</p>
+        <p>Дата рассмотрения: {{ .protestView.ReviewDate }}</p>
+        <p>Статус: {{ .protestView.Status }}</p>
+        <p>Комментарий: {{ .protestView.Comment }}</p>
+
+        {{ if .judge }}
+        <h4>Действия над протестом: </h4>
+        <form method="post" action="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/delete">
+            <button type="submit" class="btn btn-danger">Удалить протест</button>
+        </form>
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/update">Изменить протест</a>
+        {{ if eq .protest.Status 1 }}
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/complete">Завершить рассмотрение протеста</a>
+        {{ end }}
+        {{ end }}
+
+        <h4>Команды - участники протеста:</h4>
+        <div class="container mt-4 mb-4">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Номер на парусе</th>
+                    <th>Роль</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{ range .protestParticipants }}
+                <tr>
+                    <td><a href="/ratings/{{ $.rating.ID }}/crews/{{ .ID }}" class="btn btn-secondary">{{ .SailNum }}</a></td>
+                    <td>{{ .Role }}</td>
+                </tr>
+                {{ end }}
+                </tbody>
+            </table>
+        </div>
+        {{ if .judge }}
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/attach">Добавить участника протеста</a>
+        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/detach">Удалить участника протеста</a>
+        {{ end }}
+
+        <a href="/ratings/{{ .rating.ID }}/races/{{ .race.ID }}" class="btn btn-primary">Вернуться к гонке</a>
+    </div>
+</div>
+{{ template "template_end" . }}
+{{ end }}

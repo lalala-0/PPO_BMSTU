@@ -1,12 +1,76 @@
 {{ define "index" }}
 {{ template "template_start" . }}
 <div class="row d-flex justify-content-center mt-5">
-    <div class="col-8">
-        <h2>Заголовок</h2>
-        <div>
-            Ляляляля
+    <div class="col-10">
+        <h2>{{ .title }}</h2>
+        {{ if .error }}
+        <div class="alert alert-danger">
+            {{ .error }}
         </div>
+        {{ end }}
+
+        <div class="container mt-4 mb-4">
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-bordered" id="ratingsTable">
+                    <thead>
+                    <tr>
+                        <th><input type="text" id="searchName" class="form-control" placeholder="Поиск по названию"></th>
+                        <th><input type="text" id="searchClass" class="form-control" placeholder="Поиск по классу"></th>
+                    </tr>
+                    <tr>
+                        <th>Название</th>
+                        <th>Класс</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{ range .ratings }}
+                    <tr>
+                        <td><a href="/ratings/{{ .ID }}" class="btn btn-secondary">{{ .Name }}</a></td>
+                        <td>{{ .Class }}</td>
+                    </tr>
+                    {{ end }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <a class="btn btn-action" href="/ratings/create">Создать рейтинг</a>
     </div>
 </div>
-{{ template "template_end" . }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ratingInputs = [
+            { id: 'searchName', col: 0 },
+            { id: 'searchClass', col: 1 }
+        ];
+
+        ratingInputs.forEach(input => {
+            document.getElementById(input.id).addEventListener('input', function () {
+                filterTable('ratingsTable', ratingInputs);
+            });
+        });
+
+        function filterTable(tableId, inputs) {
+            const table = document.getElementById(tableId);
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 2; i < rows.length; i++) { // Начинаем с 2, чтобы пропустить заголовки таблицы
+                const cells = rows[i].getElementsByTagName('td');
+                let rowContainsText = true;
+
+                for (let j = 0; j < inputs.length; j++) {
+                    const input = document.getElementById(inputs[j].id).value.toLowerCase();
+                    if (cells[inputs[j].col].textContent.toLowerCase().includes(input) === false) {
+                        rowContainsText = false;
+                        break;
+                    }
+                }
+
+                rows[i].style.display = rowContainsText ? '' : 'none';
+            }
+        }
+    });
+</script>
+
+{{ template "template_end" }}
 {{ end }}
