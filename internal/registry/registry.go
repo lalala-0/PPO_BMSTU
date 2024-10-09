@@ -2,7 +2,8 @@ package registry
 
 import (
 	"PPO_BMSTU/config"
-	repositories "PPO_BMSTU/internal/repository"
+	"PPO_BMSTU/internal/repository/mongo"
+	"PPO_BMSTU/internal/repository/postgres"
 	"PPO_BMSTU/internal/repository/repository_interfaces"
 	services "PPO_BMSTU/internal/services"
 	"PPO_BMSTU/internal/services/service_interfaces"
@@ -37,15 +38,29 @@ type App struct {
 	Logger       *log.Logger
 }
 
-func (a *App) repositoriesInitialization(fields *repositories.PostgresConnection) *Repositories {
+func (a *App) postgresRepositoriesInitialization(fields *postgres.PostgresConnection) *Repositories {
 	r := &Repositories{
-		CrewRepository:          repositories.CreateCrewRepository(fields),
-		CrewResInRaceRepository: repositories.CreateCrewResInRaceRepository(fields),
-		JudgeRepository:         repositories.CreateJudgeRepository(fields),
-		ParticipantRepository:   repositories.CreateParticipantRepository(fields),
-		ProtestRepository:       repositories.CreateProtestRepository(fields),
-		RaceRepository:          repositories.CreateRaceRepository(fields),
-		RatingRepository:        repositories.CreateRatingRepository(fields),
+		CrewRepository:          postgres.CreateCrewRepository(fields),
+		CrewResInRaceRepository: postgres.CreateCrewResInRaceRepository(fields),
+		JudgeRepository:         postgres.CreateJudgeRepository(fields),
+		ParticipantRepository:   postgres.CreateParticipantRepository(fields),
+		ProtestRepository:       postgres.CreateProtestRepository(fields),
+		RaceRepository:          postgres.CreateRaceRepository(fields),
+		RatingRepository:        postgres.CreateRatingRepository(fields),
+	}
+	a.Logger.Info("Success initialization of repositories")
+	return r
+}
+
+func (a *App) mongoRepositoriesInitialization(fields *mongo.MongoConnection) *Repositories {
+	r := &Repositories{
+		CrewRepository:          mongo.CreateCrewRepository(fields),
+		CrewResInRaceRepository: mongo.CreateCrewResInRaceRepository(fields),
+		JudgeRepository:         mongo.CreateJudgeRepository(fields),
+		ParticipantRepository:   mongo.CreateParticipantRepository(fields),
+		ProtestRepository:       mongo.CreateProtestRepository(fields),
+		RaceRepository:          mongo.CreateRaceRepository(fields),
+		RatingRepository:        mongo.CreateRatingRepository(fields),
 	}
 	a.Logger.Info("Success initialization of repositories")
 	return r
@@ -95,15 +110,25 @@ func (a *App) initLogger() {
 func (a *App) Init() error {
 	a.initLogger()
 
-	fields, err := repositories.NewPostgresConnection(a.Config.Postgres, a.Logger)
-	if err != nil {
-		a.Logger.Fatal("Error create postgres repository fields", "err", err)
-		return err
+	if a.Config.DBType == "postgres" {
+		fields, err := postgres.NewPostgresConnection(a.Config.DBFlags, a.Logger)
+		if err != nil {
+			a.Logger.Fatal("Error create postgres repository fields", "err", err)
+			return err
+		}
+
+		a.Repositories = a.postgresRepositoriesInitialization(fields)
+		a.Services = a.servicesInitialization(a.Repositories)
+	} else if a.Config.DBType == "mongo" {
+		fields, err := mongo.NewMongoConnection(a.Config.DBFlags, a.Logger)
+		if err != nil {
+			a.Logger.Fatal("Error create mongodb repository fields", "err", err)
+			return err
+		}
+		a.Repositories = a.mongoRepositoriesInitialization(fields)
+		a.Services = a.servicesInitialization(a.Repositories)
+
 	}
-
-	a.Repositories = a.repositoriesInitialization(fields)
-	a.Services = a.servicesInitialization(a.Repositories)
-
 	return nil
 }
 

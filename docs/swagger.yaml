@@ -1,0 +1,403 @@
+definitions:
+  modelsViewApi.BadRequestError:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  modelsViewApi.ErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  modelsViewApi.JudgeFormData:
+    properties:
+      fio:
+        type: string
+      id:
+        type: string
+      login:
+        type: string
+      post:
+        type: string
+      role:
+        type: string
+    type: object
+  modelsViewApi.RaceFormData:
+    properties:
+      class:
+        type: string
+      date:
+        type: string
+      id:
+        type: string
+      number:
+        type: integer
+      rating-id:
+        type: string
+    type: object
+  modelsViewApi.RaceInput:
+    properties:
+      class:
+        type: integer
+      date:
+        type: string
+      number:
+        type: integer
+    required:
+    - date
+    - number
+    type: object
+  modelsViewApi.RatingFormData:
+    properties:
+      blowoutCnt:
+        type: integer
+      class:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  modelsViewApi.RatingInput:
+    properties:
+      blowout_cnt:
+        type: integer
+      class:
+        type: integer
+      name:
+        type: string
+    required:
+    - class
+    - name
+    type: object
+info:
+  contact: {}
+paths:
+  /api/judges:
+    get:
+      description: Получает список всех судей с возможностью фильтрации
+      parameters:
+      - description: Фильтр по ФИО
+        in: query
+        name: fio
+        type: string
+      - description: Фильтр по логину
+        in: query
+        name: login
+        type: string
+      - description: Фильтр по роли
+        in: query
+        name: role
+        type: string
+      - description: Фильтр по должности
+        in: query
+        name: post
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/modelsViewApi.JudgeFormData'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+      summary: Получить список всех судей
+      tags:
+      - Judge
+  /api/ratings:
+    get:
+      description: Получает список всех рейтингов с возможностью фильтрации
+      parameters:
+      - description: Фильтр по названию рейтинга
+        in: query
+        name: name
+        type: string
+      - description: Фильтр по классу лодки
+        in: query
+        name: class
+        type: integer
+      - description: Фильтр по количеству гонок, не учитываемых в результате
+        in: query
+        name: blowoutCnt
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список рейтингов
+          schema:
+            items:
+              $ref: '#/definitions/modelsViewApi.RatingFormData'
+            type: array
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+      summary: Получить список всех рейтингов
+      tags:
+      - Rating
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Входные данные для создания рейтинга
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.RatingInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Рейтинг успешно создан
+          schema:
+            $ref: '#/definitions/modelsViewApi.RatingInput'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+      summary: Создать новый рейтинг
+      tags:
+      - Rating
+  /api/ratings/{ratingID}:
+    delete:
+      parameters:
+      - description: Уникальный идентификатор рейтинга, который нужно удалить
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Рейтинг успешно удалён
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Рейтинг не найден
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Удалить рейтинг
+      tags:
+      - Rating
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о рейтинге успешно получена
+          schema:
+            $ref: '#/definitions/modelsViewApi.RatingFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Рейтинг не найден
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить информацию о рейтинге
+      tags:
+      - Rating
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Входные данные для обновления рейтинга
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.RatingInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Рейтинг успешно обновлен
+          schema:
+            $ref: '#/definitions/modelsViewApi.RatingFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Обновить информацию о рейтинге
+      tags:
+      - Rating
+  /api/ratings/{ratingID}/races:
+    get:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Список гонок успешно получен
+          schema:
+            items:
+              $ref: '#/definitions/modelsViewApi.RaceFormData'
+            type: array
+        "404":
+          description: Рейтинг или гонки не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить гонки по ID рейтинга
+      tags:
+      - Race
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Входные данные для создания гонки
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.RaceInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Гонка успешно создана
+          schema:
+            $ref: '#/definitions/modelsViewApi.RaceInput'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Рейтинг не найден
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Создать новую гонку для рейтинга
+      tags:
+      - Race
+  /api/ratings/{ratingID}/races/{raceID}:
+    get:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о гонке успешно получена
+          schema:
+            $ref: '#/definitions/modelsViewApi.RaceFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Гонка не найдена
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить информацию о гонке
+      tags:
+      - Race
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      - description: Входные данные для обновления гонки
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.RaceInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Гонка успешно обновлена
+          schema:
+            $ref: '#/definitions/modelsViewApi.RaceFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Гонка не найдена
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка серверав
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Обновить информацию о гонке
+      tags:
+      - Race
+swagger: "2.0"

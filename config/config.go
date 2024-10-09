@@ -5,12 +5,13 @@ import (
 )
 
 type Config struct {
-	Postgres PostgresFlags `mapstructure:"postgres"`
-	Address  string        `mapstructure:"address"`
-	Port     string        `mapstructure:"port"`
-	LogLevel string        `mapstructure:"loglevel"`
-	LogFile  string        `mapstructure:"logfile"`
-	Mode     string        `mapstructure:"mode"`
+	DBFlags  DbConnectionFlags `mapstructure:"dbConnectionFlags"`
+	Address  string            `mapstructure:"address"`
+	Port     string            `mapstructure:"port"`
+	LogLevel string            `mapstructure:"loglevel"`
+	LogFile  string            `mapstructure:"logfile"`
+	Mode     string            `mapstructure:"mode"`
+	DBType   string            `mapstructure:"dbtype"`
 }
 
 func (c *Config) ParseConfig(configFileName, pathToConfig string) error {

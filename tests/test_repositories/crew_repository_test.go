@@ -2,8 +2,9 @@ package test_repositories
 
 import (
 	"PPO_BMSTU/internal/models"
-	"PPO_BMSTU/internal/repository"
+	"PPO_BMSTU/internal/repository/postgres"
 	"PPO_BMSTU/internal/repository/repository_errors"
+	"PPO_BMSTU/tests/test_repositories/postgres_init"
 	"context"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -54,7 +55,7 @@ var testCrewRepositoryCreateFailed = []struct {
 }
 
 func TestCrewRepositoryCreate(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -62,12 +63,12 @@ func TestCrewRepositoryCreate(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
+	fields := postgres.PostgresConnection{DB: db}
 
 	for _, test := range testCrewRepositoryCreateSuccess {
-		crewRepository := repository.CreateCrewRepository(&fields)
+		crewRepository := postgres.CreateCrewRepository(&fields)
 		t.Run(test.TestName, func(t *testing.T) {
-			rating := createRating(&fields)
+			rating := postgres_init.CreateRating(&fields)
 
 			test.InputData.RatingID = rating.ID
 
@@ -76,7 +77,7 @@ func TestCrewRepositoryCreate(t *testing.T) {
 		})
 	}
 	for _, test := range testCrewRepositoryCreateFailed {
-		crewRepository := repository.CreateCrewRepository(&fields)
+		crewRepository := postgres.CreateCrewRepository(&fields)
 		t.Run(test.TestName, func(t *testing.T) {
 			createdCrew, err := crewRepository.Create(test.InputData)
 			test.CheckOutput(t, test.InputData, createdCrew, err)
@@ -113,7 +114,7 @@ var testCrewRepositoryGetByIDFailed = []struct {
 }
 
 func TestCrewRepositoryGetByID(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -121,12 +122,12 @@ func TestCrewRepositoryGetByID(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	crewRepository := repository.CreateCrewRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	crewRepository := postgres.CreateCrewRepository(&fields)
 
 	for _, test := range testCrewRepositoryGetByIDSuccess {
-		rating := createRating(&fields)
-		crew := createCrew(&fields, rating.ID)
+		rating := postgres_init.CreateRating(&fields)
+		crew := postgres_init.CreateCrew(&fields, rating.ID)
 
 		receivedCrew, err := crewRepository.GetCrewDataByID(crew.ID)
 		test.CheckOutput(t, crew, receivedCrew, err)
@@ -167,7 +168,7 @@ var testCrewRepositoryGetCrewDataBySailNumAndRatingIDFailed = []struct {
 }
 
 func TestCrewRepositoryGetCrewDataBySailNumAndRatingID(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -175,19 +176,19 @@ func TestCrewRepositoryGetCrewDataBySailNumAndRatingID(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	crewRepository := repository.CreateCrewRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	crewRepository := postgres.CreateCrewRepository(&fields)
 
 	for _, test := range testCrewRepositoryGetByIDSuccess {
-		rating := createRating(&fields)
-		crew := createCrew(&fields, rating.ID)
+		rating := postgres_init.CreateRating(&fields)
+		crew := postgres_init.CreateCrew(&fields, rating.ID)
 
 		receivedCrew, err := crewRepository.GetCrewDataBySailNumAndRatingID(crew.SailNum, crew.RatingID)
 		test.CheckOutput(t, crew, receivedCrew, err)
 	}
 
 	for _, test := range testCrewRepositoryGetByIDFailed {
-		rating := createRating(&fields)
+		rating := postgres_init.CreateRating(&fields)
 
 		_, err := crewRepository.GetCrewDataBySailNumAndRatingID(123, rating.ID)
 		test.CheckOutput(t, err)
@@ -207,7 +208,7 @@ var testCrewRepositoryDeleteSuccess = []struct {
 }
 
 func TestCrewRepositoryDelete(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -215,11 +216,11 @@ func TestCrewRepositoryDelete(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	crewRepository := repository.CreateCrewRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	crewRepository := postgres.CreateCrewRepository(&fields)
 
 	for _, test := range testCrewRepositoryDeleteSuccess {
-		rating := createRating(&fields)
+		rating := postgres_init.CreateRating(&fields)
 		createdCrew, err := crewRepository.Create(
 			&models.Crew{
 				RatingID: rating.ID,
@@ -264,7 +265,7 @@ var testCrewRepositoryUpdateSuccess = []struct {
 }
 
 func TestCrewRepositoryUpdate(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -272,11 +273,11 @@ func TestCrewRepositoryUpdate(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	crewRepository := repository.CreateCrewRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	crewRepository := postgres.CreateCrewRepository(&fields)
 
 	for _, test := range testCrewRepositoryUpdateSuccess {
-		rating := createRating(&fields)
+		rating := postgres_init.CreateRating(&fields)
 		test.InputData.Crew.RatingID = rating.ID
 		createdCrew, err := crewRepository.Create(test.InputData.Crew)
 
@@ -307,7 +308,7 @@ var testCrewRepositoryGetCrewsDataByRatingID = []struct {
 }
 
 func TestCrewRepositoryGetCrewsDataByRatingID(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -315,11 +316,11 @@ func TestCrewRepositoryGetCrewsDataByRatingID(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	crewRepository := repository.CreateCrewRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	crewRepository := postgres.CreateCrewRepository(&fields)
 
 	for _, test := range testCrewRepositoryGetCrewsDataByRatingID {
-		rating := createRating(&fields)
+		rating := postgres_init.CreateRating(&fields)
 
 		createdCrews := []models.Crew{
 			{
@@ -365,7 +366,7 @@ var testCrewRepositoryGetCrewsDataByProtestID = []struct {
 }
 
 func TestCrewRepositoryGetCrewsDataByProtestID(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -373,14 +374,14 @@ func TestCrewRepositoryGetCrewsDataByProtestID(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	crewRepository := repository.CreateCrewRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	crewRepository := postgres.CreateCrewRepository(&fields)
 
 	for _, test := range testCrewRepositoryGetCrewsDataByProtestID {
-		rating := createRating(&fields)
-		judge := createJudge(&fields)
-		race := createRace(&fields, rating.ID)
-		protest := createProtest(&fields, race.ID, judge.ID, rating.ID)
+		rating := postgres_init.CreateRating(&fields)
+		judge := postgres_init.CreateJudge(&fields)
+		race := postgres_init.CreateRace(&fields, rating.ID)
+		protest := postgres_init.CreateProtest(&fields, race.ID, judge.ID, rating.ID)
 
 		createdCrews := []models.Crew{
 			{
@@ -403,7 +404,7 @@ func TestCrewRepositoryGetCrewsDataByProtestID(t *testing.T) {
 		for i, _ := range createdCrews {
 			c, err := crewRepository.Create(&createdCrews[i])
 			require.NoError(t, err)
-			attachCrewToProtest(&fields, c.ID, protest.ID)
+			postgres_init.AttachCrewToProtest(&fields, c.ID, protest.ID)
 
 		}
 
@@ -425,7 +426,7 @@ var testCrewRepositoryAttachParticipantToCrew = []struct {
 }
 
 func TestCrewRepositoryAttachParticipantToCrew(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -433,12 +434,12 @@ func TestCrewRepositoryAttachParticipantToCrew(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	crewRepository := repository.CreateCrewRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	crewRepository := postgres.CreateCrewRepository(&fields)
 
 	for _, test := range testCrewRepositoryAttachParticipantToCrew {
-		rating := createRating(&fields)
-		participant := createParticipant(&fields)
+		rating := postgres_init.CreateRating(&fields)
+		participant := postgres_init.CreateParticipant(&fields)
 
 		crew, err := crewRepository.Create(
 			&models.Crew{
@@ -467,7 +468,7 @@ var testCrewRepositoryDetachParticipantFromCrew = []struct {
 }
 
 func TestCrewRepositoryDetachParticipantFromCrew(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -475,12 +476,12 @@ func TestCrewRepositoryDetachParticipantFromCrew(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	crewRepository := repository.CreateCrewRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	crewRepository := postgres.CreateCrewRepository(&fields)
 
 	for _, test := range testCrewRepositoryDetachParticipantFromCrew {
-		rating := createRating(&fields)
-		participant := createParticipant(&fields)
+		rating := postgres_init.CreateRating(&fields)
+		participant := postgres_init.CreateParticipant(&fields)
 
 		crew, err := crewRepository.Create(
 			&models.Crew{
@@ -509,7 +510,7 @@ var testCrewRepositoryReplaceParticipantStatusInCrew = []struct {
 }
 
 func TestCrewRepositoryReplaceParticipantStatusInCrew(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -517,12 +518,12 @@ func TestCrewRepositoryReplaceParticipantStatusInCrew(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	crewRepository := repository.CreateCrewRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	crewRepository := postgres.CreateCrewRepository(&fields)
 
 	for _, test := range testCrewRepositoryReplaceParticipantStatusInCrew {
-		rating := createRating(&fields)
-		participant := createParticipant(&fields)
+		rating := postgres_init.CreateRating(&fields)
+		participant := postgres_init.CreateParticipant(&fields)
 
 		crew, err := crewRepository.Create(
 			&models.Crew{

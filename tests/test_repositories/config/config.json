@@ -1,0 +1,15 @@
+{
+  "DatabaseType": "postgres",
+  "PostgresConfig": {
+    "Host": "localhost",
+    "Port": 5432,
+    "User": "postgres",
+    "Password": "7625",
+    "DBName": "ppo",
+    "SSLMode": "disable"
+  },
+  "MongoConfig": {
+    "URI": "mongodb://localhost:27017",
+    "DatabaseName": "ppo_db"
+  }
+}

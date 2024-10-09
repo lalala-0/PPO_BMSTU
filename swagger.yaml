@@ -1,0 +1,2769 @@
+openapi: 3.0.0
+info:
+  title: "Rating API"
+  description: "API для работы с рейтингами"
+  version: "1.0.0"
+
+paths:
+  /ratings:
+    get:
+      summary: "Получить список всех рейтингов"
+      tags:
+        - Rating
+      parameters:
+        - name: name
+          in: query
+          required: false
+          description: "Название рейтинга для фильтрации"
+          schema:
+            type: string
+
+        - name: class
+          in: query
+          required: false
+          description: "Класс лодки для фильтрации"
+          schema:
+            type: string
+
+        - name: blowoutCnt
+          in: query
+          required: false
+          description: "Количество отсеянных гонок для фильтрации"
+          schema:
+            type: integer
+
+      responses:
+        '200':
+          description: "Список рейтингов успешно получен"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RatingFormData'
+
+
+    post:
+      summary: "Создать новый рейтинг"
+      tags:
+        - Rating
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RatingInput'
+      responses:
+        '201':
+          description: "Рейтинг успешно создан"
+
+  /ratings/{ratingID}:
+    get:
+      summary: "Получить информацию о рейтинге"
+      tags:
+        - Rating
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: "Информация о рейтинге успешно получена"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RatingFormData'
+        '404':
+          description: "Рейтинг не найден"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+    put:
+      summary: "Обновить информацию о рейтинге"
+      tags:
+        - Rating
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RatingInput'
+      responses:
+        '200':
+          description: "Рейтинг успешно обновлён"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RatingFormData'
+        '404':
+          description: "Рейтинг не найден"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+    delete:
+      summary: "Удалить рейтинг"
+      tags:
+        - Rating
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга, который нужно удалить"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: "Рейтинг успешно удалён"
+        '404':
+          description: "Рейтинг не найден"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+  /ratings/{ratingID}/races:
+    get:
+      summary: "Получить гонки по ID рейтинга"
+      tags:
+        - Race
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга, который нужно удалить"
+          schema:
+            type: string
+            format: uuid
+        - name: date
+          in: query
+          required: false
+          description: "Дата гонки для фильтрации в формате YYYY-MM-DD"
+          schema:
+            type: string
+            format: date
+
+        - name: class
+          in: query
+          required: false
+          description: "Класс лодки для фильтрации"
+          schema:
+            type: string
+
+        - name: number
+          in: query
+          required: false
+          description: "Номер гонки для фильтрации"
+          schema:
+            type: integer
+
+      responses:
+        '200':
+          description: "Список гонок успешно получен"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RaceFormData'
+        '404':
+          description: "Рейтинг или гонки не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                noRacesFound:
+                  summary: "Гонки не найдены"
+                  value:
+                    error: "No races found"
+                    message: "There are no races associated with the specified rating."
+    post:
+      summary: "Создать новую гонку для рейтинга"
+      tags:
+        - Race
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RaceInput'
+      responses:
+        '201':
+          description: "Гонка успешно создана"
+        '404':
+          description: "Рейтинг не найден"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+  /ratings/{ratingID}/races/{raceID}:
+    get:
+      summary: "Получить информацию о гонке"
+      tags:
+        - Race
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          description: "Уникальный идентификатор гонки"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: "Информация о гонке успешно получена"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RaceFormData'
+        '404':
+          description: "Гонка не найдена"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+    put:
+      summary: "Обновить информацию о гонке"
+      tags:
+        - Race
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          description: "Уникальный идентификатор гонки"
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RaceInput'
+      responses:
+        '200':
+          description: "Гонка успешно обновлена"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RaceFormData'
+        '404':
+          description: "Гонка не найдена"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+    delete:
+      summary: "Удалить гонку"
+      tags:
+        - Race
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          description: "Уникальный идентификатор гонки, которую нужно удалить"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: "Гонка успешно удалена"
+        '404':
+          description: "Гонка не найдена"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+
+  /ratings/{ratingID}/races/{raceID}/start:
+    get:
+      summary: "Получить информацию о стартовой процедуре гонки"
+      tags:
+        - Race
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          description: "Уникальный идентификатор гонки"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: "Информация для старта гонки успешно получена"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartRaceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Гонка не найдена"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                crewsNotFound:
+                  summary: "Команды не найдены"
+                  value:
+                    error: "Crews not found"
+                    message: "The specified crews in this rating do not exist."
+
+    post:
+      summary: "Завершить стартовую процедуру гонки"
+      tags:
+        - Race
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          description: "Уникальный идентификатор гонки"
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+      responses:
+        '200':
+          description: "Процедура старта успешно выполнена"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Гонка не найдена"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                crewsNotFound:
+                  summary: "Команды не найдены"
+                  value:
+                    error: "Crews not found"
+                    message: "The specified crews in this rating do not exist."
+
+  /ratings/{ratingID}/races/{raceID}/finish:
+    get:
+      summary: "Получить информацию о финишной процедуре гонки"
+      tags:
+        - Race
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          description: "Уникальный идентификатор гонки"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: "Информация для финиша гонки успешно получена"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinishRaceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Гонка не найдена"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                crewsNotFound:
+                  summary: "Команды не найдены"
+                  value:
+                    error: "Crews not found"
+                    message: "The specified crews in this rating do not exist."
+
+    post:
+      summary: "Завершить финишную процедуру гонки"
+      tags:
+        - Race
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          description: "Уникальный идентификатор гонки"
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+      responses:
+        '200':
+          description: "Процедура финиша успешно выполнена"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Гонка не найдена"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                crewsNotFound:
+                  summary: "Команды не найдены"
+                  value:
+                    error: "Crews not found"
+                    message: "The specified crews in this rating do not exist."
+
+  /ratings/{ratingId}/crews:
+    get:
+      summary: "Получить все команды в рейтинге"
+      tags:
+        - Crew
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: "Список команд успешно получен"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CrewFormData'
+              examples:
+                exampleSuccess:
+                  summary: "Пример успешного получения команд"
+                  value:
+                    - id: "c1a5e001-5d56-4457-8ed0-83dd835c7f1e"
+                      rating-id: "7f499e7e-bd4c-4a72-81ef-c0bb12a89889"
+                      sailNum: 123
+                      class: "Class A"
+                    - id: "d7e0f142-8235-4578-8f92-4f2d36c7adf3"
+                      rating-id: "7f499e7e-bd4c-4a72-81ef-c0bb12a89889"
+                      sailNum: 456
+                      class: "Class B"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Не найдены рейтинг или команды"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                crewsNotFound:
+                  summary: "Команды не найдены"
+                  value:
+                    error: "Crews not found"
+                    message: "The specified crews in this rating do not exist."
+    post:
+      summary: "Создать новую команду"
+      tags:
+        - Crew
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: "Данные для создания новой команды"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sailNum:
+                  type: integer
+                  description: "Номер паруса"
+              required:
+                - sailNum
+            examples:
+              exampleInput:
+                summary: "Пример данных для создания"
+                value:
+                  sailNum: 123
+      responses:
+        '201':
+          description: "Команда успешно создана"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrewInput'
+              examples:
+                success:
+                  summary: "Пример успешного создания команды"
+                  value:
+                    id: "a4e23a01-45d4-497f-8d60-fc9e7b8cfe59"
+                    rating-id: "15bcf7e7-8a6d-493a-9a25-2c4e5c96d6f4"
+                    sailNum: 123
+                    class: 1
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Рейтинг не найден"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+
+  /ratings/{ratingId}/crews/{crewId}:
+
+    put:
+      summary: "Обновить номер паруса команды"
+      tags:
+        - Crew
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: crewId
+          in: path
+          required: true
+          description: "Уникальный идентификатор команды"
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: "Данные для обновления команды"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sailNum:
+                  type: integer
+                  description: "Номер паруса"
+              required:
+                - sailNum
+            examples:
+              exampleInput:
+                summary: "Пример данных для обновления"
+                value:
+                  sailNum: 789
+      responses:
+        '200':
+          description: "Команда успешно обновлена"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrewFormData'
+              examples:
+                exampleSuccess:
+                  summary: "Пример успешного обновления"
+                  value:
+                    id: "c1a5e001-5d56-4457-8ed0-83dd835c7f1e"
+                    rating-id: "7f499e7e-bd4c-4a72-81ef-c0bb12a89889"
+                    sailNum: 789
+                    class: "Class A"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Команда или рейтинг не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                crewNotFound:
+                  summary: "Команда не найдена"
+                  value:
+                    error: "Crew not found"
+                    message: "The specified crew ID does not exist."
+    delete:
+      summary: "Удалить команду"
+      tags:
+        - Crew
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: crewId
+          in: path
+          required: true
+          description: "Уникальный идентификатор команды"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: "Команда успешно удалена"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                success:
+                  summary: "Команда успешно удалена"
+                  value:
+                    message: "Crew successfully deleted."
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+          '404':
+          description: "Команда или рейтинг не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                crewNotFound:
+                  summary: "Команда не найдена"
+                  value:
+                    error: "Crew not found"
+                    message: "The specified crew ID does not exist."
+
+  /ratings/{ratingId}/crews/{crewId}/members:
+    get:
+      summary: "Получить список участников команды"
+      tags:
+        - Crew Members
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: crewId
+          in: path
+          required: true
+          description: "Уникальный идентификатор команды"
+          schema:
+            type: string
+            format: uuid
+        - name: name
+          in: query
+          required: false
+          description: "Фильтр по имени участника"
+          schema:
+            type: string
+        - name: helmsman
+          in: query
+          required: false
+          description: "Фильтр по статусу рулевого (1 – рулевой, 0 – не рулевой)"
+          schema:
+            type: integer
+            enum: [0, 1]
+      responses:
+        '200':
+          description: "Список участников команды"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CrewParticipant'
+              examples:
+                participantsList:
+                  summary: "Список участников команды"
+                  value:
+                    - participantID: "2c7e716e-0474-462f-8f96-530eadd6f3d4"
+                      name: "John Doe"
+                      helmsman: 1
+                    - participantID: "5bcee717-aef2-481e-8cdd-41f22dbf8714"
+                      name: "Jane Smith"
+                      helmsman: 0
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Рейтинг, команда или участники не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                crewNotFound:
+                  summary: "Команда не найдена"
+                  value:
+                    error: "Crew not found"
+                    message: "The specified crew ID does not exist."
+                participantsNotFound:
+                  summary: "Участники не найдены"
+                  value:
+                    error: "Participants not found"
+                    message: "No participants found for the specified crew."
+
+    post:
+      summary: "Добавить участника в команду"
+      tags:
+        - Crew Members
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: crewId
+          in: path
+          required: true
+          description: "Уникальный идентификатор команды"
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: "Данные для добавления существующего участника в команду"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                participantID:
+                  type: string
+                  description: "Идентификатор участника"
+                  format: uuid
+                  example: "2c7e716e-0474-462f-8f96-530eadd6f3d4"
+                helmsman:
+                  type: integer
+                  description: "1, если участник является рулевым, 0 — если нет"
+                  example: 1
+              required:
+                - participantID
+      responses:
+        '201':
+          description: "Участник успешно добавлен в команду"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  crewId:
+                    type: string
+                    format: uuid
+                  participantID:
+                    type: string
+                    format: uuid
+                  helmsman:
+                    type: integer
+                    description: "Роль рулевого"
+              examples:
+                participantAdded:
+                  summary: "Участник добавлен в команду"
+                  value:
+                    crewId: "f9b63732-2b6b-4ec5-b19e-f57253fc4e89"
+                    participantID: "2c7e716e-0474-462f-8f96-530eadd6f3d4"
+                    helmsman: 1
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Команда или рейтинг не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                crewNotFound:
+                  summary: "Команда не найдена"
+                  value:
+                    error: "Crew not found"
+                    message: "The specified crew ID does not exist."
+
+  /ratings/{ratingId}/crews/{crewId}/members/{participantID}:
+    put:
+      summary: "Изменить информацию об участнике команды"
+      tags:
+        - Crew Members
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: crewId
+          in: path
+          required: true
+          description: "Уникальный идентификатор команды"
+          schema:
+            type: string
+            format: uuid
+        - name: participantID
+          in: path
+          required: true
+          description: "Уникальный идентификатор участника"
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrewParticipantUpdateInput'
+            examples:
+              updateHelmsman:
+                summary: "Изменить статус рулевого"
+                value:
+                  helmsman: 1
+      responses:
+        '200':
+          description: "Информация об участнике успешно обновлена"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrewParticipant'
+              examples:
+                participantUpdated:
+                  summary: "Участник обновлен"
+                  value:
+                    participantID: "2c7e716e-0474-462f-8f96-530eadd6f3d4"
+                    name: "John Doe"
+                    helmsman: 1
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Команда, рейтинг или участник не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                crewNotFound:
+                  summary: "Команда не найдена"
+                  value:
+                    error: "Crew not found"
+                    message: "The specified crew ID does not exist."
+                participantNotFound:
+                  summary: "Участник не найден"
+                  value:
+                    error: "Participant not found"
+                    message: "The specified participant ID does not exist."
+
+
+
+    delete:
+      summary: "Удалить участника из команды"
+      tags:
+        - Crew Members
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: crewId
+          in: path
+          required: true
+          description: "Уникальный идентификатор команды"
+          schema:
+            type: string
+            format: uuid
+        - name: participantID
+          in: path
+          required: true
+          description: "Идентификатор участника для удаления из команды"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: "Участник успешно удален из команды"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Команда, рейтинг или участник не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                crewNotFound:
+                  summary: "Команда не найдена"
+                  value:
+                    error: "Crew not found"
+                    message: "The specified crew ID does not exist."
+                participantNotFound:
+                  summary: "Участник не найден"
+                  value:
+                    error: "Participant not found"
+                    message: "The specified participant ID does not exist."
+
+  /ratings/{ratingID}/races/{raceID}/protests:
+    get:
+      summary: "Получить все протесты для указанного рейтинга и гонки"
+      tags:
+        - Protests
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          description: "Уникальный идентификатор рейтинга"
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          description: "Уникальный идентификатор гонки"
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: "Список протестов успешно получен"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProtestFormData'
+              examples:
+                protestsList:
+                  summary: "Список протестов"
+                  value:
+                    - id: "4b5e4b79-3b5d-41b3-9a7f-cfc4f4b5eec4"
+                      judge-id: "9f2e3b76-bd98-4df2-b2c5-7c90fbb6c8d1"
+                      rating-id: "7d64c04e-e515-47c5-8db4-3c930b87e6f0"
+                      race-id: "f635b15b-cb4d-413e-845e-230cb0c4c77b"
+                      rule-num: 42
+                      review-date: "2024-09-30"
+                      status: "Pending"
+                      comment: "Awaiting further review."
+                    - id: "68c45e36-49b1-4c35-a46c-14ff18c5f462"
+                      judge-id: "4c02db3a-0e95-467c-b300-f7d4b4df46e7"
+                      rating-id: "7d64c04e-e515-47c5-8db4-3c930b87e6f0"
+                      race-id: "f635b15b-cb4d-413e-845e-230cb0c4c77b"
+                      rule-num: 12
+                      review-date: "2024-09-29"
+                      status: "Resolved"
+                      comment: "Resolved in favor of the respondent."
+        '404':
+          description: "Рейтинг или гонка не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+                protestsNotFound:
+                  summary: "Протесты не найдены"
+                  value:
+                    error: "Protests not found"
+                    message: "The specified protest in this race do not exist."
+        '500':
+          description: "Внутренняя ошибка сервера"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+
+    post:
+      summary: "Создать новый протест"
+      tags:
+        - Protests
+      operationId: "createProtest"
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: availableParticipants
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+            description: "Список возможных вариантов номеров участников"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProtestInput'
+      responses:
+        '201':
+          description: "Протест успешно создан"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProtestFormData'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Рейтинг или гонка не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+
+  /ratings/{ratingID}/races/{raceID}/protests/{protestID}:
+    delete:
+      summary: "Удалить протест"
+      tags:
+        - Protests
+      operationId: "deleteProtest"
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: protestID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: "Протест успешно удален"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Протест, рейтинг или гонка не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                protestNotFound:
+                  summary: "Протест не найден"
+                  value:
+                    error: "Protest not found"
+                    message: "The specified protest ID does not exist."
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+    put:
+      summary: "Обновить информацию о протесте"
+      tags:
+        - Protests
+      operationId: "updateProtest"
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: protestID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProtestInput'
+      responses:
+        '200':
+          description: "Протест успешно обновлен"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProtestFormData'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Протест, рейтинг или гонка не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                protestNotFound:
+                  summary: "Протест не найден"
+                  value:
+                    error: "Protest not found"
+                    message: "The specified protest ID does not exist."
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+
+    patch:
+      summary: "Завершить рассмотрение протеста"
+      tags:
+        - Protests
+      operationId: "completeProtest"
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: protestID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProtestComplete'
+      responses:
+        '200':
+          description: "Рассмотрение протеста успешно завершено"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProtestFormData'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Протест, рейтинг или гонка не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                protestNotFound:
+                  summary: "Протест не найден"
+                  value:
+                    error: "Protest not found"
+                    message: "The specified protest ID does not exist."
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+
+  /ratings/{ratingID}/races/{raceID}/protests/{protestID}/members:
+    post:
+      summary: "Добавить команду-участника протеста"
+      tags:
+        - Protest Members
+      operationId: "attachProtestMember"
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: protestID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: possibleCrewMembers
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+            description: "Список возможных вариантов команд-участников (номера парусов)"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProtestParticipantAttachInput'
+      responses:
+        '201':
+          description: "Команда-участник успешно добавлена"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Participant attached successfully"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Протест, гонка или команда не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                protestNotFound:
+                  summary: "Протест не найден"
+                  value:
+                    error: "Protest not found"
+                    message: "The specified protest ID does not exist."
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+                crewNotFound:
+                  summary: "Команда не найдена"
+                  value:
+                    error: "Crew not found"
+                    message: "The specified crew with the given sail number does not exist."
+
+    get:
+      summary: "Получить информацию о всех командах-участниках протеста"
+      tags:
+        - Protest Members
+      operationId: "getProtestMembers"
+      parameters:
+        - name: ratingID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: protestID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: "Список команд-участников протеста"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProtestParticipantInfo'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Протест, гонка или команды не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                protestNotFound:
+                  summary: "Протест не найден"
+                  value:
+                    error: "Protest not found"
+                    message: "The specified protest ID does not exist."
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+                membersNotFound:
+                  summary: "Команды не найдены"
+                  value:
+                    error: "Protest members not found"
+                    message: "No teams found for this protest."
+
+  /ratings/{ratingID}/races/{raceID}/protests/{protestID}/members/{сrewID}:
+    delete:
+      summary: "Удалить команду-участника из протеста"
+      tags:
+        - Protest Members
+      operationId: "deleteProtestMember"
+      parameters:
+        - name: сrewID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: ratingID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: protestID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: "Команда-участник успешно удалена из протеста"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Протест, гонка или команда не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                protestNotFound:
+                  summary: "Протест не найден"
+                  value:
+                    error: "Protest not found"
+                    message: "The specified protest ID does not exist."
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+                memberNotFound:
+                  summary: "Команда не найдена"
+                  value:
+                    error: "Protest member not found"
+                    message: "The specified team is not part of the protest."
+
+    patch:
+      summary: "Изменить роль команды-участника в протесте"
+      tags:
+        - Protest Members
+      operationId: "updateProtestMemberRole"
+      parameters:
+        - name: сrewID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: ratingID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: raceID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: protestID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  description: "Новая роль команды"
+                  enum:
+                    - protestor
+                    - protested
+                    - witness
+      responses:
+        '200':
+          description: "Роль команды-участника успешно обновлена"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProtestParticipantInfo'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Протест, гонка или команда не найдены"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                protestNotFound:
+                  summary: "Протест не найден"
+                  value:
+                    error: "Protest not found"
+                    message: "The specified protest ID does not exist."
+                raceNotFound:
+                  summary: "Гонка не найдена"
+                  value:
+                    error: "Race not found"
+                    message: "The specified race ID does not exist."
+                memberNotFound:
+                  summary: "Команда не найдена"
+                  value:
+                    error: "Protest member not found"
+                    message: "The specified team is not part of the protest."
+
+  /participants:
+    get:
+      summary: "Получить список всех участников"
+      tags:
+        - Participant
+      operationId: "getAllParticipants"
+      parameters:
+        - name: fio
+          in: query
+          description: "Фильтр по ФИО"
+          required: false
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: "Фильтр по категории"
+          required: false
+          schema:
+            type: string
+        - name: gender
+          in: query
+          description: "Фильтр по полу"
+          required: false
+          schema:
+            type: string
+        - name: birthday
+          in: query
+          description: "Фильтр по дате рождения"
+          required: false
+          schema:
+            type: string
+        - name: coach
+          in: query
+          description: "Фильтр по тренеру"
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Список всех участников"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ParticipantFormData'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+    post:
+      summary: "Создать нового участника"
+      tags:
+        - Participant
+      operationId: "createParticipant"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParticipantInput'
+      responses:
+        '201':
+          description: "Участник успешно создан"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantFormData'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+  /participants/{participantID}:
+    get:
+      summary: "Получить информацию о конкретном участнике"
+      tags:
+        - Participant
+      operationId: "getParticipantById"
+      parameters:
+        - name: participantID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: "Информация о конкретном участнике"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantFormData'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Участник не найден"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                participantNotFound:
+                  summary: "Участник не найден"
+                  value:
+                    error: "Participant not found"
+                    message: "The specified participant ID does not exist."
+    delete:
+      summary: "Удалить участника"
+      tags:
+        - Participant
+      operationId: "deleteParticipant"
+      parameters:
+        - name: participantID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: "Участник успешно удален"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Участник не найден"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                participantNotFound:
+                  summary: "Участник не найден"
+                  value:
+                    error: "Participant not found"
+                    message: "The specified participant ID does not exist."
+    put:
+      summary: "Обновить информацию об участнике"
+      tags:
+        - Participant
+      operationId: "updateParticipant"
+      parameters:
+        - name: participantID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParticipantInput'
+      responses:
+        '200':
+          description: "Информация об участнике успешно обновлена"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantFormData'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Участник не найден"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                participantNotFound:
+                  summary: "Участник не найден"
+                  value:
+                    error: "Participant not found"
+                    message: "The specified participant ID does not exist."
+
+  /judges:
+    get:
+      summary: "Получить список всех судей"
+      tags:
+        - Judge
+      operationId: "getJudges"
+      parameters:
+        - name: fio
+          in: query
+          description: "Фильтр по ФИО"
+          required: false
+          schema:
+            type: string
+        - name: login
+          in: query
+          description: "Фильтр по логину"
+          required: false
+          schema:
+            type: string
+        - name: role
+          in: query
+          description: "Фильтр по роли"
+          required: false
+          schema:
+            type: string
+        - name: post
+          in: query
+          description: "Фильтр по должности"
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Список судей успешно получен"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JudgeFormData'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+    post:
+      summary: "Создать нового судью"
+      tags:
+        - Judge
+      operationId: "createJudge"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JudgeInput'
+      responses:
+        '201':
+          description: "Судья успешно создан"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JudgeFormData'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+
+  /judges/{judgeID}:
+    get:
+      summary: "Получить информацию о судье"
+      tags:
+        - Judge
+      operationId: "getJudgeById"
+      parameters:
+        - name: judgeID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: "ID судьи"
+      responses:
+        '200':
+          description: "Информация о судье"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JudgeFormData'
+        '404':
+          description: "Судья не найден"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                judgeNotFound:
+                  summary: "Судья не найден"
+                  value:
+                    error: "Judge not found"
+                    message: "The specified judge ID does not exist."
+
+    delete:
+      summary: "Удалить судью"
+      tags:
+        - Judge
+      operationId: "deleteJudge"
+      parameters:
+        - name: judgeID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: "ID судьи"
+      responses:
+        '204':
+          description: "Судья успешно удален"
+        '404':
+          description: "Судья не найден"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                judgeNotFound:
+                  summary: "Судья не найден"
+                  value:
+                    error: "Judge not found"
+                    message: "The specified judge ID does not exist."
+    put:
+      summary: "Обновить информацию о судье"
+      tags:
+        - Judge
+      operationId: "updateJudge"
+      parameters:
+        - name: judgeID
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: "ID судьи"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JudgeInput'
+      responses:
+        '200':
+          description: "Информация о судье успешно обновлена"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JudgeFormData'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Судья не найден"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                judgeNotFound:
+                  summary: "Судья не найден"
+                  value:
+                    error: "Judge not found"
+                    message: "The specified judge ID does not exist."
+
+  /ratings/{ratingId}/rankings:
+    get:
+      summary: "Получить рейтинговую таблицу"
+      tags:
+        - Ranking
+      operationId: "getRankingTable"
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: "Рейтинговая таблица успешно получена"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  RankingTable:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RatingTableLine'
+                  Races:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RaceInfo'
+                example:
+                  RankingTable:
+                    - SailNum: 1
+                      ParticipantNames:
+                        - "John Doe"
+                        - "Jane Doe"
+                      ParticipantBirthDates:
+                        - "1990-01-01T00:00:00Z"
+                        - "1992-02-02T00:00:00Z"
+                      ParticipantCategories:
+                        - 1
+                        - 2
+                      ResInRace:
+                        1: 10
+                        2: 12
+                      PointsSum: 100
+                      Rank: 1
+                      CoachNames:
+                        - "Coach A"
+                        - "Coach B"
+                    - SailNum: 2
+                      ParticipantNames:
+                        - "Alex Smith"
+                      ParticipantBirthDates:
+                        - "1989-03-03T00:00:00Z"
+                      ParticipantCategories:
+                        - 1
+                      ResInRace:
+                        1: 9
+                      PointsSum: 95
+                      Rank: 2
+                      CoachNames:
+                        - "Coach C"
+                  Races:
+                    - RaceNum: 1
+                      RaceID: "b1a9ffb0-02b2-11ec-9a03-0242ac130003"
+                    - RaceNum: 2
+                      RaceID: "cba9ffb0-02b2-11ec-9a03-0242ac130003"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: "Рейтинг не найден"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                ratingNotFound:
+                  summary: "Рейтинг не найден"
+                  value:
+                    error: "Rating not found"
+                    message: "The specified rating ID does not exist."
+
+
+components:
+  schemas:
+    RatingTableLine:
+      type: object
+      properties:
+        SailNum:
+          type: integer
+          example: 1
+        ParticipantNames:
+          type: array
+          items:
+            type: string
+          example: ["John Doe", "Jane Doe"]
+        ParticipantBirthDates:
+          type: array
+          items:
+            type: string
+            format: date-time
+          example: ["1990-01-01T00:00:00Z", "1992-02-02T00:00:00Z"]
+        ParticipantCategories:
+          type: array
+          items:
+            type: integer
+          example: [1, 2]
+        ResInRace:
+          type: object
+          additionalProperties:
+            type: integer
+          example:
+            1: 10
+            2: 12
+        PointsSum:
+          type: integer
+          example: 100
+        Rank:
+          type: integer
+          example: 1
+        CoachNames:
+          type: array
+          items:
+            type: string
+          example: ["Coach A", "Coach B"]
+
+    RaceInfo:
+      type: object
+      properties:
+        RaceNumber:
+          type: integer
+          description: "Номер гонки"
+        RaceID:
+          type: string
+          format: uuid
+          description: "ID гонки"
+
+    JudgeInput:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "ID судьи (необязательное поле, создается автоматически)"
+          example: "c56a4180-65aa-42ec-a945-5fd21dec0538"
+        fio:
+          type: string
+          description: "ФИО судьи"
+          example: "Иван Иванов"
+        login:
+          type: string
+          description: "Логин судьи"
+          example: "ivan_ivanov"
+        password:
+          type: string
+          description: "Пароль судьи"
+          example: "password123"
+        role:
+          type: integer
+          description: "Роль судьи (в виде числового значения)"
+          example: 1
+        post:
+          type: string
+          description: "Должность судьи"
+          example: "Главный судья"
+
+    JudgeFormData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "ID судьи"
+          example: "c56a4180-65aa-42ec-a945-5fd21dec0538"
+        fio:
+          type: string
+          description: "ФИО судьи"
+          example: "Иван Иванов"
+        login:
+          type: string
+          description: "Логин судьи"
+          example: "ivan_ivanov"
+        role:
+          type: string
+          description: "Роль судьи"
+          example: "Главный судья"
+        post:
+          type: string
+          description: "Должность судьи"
+          example: "Судья соревнования"
+    ParticipantInput:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "ID участника (может быть не задан)"
+        fio:
+          type: string
+          description: "ФИО участника"
+          example: "Иван Иванов"
+        category:
+          type: integer
+          description: "Разряд участника"
+          example: 1
+        gender:
+          type: integer
+          description: "Пол участника (0 - женский, 1 - мужской)"
+          example: 1
+        birthday:
+          type: string
+          format: date
+          description: "Дата рождения участника (YYYY-MM-DD)"
+          example: "1990-05-15"
+        coach:
+          type: string
+          description: "Тренер участника"
+          example: "Тренер Петров"
+      required:
+        - fio
+        - category
+        - birthday
+        - coach
+
+    ParticipantFormData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fio:
+          type: string
+          description: "ФИО участника"
+        category:
+          type: string
+          description: "Категория участника"
+        gender:
+          type: string
+          description: "Пол участника"
+        birthday:
+          type: string
+          description: "Дата рождения участника (YYYY-MM-DD)"
+        coach:
+          type: string
+          description: "Тренер участника"
+
+    ProtestParticipantInfo:
+      type: object
+      properties:
+        sailNum:
+          type: integer
+          description: "Номер паруса команды-участника протеста"
+        role:
+          type: string
+          description: "Роль команды в протесте (protestor - протестующий, protested - опротестованный, witness - свидетель)"
+          enum:
+            - protestor
+            - protested
+            - witness
+    ProtestParticipantAttachInput:
+      type: object
+      properties:
+        sailNum:
+          type: integer
+          description: "Номер паруса команды-участника протеста"
+        role:
+          type: integer
+          description: "Роль команды в протесте (1 - протестующий, 2 - опротестованный, 3 - свидетель)"
+          enum: [ 1, 2, 3 ]
+      required:
+        - sailNum
+        - role
+
+    ProtestComplete:
+      type: object
+      properties:
+        resPoints:
+          type: integer
+          description: "Окончательные очки, присужденные по результатам рассмотрения протеста."
+        comment:
+          type: string
+          description: "Комментарий судьи по завершению протеста."
+      required:
+        - resPoints
+
+    ProtestInput:
+      type: object
+      properties:
+        ruleNum:
+          type: integer
+          example: 1
+        reviewDate:
+          type: string
+          format: date
+          example: "2024-09-30"
+        status:
+          type: integer
+          example: 0
+        comment:
+          type: string
+          example: "This is a sample comment."
+        protester:
+          type: integer
+          example: 1
+        contested:
+          type: integer
+          example: 2
+        witnesses:
+          type: array
+          items:
+            type: integer
+            example: 3
+          maxItems: 3
+
+    ProtestFormData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "Уникальный идентификатор протеста"
+        judge-id:
+          type: string
+          format: uuid
+          description: "Уникальный идентификатор судьи"
+        rating-id:
+          type: string
+          format: uuid
+          description: "Уникальный идентификатор рейтинга"
+        race-id:
+          type: string
+          format: uuid
+          description: "Уникальный идентификатор гонки"
+        rule-num:
+          type: integer
+          description: "Номер правила, нарушенного в протесте"
+        review-date:
+          type: string
+          format: date
+          description: "Дата рассмотрения протеста"
+        status:
+          type: string
+          description: "Статус протеста"
+        comment:
+          type: string
+          description: "Комментарий по протесту"
+      required:
+        - id
+        - judge-id
+        - rating-id
+        - race-id
+        - rule-num
+        - review-date
+        - status
+    RatingFormData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "Уникальный идентификатор рейтинга"
+        name:
+          type: string
+          description: "Название рейтинга"
+        class:
+          type: string
+          description: "Класс лодки"
+        blowoutCnt:
+          type: integer
+          description: "Количество отсеянных гонок (blowout)"
+
+    RatingInput:
+      type: object
+      required:
+        - name
+        - class
+      properties:
+        name:
+          type: string
+          description: "Название рейтинга"
+        class:
+          type: integer
+          description: "Код класса лодки, который соответствует карте классов"
+        blowoutCnt:
+          type: integer
+          description: "Количество гонок, которые не учитываются в результате (blowout)"
+    RaceFormData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "Уникальный идентификатор гонки"
+        ratingID:
+          type: string
+          format: uuid
+          description: "Уникальный идентификатор рейтинга, к которому относится гонка"
+        date:
+          type: string
+          format: date-time
+          description: "Дата и время гонки в формате 'YYYY-MM-DD HH:MM:SS'"
+        number:
+          type: integer
+          description: "Номер гонки"
+        class:
+          type: string
+          description: "Класс лодки, участвующей в гонке"
+
+    RaceInput:
+      type: object
+      required:
+        - date
+        - number
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: "Дата и время гонки в формате 'YYYY-MM-DD HH:MM:SS'"
+        number:
+          type: integer
+          description: "Номер гонки"
+        class:
+          type: integer
+          description: "Код класса лодки, который соответствует карте классов"
+
+    StartRaceResponse:
+      type: object
+      properties:
+        title:
+          type: string
+        specCircumstance:
+          type: integer
+          description: "Код специальных обстоятельств старта, который соответствует карте спец. обстоятельств"
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            - 11
+        crews:
+          type: array
+          items:
+            type: object
+        raceView:
+          type: object
+        ratingView:
+          type: object
+
+    FinishRaceResponse:
+      type: object
+      properties:
+        title:
+          type: string
+        crews:
+          type: array
+          items:
+            type: object
+        raceView:
+          type: object
+        ratingView:
+          type: object
+
+    CrewFormData:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "Уникальный идентификатор команды"
+        rating-id:
+          type: string
+          format: uuid
+          description: "Уникальный идентификатор рейтинга, к которому принадлежит команда"
+        sailNum:
+          type: integer
+          description: "Номер паруса команды"
+        class:
+          type: string
+          description: "Класс судна команды"
+      required:
+        - id
+        - rating-id
+        - sailNum
+        - class
+
+    CrewInput:
+      type: object
+      properties:
+        sailNum:
+          type: integer
+          description: "Номер паруса команды"
+        class:
+          type: integer
+          description: "Класс судна команды"
+      required:
+        - sailNum
+        - class
+
+    CrewParticipant:
+      type: object
+      properties:
+        participantID:
+          type: string
+          format: uuid
+          description: "Идентификатор участника"
+          example: "2c7e716e-0474-462f-8f96-530eadd6f3d4"
+        name:
+          type: string
+          description: "Имя участника"
+          example: "John Doe"
+        helmsman:
+          type: integer
+          description: "1, если участник рулевой, 0 — если нет"
+          example: 1
+
+    CrewParticipantUpdateInput:
+      type: object
+      properties:
+        helmsman:
+          type: integer
+          description: "1, если участник рулевой, 0 — если нет"
+          example: 1
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+
+
+
+
+
+
+
+
+
+
+
+
+  responses:
+    BadRequestError:
+      description: "Ошибка в запросе"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            invalidInput:
+              summary: "Неверные данные"
+              value:
+                error: "Invalid input"
+                message: "The provided input data is invalid."

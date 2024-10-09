@@ -1,15 +1,16 @@
 {
-  "postgres": {
+  "dbConnectionFlags": {
     "host": "127.0.0.1",
-    "user": "postgres",
+    "user": "root",
     "password": "7625",
-    "port": "5432",
-    "dbname": "ppo"
+    "port": "27017",
+    "dbname": "ppo_db"
   },
 
-  "mode"    : "server",
+  "mode" : "server",
+  "dbtype": "mongo",
   "loglevel": "info",
   "logfile" : "info.log",
-  "port"    : ":8081",
-  "address" : "127.0.0.1"
+  "port": ":8081",
+  "address": "127.0.0.1"
 }

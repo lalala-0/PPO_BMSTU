@@ -2,7 +2,8 @@ package test_repositories
 
 import (
 	"PPO_BMSTU/internal/models"
-	"PPO_BMSTU/internal/repository"
+	"PPO_BMSTU/internal/repository/postgres"
+	"PPO_BMSTU/tests/test_repositories/postgres_init"
 	"context"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -36,7 +37,7 @@ var testJudgeRepositoryCreateProfileSuccess = []struct {
 }
 
 func TestJudgeRepositoryCreateProfile(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -44,10 +45,10 @@ func TestJudgeRepositoryCreateProfile(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
+	fields := postgres.PostgresConnection{DB: db}
 
 	for _, test := range testJudgeRepositoryCreateProfileSuccess {
-		judgeRepository := repository.CreateJudgeRepository(&fields)
+		judgeRepository := postgres.CreateJudgeRepository(&fields)
 		t.Run(test.TestName, func(t *testing.T) {
 			createdJudge, err := judgeRepository.CreateProfile(test.InputData)
 			test.CheckOutput(t, test.InputData, createdJudge, err)
@@ -69,7 +70,7 @@ var testJudgeRepositoryGetByIDSuccess = []struct {
 }
 
 func TestJudgeRepositoryGetByID(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -77,8 +78,8 @@ func TestJudgeRepositoryGetByID(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	judgeRepository := repository.CreateJudgeRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	judgeRepository := postgres.CreateJudgeRepository(&fields)
 
 	for _, test := range testJudgeRepositoryGetByIDSuccess {
 		createdJudge, err := judgeRepository.CreateProfile(
@@ -113,7 +114,7 @@ var testJudgeRepositoryGetJudgeDataByProtestIDSuccess = []struct {
 }
 
 func TestJudgeRepositoryGetJudgeDataByProtestID(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -121,14 +122,14 @@ func TestJudgeRepositoryGetJudgeDataByProtestID(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	judgeRepository := repository.CreateJudgeRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	judgeRepository := postgres.CreateJudgeRepository(&fields)
 
 	for _, test := range testJudgeRepositoryGetJudgeDataByProtestIDSuccess {
-		rating := createRating(&fields)
-		judge := createJudge(&fields)
-		race := createRace(&fields, rating.ID)
-		protest := createProtest(&fields, race.ID, judge.ID, rating.ID)
+		rating := postgres_init.CreateRating(&fields)
+		judge := postgres_init.CreateJudge(&fields)
+		race := postgres_init.CreateRace(&fields, rating.ID)
+		protest := postgres_init.CreateProtest(&fields, race.ID, judge.ID, rating.ID)
 
 		receivedJudge, err := judgeRepository.GetJudgeDataByProtestID(protest.ID)
 		test.CheckOutput(t, judge, receivedJudge, err)
@@ -151,7 +152,7 @@ var testJudgeRepositoryGetJudgeDataByLoginSuccess = []struct {
 }
 
 func TestJudgeRepositoryGetJudgeDataByLogin(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -159,11 +160,11 @@ func TestJudgeRepositoryGetJudgeDataByLogin(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	judgeRepository := repository.CreateJudgeRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	judgeRepository := postgres.CreateJudgeRepository(&fields)
 
 	for _, test := range testJudgeRepositoryGetJudgeDataByLoginSuccess {
-		judge := createJudge(&fields)
+		judge := postgres_init.CreateJudge(&fields)
 
 		receivedJudge, err := judgeRepository.GetJudgeDataByLogin(judge.Login)
 		test.CheckOutput(t, judge, receivedJudge, err)
@@ -183,7 +184,7 @@ var testJudgeRepositoryDeleteSuccess = []struct {
 }
 
 func TestJudgeRepositoryDelete(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -191,8 +192,8 @@ func TestJudgeRepositoryDelete(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	judgeRepository := repository.CreateJudgeRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	judgeRepository := postgres.CreateJudgeRepository(&fields)
 
 	for _, test := range testJudgeRepositoryDeleteSuccess {
 		createdJudge, err := judgeRepository.CreateProfile(
@@ -250,7 +251,7 @@ var testJudgeRepositoryUpdateSuccess = []struct {
 }
 
 func TestJudgeRepositoryUpdate(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -258,8 +259,8 @@ func TestJudgeRepositoryUpdate(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	judgeRepository := repository.CreateJudgeRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	judgeRepository := postgres.CreateJudgeRepository(&fields)
 
 	for _, test := range testJudgeRepositoryUpdateSuccess {
 		createdJudge, err := judgeRepository.CreateProfile(test.InputData.Judge)
@@ -295,7 +296,7 @@ var testJudgeRepositoryGetJudgesDataByRatingID = []struct {
 }
 
 func TestJudgeRepositoryGetJudgesDataByRatingID(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -303,11 +304,11 @@ func TestJudgeRepositoryGetJudgesDataByRatingID(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	judgeRepository := repository.CreateJudgeRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	judgeRepository := postgres.CreateJudgeRepository(&fields)
 
 	for _, test := range testJudgeRepositoryGetJudgesDataByRatingID {
-		rating := createRating(&fields)
+		rating := postgres_init.CreateRating(&fields)
 
 		createdJudges := []models.Judge{
 			{
@@ -339,7 +340,7 @@ func TestJudgeRepositoryGetJudgesDataByRatingID(t *testing.T) {
 		for i, _ := range createdJudges {
 			j, err := judgeRepository.CreateProfile(&createdJudges[i])
 			require.NoError(t, err)
-			attachJudgeToRating(&fields, j.ID, rating.ID)
+			postgres_init.AttachJudgeToRating(&fields, j.ID, rating.ID)
 		}
 
 		receivedJudges, err := judgeRepository.GetJudgesDataByRatingID(rating.ID)
@@ -361,7 +362,7 @@ var testJudgeRepositoryGetAllJudges = []struct {
 }
 
 func TestJudgeRepositoryGetAllJudges(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -369,11 +370,11 @@ func TestJudgeRepositoryGetAllJudges(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	judgeRepository := repository.CreateJudgeRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	judgeRepository := postgres.CreateJudgeRepository(&fields)
 
 	for _, test := range testJudgeRepositoryGetAllJudges {
-		rating := createRating(&fields)
+		rating := postgres_init.CreateRating(&fields)
 
 		createdJudges := []models.Judge{
 			{
@@ -405,7 +406,7 @@ func TestJudgeRepositoryGetAllJudges(t *testing.T) {
 		for i, _ := range createdJudges {
 			j, err := judgeRepository.CreateProfile(&createdJudges[i])
 			require.NoError(t, err)
-			attachJudgeToRating(&fields, j.ID, rating.ID)
+			postgres_init.AttachJudgeToRating(&fields, j.ID, rating.ID)
 		}
 
 		receivedJudges, err := judgeRepository.GetAllJudges()

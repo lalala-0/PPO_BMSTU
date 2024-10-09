@@ -2,7 +2,8 @@ package test_repositories
 
 import (
 	"PPO_BMSTU/internal/models"
-	"PPO_BMSTU/internal/repository"
+	"PPO_BMSTU/internal/repository/postgres"
+	"PPO_BMSTU/tests/test_repositories/postgres_init"
 	"context"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -33,7 +34,7 @@ var testRatingRepositoryCreateSuccess = []struct {
 }
 
 func TestRatingRepositoryCreate(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -41,10 +42,10 @@ func TestRatingRepositoryCreate(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
+	fields := postgres.PostgresConnection{DB: db}
 
 	for _, test := range testRatingRepositoryCreateSuccess {
-		ratingRepository := repository.CreateRatingRepository(&fields)
+		ratingRepository := postgres.CreateRatingRepository(&fields)
 		t.Run(test.TestName, func(t *testing.T) {
 
 			createdRating, err := ratingRepository.Create(test.InputData)
@@ -67,7 +68,7 @@ var testRatingRepositoryGetByIDSuccess = []struct {
 }
 
 func TestRatingRepositoryGetByID(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -75,11 +76,11 @@ func TestRatingRepositoryGetByID(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	ratingRepository := repository.CreateRatingRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	ratingRepository := postgres.CreateRatingRepository(&fields)
 
 	for _, test := range testRatingRepositoryGetByIDSuccess {
-		rating := createRating(&fields)
+		rating := postgres_init.CreateRating(&fields)
 
 		receivedRating, err := ratingRepository.GetRatingDataByID(rating.ID)
 		test.CheckOutput(t, rating, receivedRating, err)
@@ -99,7 +100,7 @@ var testRatingRepositoryDeleteSuccess = []struct {
 }
 
 func TestRatingRepositoryDelete(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -107,11 +108,11 @@ func TestRatingRepositoryDelete(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	ratingRepository := repository.CreateRatingRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	ratingRepository := postgres.CreateRatingRepository(&fields)
 
 	for _, test := range testRatingRepositoryDeleteSuccess {
-		rating := createRating(&fields)
+		rating := postgres_init.CreateRating(&fields)
 
 		err := ratingRepository.Delete(rating.ID)
 		test.CheckOutput(t, err)
@@ -144,7 +145,7 @@ var testRatingRepositoryUpdateSuccess = []struct {
 }
 
 func TestRatingRepositoryUpdate(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -152,11 +153,11 @@ func TestRatingRepositoryUpdate(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	ratingRepository := repository.CreateRatingRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	ratingRepository := postgres.CreateRatingRepository(&fields)
 
 	for _, test := range testRatingRepositoryUpdateSuccess {
-		rating := createRating(&fields)
+		rating := postgres_init.CreateRating(&fields)
 
 		createdRating, err := ratingRepository.Create(test.InputData)
 
@@ -188,7 +189,7 @@ var testRatingRepositoryAttachJudgeToRating = []struct {
 }
 
 func TestRatingRepositoryAttachJudgeToRating(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -196,12 +197,12 @@ func TestRatingRepositoryAttachJudgeToRating(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	ratingRepository := repository.CreateRatingRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	ratingRepository := postgres.CreateRatingRepository(&fields)
 
 	for _, test := range testRatingRepositoryAttachJudgeToRating {
-		rating := createRating(&fields)
-		judge := createJudge(&fields)
+		rating := postgres_init.CreateRating(&fields)
+		judge := postgres_init.CreateJudge(&fields)
 
 		err := ratingRepository.AttachJudgeToRating(rating.ID, judge.ID)
 		test.CheckOutput(t, err)
@@ -221,7 +222,7 @@ var testRatingRepositoryDetachJudgeFromRating = []struct {
 }
 
 func TestRatingRepositoryDetachJudgeFromRating(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -229,12 +230,12 @@ func TestRatingRepositoryDetachJudgeFromRating(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	ratingRepository := repository.CreateRatingRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	ratingRepository := postgres.CreateRatingRepository(&fields)
 
 	for _, test := range testRatingRepositoryDetachJudgeFromRating {
-		rating := createRating(&fields)
-		judge := createJudge(&fields)
+		rating := postgres_init.CreateRating(&fields)
+		judge := postgres_init.CreateJudge(&fields)
 
 		err := ratingRepository.AttachJudgeToRating(rating.ID, judge.ID)
 		require.NoError(t, err)
@@ -257,7 +258,7 @@ var testRatingRepositoryGetAllRatings = []struct {
 }
 
 func TestRatingRepositoryGetAllRatings(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -265,8 +266,8 @@ func TestRatingRepositoryGetAllRatings(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	ratingRepository := repository.CreateRatingRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	ratingRepository := postgres.CreateRatingRepository(&fields)
 
 	for _, test := range testRatingRepositoryGetAllRatings {
 		createdRatings := []models.Rating{

@@ -2,8 +2,9 @@ package main
 
 import (
 	"PPO_BMSTU/cmd/views/mainMenus"
+	_ "PPO_BMSTU/docs"
 	"PPO_BMSTU/internal/registry"
-	"PPO_BMSTU/ui/controllers"
+	controllersUI "PPO_BMSTU/server"
 	"fmt"
 	"github.com/charmbracelet/log"
 )
@@ -31,7 +32,7 @@ func main() {
 		}
 	} else if app.Config.Mode == "server" {
 		log.Info("Start with server!")
-		err = controllers.RunServer(&app)
+		err = controllersUI.RunServer(&app)
 		if err != nil {
 			log.Fatal(err)
 			return
@@ -40,3 +41,12 @@ func main() {
 		log.Error("Wrong app mode", "mode", app.Config.Mode)
 	}
 }
+
+//else if app.Config.Mode == "api" {
+//log.Info("Start with api!")
+//err = controllersAPI.RunApi(&app)
+//if err != nil {
+//log.Fatal(err)
+//return
+//}
+//}

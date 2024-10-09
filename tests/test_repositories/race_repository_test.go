@@ -2,7 +2,8 @@ package test_repositories
 
 import (
 	"PPO_BMSTU/internal/models"
-	"PPO_BMSTU/internal/repository"
+	"PPO_BMSTU/internal/repository/postgres"
+	"PPO_BMSTU/tests/test_repositories/postgres_init"
 	"context"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -35,7 +36,7 @@ var testRaceRepositoryCreateSuccess = []struct {
 }
 
 func TestRaceRepositoryCreate(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -43,12 +44,12 @@ func TestRaceRepositoryCreate(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
+	fields := postgres.PostgresConnection{DB: db}
 
 	for _, test := range testRaceRepositoryCreateSuccess {
-		raceRepository := repository.CreateRaceRepository(&fields)
+		raceRepository := postgres.CreateRaceRepository(&fields)
 		t.Run(test.TestName, func(t *testing.T) {
-			rating := createRating(&fields)
+			rating := postgres_init.CreateRating(&fields)
 			test.InputData.RatingID = rating.ID
 			createdRace, err := raceRepository.Create(test.InputData)
 			test.CheckOutput(t, test.InputData, createdRace, err)
@@ -73,7 +74,7 @@ var testRaceRepositoryGetRaceByIDSuccess = []struct {
 }
 
 func TestRaceRepositoryGetByID(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -81,12 +82,12 @@ func TestRaceRepositoryGetByID(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	raceRepository := repository.CreateRaceRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	raceRepository := postgres.CreateRaceRepository(&fields)
 
 	for _, test := range testRaceRepositoryGetRaceByIDSuccess {
-		rating := createRating(&fields)
-		race := createRace(&fields, rating.ID)
+		rating := postgres_init.CreateRating(&fields)
+		race := postgres_init.CreateRace(&fields, rating.ID)
 
 		receivedRace, err := raceRepository.GetRaceDataByID(race.ID)
 		test.CheckOutput(t, race, receivedRace, err)
@@ -106,7 +107,7 @@ var testRaceRepositoryDeleteSuccess = []struct {
 }
 
 func TestRaceRepositoryDelete(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -114,12 +115,12 @@ func TestRaceRepositoryDelete(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	raceRepository := repository.CreateRaceRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	raceRepository := postgres.CreateRaceRepository(&fields)
 
 	for _, test := range testRaceRepositoryDeleteSuccess {
-		rating := createRating(&fields)
-		race := createRace(&fields, rating.ID)
+		rating := postgres_init.CreateRating(&fields)
+		race := postgres_init.CreateRace(&fields, rating.ID)
 
 		err := raceRepository.Delete(race.ID)
 		test.CheckOutput(t, err)
@@ -159,7 +160,7 @@ var testRaceRepositoryUpdateSuccess = []struct {
 }
 
 func TestRaceRepositoryUpdate(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -167,12 +168,12 @@ func TestRaceRepositoryUpdate(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	raceRepository := repository.CreateRaceRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	raceRepository := postgres.CreateRaceRepository(&fields)
 
 	for _, test := range testRaceRepositoryUpdateSuccess {
-		rating := createRating(&fields)
-		race := createRace(&fields, rating.ID)
+		rating := postgres_init.CreateRating(&fields)
+		race := postgres_init.CreateRace(&fields, rating.ID)
 
 		updatedRace, err := raceRepository.Update(
 			&models.Race{
@@ -204,7 +205,7 @@ var testRaceRepositoryGetRacesDataByRatingID = []struct {
 }
 
 func TestRaceRepositoryGetRacesDataByRatingID(t *testing.T) {
-	dbContainer, db := SetupTestDatabase()
+	dbContainer, db := postgres_init.SetupTestDatabase()
 	defer func(dbContainer testcontainers.Container, ctx context.Context) {
 		err := dbContainer.Terminate(ctx)
 		if err != nil {
@@ -212,11 +213,11 @@ func TestRaceRepositoryGetRacesDataByRatingID(t *testing.T) {
 		}
 	}(dbContainer, context.Background())
 
-	fields := repository.PostgresConnection{DB: db}
-	raceRepository := repository.CreateRaceRepository(&fields)
+	fields := postgres.PostgresConnection{DB: db}
+	raceRepository := postgres.CreateRaceRepository(&fields)
 
 	for _, test := range testRaceRepositoryGetRacesDataByRatingID {
-		rating := createRating(&fields)
+		rating := postgres_init.CreateRating(&fields)
 
 		createdRaces := []models.Race{
 			{

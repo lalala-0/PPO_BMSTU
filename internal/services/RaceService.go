@@ -165,6 +165,7 @@ func (r RaceService) MakeStartProcedure(raceID uuid.UUID, falseStartYachtList ma
 					rc = err
 				}
 				res.SpecCircumstance = specCircumstance
+				res.Points = len(crews) + 1
 
 				_, err = r.CrewResInRaceRepository.Update(res)
 				if err != nil {

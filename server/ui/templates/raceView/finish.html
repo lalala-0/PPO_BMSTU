@@ -1,0 +1,31 @@
+{{ define "finish" }}
+{{ template "template_start" . }}
+
+<div class="container mt-5">
+    <h2>Процедура финиша</h2>
+
+    {{ if .error }}
+    <div class="alert alert-danger" role="alert">
+        {{ .error }}
+    </div>
+    {{ end }}
+
+    <form action="/ratings/{{ .ratingView.ID }}/races/{{ .raceView.ID }}/finish" method="post">
+        <div class="form-group">
+            <label for="ratingName">Рейтинг:</label>
+            <input type="text" class="form-control" id="ratingName" name="ratingName" value="{{ .ratingView.Name }}" readonly>
+        </div>
+
+        <h4>Экипажи</h4>
+        <div class="form-group">
+            <label for="InputFinishSailNums">Введите номера парусов яхт в порядке их финиша</label>
+            <input type="text" class="form-control" id="InptFinishSailNums" name="finishSailNums" required>
+            <small class="form-text text-muted">Введите номера парусов через запятую. Возможные варианты: {{ range .crews }}{{ .SailNum }}, {{ end }}</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Завершить гонку</button>
+    </form>
+</div>
+
+{{ template "template_end" . }}
+{{ end }}
