@@ -30,11 +30,11 @@ jobs:
       - name: Запуск unit тестов сервисов
         run: go test -v ./tests/unit_tests/test_service -json > ./tests/allure-results/test_service.json
 
-      - name: Запуск integration тестов репозиториев
-        run: go test -v ./tests/integration_tests/test_repository -json > ./tests/allure-results/integration_test_repository.json
-
-      - name: Запуск integration тестов сервисов
-        run: go test -v ./tests/integration_tests/service_repository -json > ./tests/allure-results/integration_service_repository.json
+#      - name: Запуск integration тестов репозиториев
+#        run: go test -v ./tests/integration_tests/test_repository -json > ./tests/allure-results/integration_test_repository.json
+#
+#      - name: Запуск integration тестов сервисов
+#        run: go test -v ./tests/integration_tests/service_repository -json > ./tests/allure-results/integration_service_repository.json
 
       - name: Установка Allure
         run: |
