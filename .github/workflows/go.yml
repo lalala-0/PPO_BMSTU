@@ -28,10 +28,10 @@ jobs:
         run: mkdir -p ./tests/allure-results
 
       - name: Запуск unit тестов репозиториев
-        run: go test -v ./tests/unit_tests/test_repository -json > ./tests/allure-results/test_repository.json
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests_repo.xml" -- ./tests/unit_tests/test_repository
 
       - name: Запуск unit тестов сервисов
-        run: go test -v ./tests/unit_tests/test_service -json > ./tests/allure-results/test_service.json
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests_service.xml" -- ./tests/unit_tests/test_service
 
       # Установка Allure для генерации отчетов
       - name: Установка Allure
