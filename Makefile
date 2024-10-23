@@ -57,9 +57,9 @@ rm-compose:
 	docker image rm testing-backend:latest
 
 ci-concat-reports:
-	mkdir allure-results
-	cp unit-allure/* allure-results/
-	cp integration-allure/* allure-results/
+	mkdir ./tests/allure-results
+	cp ./tests/unit_tests/unit-allure/* ./tests/allure-results/
+	cp ./tests/integration_tests/integration-allure/* ./tests/allure-results/
 	#cp e2e-allure/* allure-results/
 	cp environment.properties allure-results
 
