@@ -25,14 +25,11 @@ jobs:
     - name: Установка зависимостей
       run: go mod tidy
 
-    - name: Запуск тестов
-      run: go test ./...  # Запускает тесты во всех пакетах
-      
-    - name: Запуск тестов с покрытием
-      run: go test -coverprofile=coverage.out ./...
-      
-    - name: Отображение покрытия
-      run: go tool cover -html=coverage.out -o coverage.html
+    - name: Запуск unit тестов
+      run: go test ./tests/unit_tests
+
+    - name: Запуск integration тестов
+      run: go test ./tests/integration_tests
 
     - name: Кэширование модулей Go
       uses: actions/cache@v2
