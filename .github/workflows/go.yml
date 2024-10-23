@@ -25,11 +25,18 @@ jobs:
     - name: Установка зависимостей
       run: go mod tidy
 
-    - name: Запуск unit тестов
-      run: go test ./tests/unit_tests
+    - name: Запуск unit тестов репозиториев
+      run: go test ./tests/unit_tests/test_repository
 
-    - name: Запуск integration тестов
-      run: go test ./tests/integration_tests
+    - name: Запуск unit тестов сервисов
+      run: go test ./tests/unit_tests/test_service
+
+    - name: Запуск integration тестов репозиториев
+      run: go test ./tests/integration_tests/test_repository
+
+    - name: Запуск integration тестов сервисов
+      run: go test ./tests/integration_tests/service_repository
+      
 
     - name: Кэширование модулей Go
       uses: actions/cache@v2
