@@ -1,0 +1,47 @@
+name: Go CI
+
+on:
+  push:
+    branches:
+      - main  # или другая ветка, которую вы используете
+  pull_request:
+    branches:
+      - main  # или другая ветка, которую вы используете
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Проверка репозитория
+      uses: actions/checkout@v2
+
+    - name: Установка Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.22.4'  # Укажите версию Go, которую вы хотите использовать
+
+    - name: Установка зависимостей
+      run: go mod tidy
+
+    - name: Запуск unit тестов репозиториев
+      run: go test ./tests/unit_tests/test_repository
+
+    - name: Запуск unit тестов сервисов
+      run: go test ./tests/unit_tests/test_service
+
+    - name: Запуск integration тестов репозиториев
+      run: go test ./tests/integration_tests/test_repository
+
+    - name: Запуск integration тестов сервисов
+      run: go test ./tests/integration_tests/service_repository
+      
+
+    - name: Кэширование модулей Go
+      uses: actions/cache@v2
+      with:
+        path: /tmp/gopath/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/*.go') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
