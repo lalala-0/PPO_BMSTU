@@ -10,7 +10,6 @@ test:
 	export ALLURE_OUTPUT_PATH="./tests" && \
 	go test -tags=unit ./tests/unit_tests/test_service/... \
 	./tests/unit_tests/test_repository/... --race --parallel 11
-	cp environment.properties allure-results
 
 allure: clean test
 	cp -R allure-reports/history allure-results
@@ -68,4 +67,3 @@ ci-concat-reports:
 	cp ./tests/unit_tests/unit-allure/* ./tests/allure-results/ || true
 	cp ./tests/integration_tests/integration-allure/* ./tests/allure-results/ || true
 	#cp e2e-allure/* allure-results/
-	cp environment.properties allure-results
