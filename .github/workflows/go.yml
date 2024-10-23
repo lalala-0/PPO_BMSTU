@@ -1,54 +1,33 @@
-name: Go CI
+name: Go tests
 
-on:
-  push:
-    branches:
-      - main  # или другая ветка, которую вы используете
-  pull_request:
-    branches:
-      - main  # или другая ветка, которую вы используете
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Проверка репозитория
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Установка Go
-        uses: actions/setup-go@v2
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
-          go-version: '1.22.4'  # Укажите версию Go, которую вы хотите использовать
+          go-version: '1.22.4'
 
-      - name: Установка зависимостей
-        run: go mod tidy
+      - name: Run unit tests
+        run: make ci-unit
 
-      - name: Запуск unit тестов репозиториев
-        run: go test -v ./tests/unit_tests/test_repository -json > ./tests/allure-results/test_repository.json
+#      - name: Run integration tests
+#        run: make ci-integration -i
 
-      - name: Запуск unit тестов сервисов
-        run: go test -v ./tests/unit_tests/test_service -json > ./tests/allure-results/test_service.json
+#      - name: Run E2E tests
+#        run: make ci-e2e -i
 
-#      - name: Запуск integration тестов репозиториев
-#        run: go test -v ./tests/integration_tests/test_repository -json > ./tests/allure-results/integration_test_repository.json
-#
-#      - name: Запуск integration тестов сервисов
-#        run: go test -v ./tests/integration_tests/service_repository -json > ./tests/allure-results/integration_service_repository.json
+      - name: Processing report data
+        run: make ci-concat-reports -i
+        if: always()
+        continue-on-error: true
 
-      - name: Установка Allure
-        run: |
-          sudo apt-get install -y allure
-
-      - name: Генерация отчета Allure
-        run: |
-          allure generate ./tests/allure-results --clean -o ./tests/allure-report
-
-      - name: Просмотр отчета Allure
-        run: |
-          allure serve ./tests/allure-results
-
-      - name: Загрузка истории отчетов тестирования
+      - name: Load test report history
         uses: actions/checkout@v3
         if: always()
         continue-on-error: true
@@ -56,7 +35,7 @@ jobs:
           ref: main
           path: main
 
-      - name: Создание отчета тестирования
+      - name: Build test report
         uses: simple-elf/allure-report-action@v1.7
         if: always()
         with:
@@ -64,18 +43,10 @@ jobs:
           allure_history: allure-history
           allure_results: allure-results
 
-      - name: Публикация отчета тестирования
+      - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
         if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: main
           publish_dir: allure-history
-
-      - name: Кэширование модулей Go
-        uses: actions/cache@v2
-        with:
-          path: ${{ github.workspace }}/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/*.go') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
