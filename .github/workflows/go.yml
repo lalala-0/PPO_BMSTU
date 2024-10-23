@@ -36,14 +36,9 @@ jobs:
 #      - name: Запуск integration тестов сервисов
 #        run: go test -v ./tests/integration_tests/service_repository -json > ./tests/allure-results/integration_service_repository.json
 
-      - name: Установка Allure с использованием Homebrew
+      - name: Установка Allure
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget -qO allure.zip "https://github.com/allure-framework/allure2/releases/latest/download/allure-2.20.1.zip"
-          unzip -q allure.zip -d allure
-          sudo mv allure/* /usr/local/bin/
-          rm -rf allure allure.zip
+          sudo apt-get install -y allure
 
       - name: Генерация отчета Allure
         run: |
@@ -52,8 +47,6 @@ jobs:
       - name: Просмотр отчета Allure
         run: |
           allure serve ./tests/allure-results
-        # Это откроет локальный сервер с отчетом Allure.
-        # На CI/CD этот шаг обычно не выполняется, так как не доступен веб-интерфейс.
 
       - name: Загрузка истории отчетов тестирования
         uses: actions/checkout@v3
