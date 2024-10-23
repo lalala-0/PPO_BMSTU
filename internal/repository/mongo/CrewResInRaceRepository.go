@@ -61,9 +61,13 @@ func (w *CrewResInRaceRepository) Delete(raceID uuid.UUID, crewID uuid.UUID) err
 	collection := w.db.Collection("crew_race")
 	filter := bson.M{"race_id": raceID.String(), "crew_id": crewID.String()}
 
-	_, err := collection.DeleteOne(context.TODO(), filter)
+	res, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return repository_errors.DeleteError
+	}
+
+	if res.DeletedCount == 0 {
+		return repository_errors.DoesNotExist
 	}
 
 	return nil

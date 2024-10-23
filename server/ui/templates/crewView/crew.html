@@ -10,10 +10,10 @@
 
         {{ if .judge }}
         <h4>Действия над командой: </h4>
-        <form method="post" action="/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/delete">
+        <form method="post" action="/ui/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/delete">
             <button type="submit" class="btn btn-danger">Удалить команду</button>
         </form>
-        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/update">Изменить команду</a>
+        <a class="btn btn-action" href="/ui/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/update">Изменить команду</a>
         {{ end }}
 
         <h4>Список участников: </h4>
@@ -33,7 +33,7 @@
                 <tbody>
                 {{ range .participantsView }}
                 <tr>
-                    <td><a href="/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/participants/{{ .ID }}" class="btn btn-secondary">>></a></td>
+                    <td><a href="/ui/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/ui/participants/{{ .ID }}" class="btn btn-secondary">>></a></td>
                     <td>{{ .FIO }}</td>
                     <td>{{ .Category }}</td>
                     <td>{{ .Gender }}</td>
@@ -45,11 +45,11 @@
             </table>
         </div>
         {{ if .judge }}
-        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/attach">Добавить участника в команду</a>
-        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/detach">Удалить участника из команды</a>
+        <a class="btn btn-action" href="/ui/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/attach">Добавить участника в команду</a>
+        <a class="btn btn-action" href="/ui/ratings/{{ $.rating.ID }}/crews/{{ $.crew.ID }}/detach">Удалить участника из команды</a>
         {{ end }}
 
-        <a href="/ratings/{{ .rating.ID }}" class="btn btn-primary">Вернуться к рейтингу</a>
+        <a href="/ui/ratings/{{ .rating.ID }}" class="btn btn-primary">Вернуться к рейтингу</a>
     </div>
 </div>
 {{ template "template_end" . }}

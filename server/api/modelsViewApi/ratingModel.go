@@ -58,3 +58,52 @@ var ClassMap = map[int]string{
 	10: "RS:X",
 	11: "Cadet",
 }
+
+type RatingTableLine struct {
+	crewID                uuid.UUID   `json:"crewID"`
+	SailNum               int         `json:"SailNum"`
+	ParticipantNames      []string    `json:"ParticipantNames"`
+	ParticipantBirthDates []string    `json:"ParticipantBirthDates"`
+	ParticipantCategories []int       `json:"ParticipantCategories"`
+	ResInRace             map[int]int `json:"ResInRace"`
+	PointsSum             int         `json:"PointsSum"`
+	Rank                  int         `json:"Rank"`
+	CoachNames            []string    `json:"CoachNames"`
+}
+
+type RaceInfo struct {
+	RaceNum int       `json:"RaceNum"`
+	RaceID  uuid.UUID `json:"RaceID"`
+}
+
+type RankingResponse struct {
+	RankingTable []RatingTableLine `json:"RankingTable"`
+	Races        []RaceInfo        `json:"Races"`
+}
+
+// Функция конвертации
+func FromRatingTableLineModelTiStringData(original models.RatingTableLine) RatingTableLine {
+	birthDates := make([]string, len(original.ParticipantBirthDates))
+	for i, date := range original.ParticipantBirthDates {
+		birthDates[i] = date.Format("2006-01-02") // Форматирование даты в строку
+	}
+
+	return RatingTableLine{
+		SailNum:               original.SailNum,
+		ParticipantNames:      original.ParticipantNames,
+		ParticipantBirthDates: birthDates,
+		ParticipantCategories: original.ParticipantCategories,
+		ResInRace:             original.ResInRace,
+		PointsSum:             original.PointsSum,
+		Rank:                  original.Rank,
+		CoachNames:            original.CoachNames,
+	}
+}
+
+func FromRatingTableLinesModelTiStringData(original []models.RatingTableLine) []RatingTableLine {
+	var result []RatingTableLine
+	for _, line := range original {
+		result = append(result, FromRatingTableLineModelTiStringData(line))
+	}
+	return result
+}

@@ -3,6 +3,7 @@
     "info": {
         "contact": {}
     },
+
     "paths": {
         "/api/judges": {
             "get": {
@@ -57,6 +58,358 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Judge"
+                ],
+                "summary": "Создать нового судью",
+                "parameters": [
+                    {
+                        "description": "Данные для создания судьи",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.JudgeInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Судья успешно создан",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.JudgeInput"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/judges/{judgeID}": {
+            "get": {
+                "tags": [
+                    "Judge"
+                ],
+                "summary": "Получить информацию о судье",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID судьи",
+                        "name": "judgeID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Информация о судье",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.JudgeFormData"
+                        }
+                    },
+                    "404": {
+                        "description": "Судья не найден",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Judge"
+                ],
+                "summary": "Обновить информацию о судье",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID судьи",
+                        "name": "judgeID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для обновления судьи",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.JudgeInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Информация о судье успешно обновлена",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.JudgeFormData"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Судья не найден",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Judge"
+                ],
+                "summary": "Удалить судью",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID судьи",
+                        "name": "judgeID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Судья успешно удален",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Судья не найден",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/participants": {
+            "get": {
+                "description": "Получает список всех участников с возможностью фильтрации",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Participant"
+                ],
+                "summary": "Получить список всех участников",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Фильтр по ФИО",
+                        "name": "fio",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Фильтр по категории",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Фильтр по полу",
+                        "name": "gender",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Фильтр по дате рождения",
+                        "name": "birthday",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Фильтр по тренеру",
+                        "name": "coach",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список всех участников",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/modelsViewApi.ParticipantFormData"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Participant"
+                ],
+                "summary": "Создать нового участника",
+                "parameters": [
+                    {
+                        "description": "Данные для создания участника",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ParticipantInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Участник успешно создан",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ParticipantFormData"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/participants/{participantID}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Participant"
+                ],
+                "summary": "Получить информацию о конкретном участнике",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор участника",
+                        "name": "participantID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Информация о конкретном участнике",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ParticipantFormData"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Участник не найден",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Participant"
+                ],
+                "summary": "Обновить информацию об участнике",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор участника",
+                        "name": "participantID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для обновления участника",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ParticipantInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Информация об участнике успешно обновлена",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ParticipantFormData"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Участник не найден",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Participant"
+                ],
+                "summary": "Удалить участника",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор участника",
+                        "name": "participantID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Участник успешно удален"
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Участник не найден",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/api/ratings": {
@@ -77,7 +430,7 @@
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Фильтр по классу лодки",
                         "name": "class",
                         "in": "query"
@@ -266,6 +619,597 @@
                     },
                     "404": {
                         "description": "Рейтинг не найден",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ratings/{ratingID}/crews": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crew"
+                ],
+                "summary": "Получить все команды в рейтинге",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список команд успешно получен",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/modelsViewApi.CrewFormData"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Не найдены рейтинг или команды",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crew"
+                ],
+                "summary": "Создать новую команду",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для создания новой команды",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.CrewInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Команда успешно создана",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.CrewFormData"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Рейтинг не найден",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ratings/{ratingID}/crews/{crewID}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crew"
+                ],
+                "summary": "Получить информацию о команде",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор команды",
+                        "name": "crewID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Информация о команде успешно получена",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.CrewFormData"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Рейтинг или команда не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crew"
+                ],
+                "summary": "Обновить номер паруса команды",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор команды",
+                        "name": "crewID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для обновления команды",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.CrewInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Команда успешно обновлена",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.CrewFormData"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Рейтинг или команда не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crew"
+                ],
+                "summary": "Удалить команду",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор команды",
+                        "name": "crewID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Команда успешно удалена"
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Рейтинг или команда не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ratings/{ratingID}/crews/{crewID}/members": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crew Members"
+                ],
+                "summary": "Получить список участников команды",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор команды",
+                        "name": "crewID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Фильтр по имени участника",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Фильтр по статусу рулевого (1 – рулевой, 0 – не рулевой)",
+                        "name": "helmsman",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список участников команды",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/modelsViewApi.ParticipantFormData"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Рейтинг, команда или участники не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crew Members"
+                ],
+                "summary": "Добавить участника в команду",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор команды",
+                        "name": "crewID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для добавления участника",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.CrewParticipantAttachInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Участник успешно добавлен",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Рейтинг или команда не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ratings/{ratingID}/crews/{crewID}/members/{participantID}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crew Members"
+                ],
+                "summary": "Получить информацию об участнике команды",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор команды",
+                        "name": "crewID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор участника",
+                        "name": "participantID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Информация об участнике успешно получена",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ParticipantFormData"
+                        }
+                    },
+                    "404": {
+                        "description": "Команда, рейтинг или участник не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crew Members"
+                ],
+                "summary": "Изменить информацию об участнике команды",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор команды",
+                        "name": "crewID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор участника",
+                        "name": "participantID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для обновления участника",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ParticipantInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Информация об участнике успешно обновлена",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ParticipantFormData"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Команда, рейтинг или участник не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Crew Members"
+                ],
+                "summary": "Удалить участника из команды",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор команды",
+                        "name": "crewID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор участника",
+                        "name": "participantID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Участник успешно удален",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Рейтинг или команда не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
                         "schema": {
                             "$ref": "#/definitions/modelsViewApi.ErrorResponse"
                         }
@@ -483,7 +1427,726 @@
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка серверав",
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Race"
+                ],
+                "summary": "Удалить гонку",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор гонки, которую нужно удалить",
+                        "name": "raceID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Гонка успешно удалена"
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Гонка не найдена",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ratings/{ratingID}/races/{raceID}/finish": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Race"
+                ],
+                "summary": "Завершить финишную процедуру гонки",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор гонки",
+                        "name": "raceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Входные данные для завершения финишной процедуры",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.FinishInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Процедура финиша успешно выполнена",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Гонка не найдена",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ratings/{ratingID}/races/{raceID}/protests": {
+            "get": {
+                "tags": [
+                    "Protests"
+                ],
+                "summary": "Получить все протесты для указанного рейтинга и гонки",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор гонки",
+                        "name": "raceID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список протестов успешно получен",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/modelsViewApi.ProtestFormData"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Рейтинг или гонка не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Protests"
+                ],
+                "summary": "Создать новый протест",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор гонки",
+                        "name": "raceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для создания протеста",
+                        "name": "protestInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ProtestCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Протест успешно создан",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ProtestFormData"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Рейтинг или гонка не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ratings/{ratingID}/races/{raceID}/protests/{protestID}": {
+            "get": {
+                "tags": [
+                    "Protests"
+                ],
+                "summary": "Получить информацию о протесте",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор гонки",
+                        "name": "raceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор протеста",
+                        "name": "protestID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Информация о протесте",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ProtestFormData"
+                        }
+                    },
+                    "404": {
+                        "description": "Протест, рейтинг или гонка не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Protests"
+                ],
+                "summary": "Обновить информацию о протесте",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор гонки",
+                        "name": "raceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор протеста",
+                        "name": "protestID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для обновления протеста",
+                        "name": "protestInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ProtestInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Протест успешно обновлен",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ProtestFormData"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Протест, рейтинг или гонка не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Protests"
+                ],
+                "summary": "Удалить протест",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор гонки",
+                        "name": "raceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор протеста",
+                        "name": "protestID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Протест успешно удален"
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Протест, рейтинг или гонка не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ratings/{ratingID}/races/{raceID}/protests/{protestID}/complete": {
+            "patch": {
+                "tags": [
+                    "Protests"
+                ],
+                "summary": "Завершить рассмотрение протеста",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор гонки",
+                        "name": "raceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор протеста",
+                        "name": "protestID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для завершения рассмотрения протеста",
+                        "name": "protestComplete",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ProtestComplete"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Рассмотрение протеста успешно завершено",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ProtestFormData"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Протест, рейтинг или гонка не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ratings/{ratingID}/races/{raceID}/protests/{protestID}/members": {
+            "get": {
+                "tags": [
+                    "Protest Members"
+                ],
+                "summary": "Получить информацию о всех командах-участниках протеста",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор гонки",
+                        "name": "raceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор протеста",
+                        "name": "protestID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список команд-участников протеста",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/modelsViewApi.ProtestCrewFormData"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Протест, гонка или команды не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Protest Members"
+                ],
+                "summary": "Добавить команду-участника протеста",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор гонки",
+                        "name": "raceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор протеста",
+                        "name": "protestID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для добавления команды-участника",
+                        "name": "protestParticipantAttachInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ProtestParticipantAttachInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Команда-участник успешно добавлена",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Протест, гонка или команда не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ratings/{ratingID}/races/{raceID}/protests/{protestID}/members/{crewSailNum}": {
+            "delete": {
+                "tags": [
+                    "Protest Members"
+                ],
+                "summary": "Удалить команду-участника из протеста",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор гонки",
+                        "name": "raceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор протеста",
+                        "name": "protestID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "format": "int",
+                        "description": "Номер паруса команды",
+                        "name": "crewSailNum",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Команда-участник успешно удалена из протеста"
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Протест, гонка или команда не найдены",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ratings/{ratingID}/races/{raceID}/start": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Race"
+                ],
+                "summary": "Завершить стартовую процедуру гонки",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Уникальный идентификатор гонки",
+                        "name": "raceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Входные данные для завершения стартовой процедуры",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.StartInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Процедура старта успешно выполнена",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Гонка не найдена",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ratings/{ratingID}/rankings": {
+            "get": {
+                "tags": [
+                    "Ranking"
+                ],
+                "summary": "Получить рейтинговую таблицу",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID рейтинга",
+                        "name": "ratingID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Рейтинговая таблица успешно получена",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.RankingResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "$ref": "#/definitions/modelsViewApi.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Рейтинг не найден",
                         "schema": {
                             "$ref": "#/definitions/modelsViewApi.ErrorResponse"
                         }
@@ -504,6 +2167,48 @@
                 }
             }
         },
+        "modelsViewApi.CrewFormData": {
+            "type": "object",
+            "properties": {
+                "class": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "integer"
+                },
+                "rating-id": {
+                    "type": "string"
+                }
+            }
+        },
+        "modelsViewApi.CrewInput": {
+            "type": "object",
+            "required": [
+                "sailNum"
+            ],
+            "properties": {
+                "sailNum": {
+                    "type": "integer"
+                }
+            }
+        },
+        "modelsViewApi.CrewParticipantAttachInput": {
+            "type": "object",
+            "required": [
+                "participantID"
+            ],
+            "properties": {
+                "helmsman": {
+                    "type": "integer"
+                },
+                "participantID": {
+                    "type": "string"
+                }
+            }
+        },
         "modelsViewApi.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -512,6 +2217,18 @@
                 },
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "modelsViewApi.FinishInput": {
+            "type": "object",
+            "properties": {
+                "falseStartList": {
+                    "description": "Массив номеров команд в порядке финиша",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -535,6 +2252,223 @@
                 }
             }
         },
+        "modelsViewApi.JudgeInput": {
+            "type": "object",
+            "required": [
+                "fio",
+                "login"
+            ],
+            "properties": {
+                "fio": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "login": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "post": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "integer"
+                }
+            }
+        },
+        "modelsViewApi.ParticipantFormData": {
+            "type": "object",
+            "properties": {
+                "birthday": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "coach": {
+                    "type": "string"
+                },
+                "fio": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "modelsViewApi.ParticipantInput": {
+            "type": "object",
+            "required": [
+                "birthday",
+                "category",
+                "coach",
+                "fio"
+            ],
+            "properties": {
+                "birthday": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "integer"
+                },
+                "coach": {
+                    "type": "string"
+                },
+                "fio": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "modelsViewApi.ProtestComplete": {
+            "type": "object",
+            "required": [
+                "resPoints"
+            ],
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "resPoints": {
+                    "type": "integer"
+                }
+            }
+        },
+        "modelsViewApi.ProtestCreate": {
+            "type": "object",
+            "required": [
+                "protestee",
+                "protestor",
+                "reviewDate",
+                "ruleNum",
+                "witnesses"
+            ],
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "judge-id": {
+                    "type": "string"
+                },
+                "protestee": {
+                    "type": "integer"
+                },
+                "protestor": {
+                    "type": "integer"
+                },
+                "reviewDate": {
+                    "type": "string"
+                },
+                "ruleNum": {
+                    "type": "integer"
+                },
+                "witnesses": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "modelsViewApi.ProtestCrewFormData": {
+            "type": "object",
+            "properties": {
+                "class": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "integer"
+                },
+                "rating-id": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "modelsViewApi.ProtestFormData": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "judge-id": {
+                    "type": "string"
+                },
+                "race-id": {
+                    "type": "string"
+                },
+                "rating-id": {
+                    "type": "string"
+                },
+                "review-date": {
+                    "type": "string"
+                },
+                "rule-num": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "modelsViewApi.ProtestInput": {
+            "type": "object",
+            "required": [
+                "reviewDate",
+                "ruleNum"
+            ],
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "judge-id": {
+                    "type": "string"
+                },
+                "reviewDate": {
+                    "type": "string"
+                },
+                "ruleNum": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "modelsViewApi.ProtestParticipantAttachInput": {
+            "type": "object",
+            "required": [
+                "role",
+                "sailNum"
+            ],
+            "properties": {
+                "role": {
+                    "type": "integer"
+                },
+                "sailNum": {
+                    "type": "integer"
+                }
+            }
+        },
         "modelsViewApi.RaceFormData": {
             "type": "object",
             "properties": {
@@ -555,6 +2489,17 @@
                 }
             }
         },
+        "modelsViewApi.RaceInfo": {
+            "type": "object",
+            "properties": {
+                "RaceID": {
+                    "type": "string"
+                },
+                "RaceNum": {
+                    "type": "integer"
+                }
+            }
+        },
         "modelsViewApi.RaceInput": {
             "type": "object",
             "required": [
@@ -570,6 +2515,23 @@
                 },
                 "number": {
                     "type": "integer"
+                }
+            }
+        },
+        "modelsViewApi.RankingResponse": {
+            "type": "object",
+            "properties": {
+                "Races": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/modelsViewApi.RaceInfo"
+                    }
+                },
+                "RankingTable": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/modelsViewApi.RatingTableLine"
+                    }
                 }
             }
         },
@@ -605,6 +2567,66 @@
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "modelsViewApi.RatingTableLine": {
+            "type": "object",
+            "properties": {
+                "CoachNames": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ParticipantBirthDates": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ParticipantCategories": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "ParticipantNames": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "PointsSum": {
+                    "type": "integer"
+                },
+                "Rank": {
+                    "type": "integer"
+                },
+                "ResInRace": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "SailNum": {
+                    "type": "integer"
+                }
+            }
+        },
+        "modelsViewApi.StartInput": {
+            "type": "object",
+            "properties": {
+                "falseStartList": {
+                    "description": "Массив номеров фальш-стартовавших команд",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "specCircumstance": {
+                    "description": "Номер специального обстоятельства в случае фальш-старта",
+                    "type": "integer"
                 }
             }
         }

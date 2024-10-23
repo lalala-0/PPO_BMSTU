@@ -90,9 +90,13 @@ func (w *RaceRepository) Delete(id uuid.UUID) error {
 	collection := w.db.Collection("races")
 	filter := bson.M{"_id": id.String()}
 
-	_, err := collection.DeleteOne(context.Background(), filter)
+	res, err := collection.DeleteOne(context.Background(), filter)
 	if err != nil {
 		return repository_errors.DeleteError
+	}
+
+	if res.DeletedCount == 0 {
+		return repository_errors.DoesNotExist
 	}
 
 	return nil

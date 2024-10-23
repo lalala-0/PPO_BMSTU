@@ -16,9 +16,9 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 
 	router.LoadHTMLGlob("server/ui/templates/**/*")
 
-	router.GET("/", s.index)
+	router.GET("ui/", s.index)
 
-	authGroup := router.Group("/auth")
+	authGroup := router.Group("ui/auth")
 	{
 		authGroup.GET("/signin", s.signinGet)
 		authGroup.POST("/signin", s.signinPost)
@@ -26,7 +26,7 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 		authGroup.GET("/logout", s.logout)
 	}
 
-	judgeGroup := router.Group("/judges")
+	judgeGroup := router.Group("ui/judges")
 	judgeGroup.Use(authMiddleware.JudgeMiddleware())
 	{
 		judgeGroup.GET("/", s.menu)
@@ -50,7 +50,7 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 		judgeGroup.POST("/:judgeID/update", s.updateJudgePost)
 	}
 
-	ratingsGroup := router.Group("/ratings")
+	ratingsGroup := router.Group("ui/ratings")
 	ratingsGroup.Use()
 	{
 		ratingsGroup.GET("/create", s.createRatingGet)
@@ -65,7 +65,7 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 		ratingsGroup.GET("/:ratingID/ratingTable", s.getRatingTable)
 	}
 
-	racesGroup := router.Group("/ratings/:ratingID/races")
+	racesGroup := router.Group("ui/ratings/:ratingID/races")
 	racesGroup.Use()
 	{
 		racesGroup.GET("/:raceID", s.getRaceMenu)
@@ -85,7 +85,7 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 		racesGroup.POST("/:raceID/finish", s.finishRacePost)
 	}
 
-	participantsGroup := router.Group("ratings/:ratingID/crews/:crewID/participants")
+	participantsGroup := router.Group("ui/ratings/:ratingID/crews/:crewID/participants")
 	participantsGroup.Use(authMiddleware.JudgeMiddleware())
 	{
 		participantsGroup.GET("/:participantID", s.getParticipantMenu)
@@ -99,7 +99,7 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 		participantsGroup.POST("/:participantID/update", s.updateParticipantPost)
 	}
 
-	participantsShortGroup := router.Group("participants")
+	participantsShortGroup := router.Group("ui/participants")
 	participantsShortGroup.Use(authMiddleware.JudgeMiddleware())
 	{
 		participantsShortGroup.GET("/:participantID", s.getParticipantMenu)
@@ -113,7 +113,7 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 		participantsShortGroup.POST("/:participantID/update", s.updateParticipantPost)
 	}
 
-	crewsGroup := router.Group("/ratings/:ratingID/crews")
+	crewsGroup := router.Group("ui/ratings/:ratingID/crews")
 	crewsGroup.Use()
 	{
 		crewsGroup.GET("/:crewID", s.getCrewMenu)
@@ -134,7 +134,7 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 
 	}
 
-	protestsGroup := router.Group("/ratings/:ratingID/races/:raceID/protests")
+	protestsGroup := router.Group("ui/ratings/:ratingID/races/:raceID/protests")
 	protestsGroup.Use()
 	{
 		protestsGroup.GET("/:protestID", s.getProtestMenu)

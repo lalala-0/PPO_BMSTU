@@ -28,7 +28,7 @@
                     <tbody>
                     {{ range .participantsView }}
                     <tr>
-                        <td><a href="/participants/{{ .ID }}" class="btn btn-secondary">{{ .FIO }}</a></td>
+                        <td><a href="/ui/participants/{{ .ID }}" class="btn btn-secondary">{{ .FIO }}</a></td>
                         <td>{{ .Category }}</td>
                         <td>{{ .Gender }}</td>
                         <td>{{ .Birthday }}</td>
@@ -39,7 +39,7 @@
                 </table>
             </div>
         </div>
-        <a class="btn btn-action" href="/participants/create">Создать участника</a>
+        <a class="btn btn-action" href="/ui/participants/create">Создать участника</a>
 
         {{ if .mainJudge }}
         <h4>Список судей: </h4>
@@ -63,7 +63,7 @@
                     <tbody>
                     {{ range .judgesView }}
                     <tr>
-                        <td><a href="/judges/{{ .ID }}" class="btn btn-secondary">{{ .FIO }}</a></td>
+                        <td><a href="/ui/judges/{{ .ID }}" class="btn btn-secondary">{{ .FIO }}</a></td>
                         <td>{{ .Login }}</td>
                         <td>{{ .Role }}</td>
                         <td>{{ .Post }}</td>
@@ -73,7 +73,7 @@
                 </table>
             </div>
         </div>
-        <a class="btn btn-action" href="/judges/create">Создать судью</a>
+        <a class="btn btn-action" href="/ui/judges/create">Создать судью</a>
         {{ end }}
     </div>
 </div>

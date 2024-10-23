@@ -104,9 +104,13 @@ func (w *ProtestRepository) Delete(id uuid.UUID) error {
 	collection := w.db.Collection("protests")
 	filter := bson.M{"_id": id.String()}
 
-	_, err := collection.DeleteOne(context.TODO(), filter)
+	res, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return repository_errors.DeleteError
+	}
+
+	if res.DeletedCount == 0 {
+		return repository_errors.DoesNotExist
 	}
 
 	return nil
@@ -148,9 +152,13 @@ func (w *ProtestRepository) DetachCrewFromProtest(protestID uuid.UUID, crewID uu
 	collection := w.db.Collection("crew_protest")
 	filter := bson.M{"crew_id": crewID.String(), "protest_id": protestID.String()}
 
-	_, err := collection.DeleteOne(context.TODO(), filter)
+	res, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return repository_errors.DeleteError
+	}
+
+	if res.DeletedCount == 0 {
+		return repository_errors.DoesNotExist
 	}
 
 	return nil

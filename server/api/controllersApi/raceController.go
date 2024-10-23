@@ -1,6 +1,7 @@
 package controllersApi
 
 import (
+	"PPO_BMSTU/internal/repository/repository_errors"
 	"PPO_BMSTU/server/api/apiUtils"
 	"PPO_BMSTU/server/api/modelsViewApi"
 	"fmt"
@@ -31,8 +32,15 @@ func (s *ServicesAPI) getRacesByRatingID(c *gin.Context) {
 
 	races, err := s.Services.RaceService.GetRacesDataByRatingID(ratingID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, modelsViewApi.ErrorResponse{
-			Error:   "Not Found",
+		if err == repository_errors.DoesNotExist {
+			c.JSON(http.StatusNotFound, modelsViewApi.BadRequestError{
+				Error:   "Race or rating not found",
+				Message: err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
+			Error:   "Internal server error",
 			Message: "Rating or races not found.",
 		})
 		return
@@ -42,14 +50,14 @@ func (s *ServicesAPI) getRacesByRatingID(c *gin.Context) {
 	class := c.Query("class")
 	number := c.Query("number")
 
-	var filteredRaces []modelsViewApi.RaceFormData
+	var filteredRaces []*modelsViewApi.RaceFormData
 	for _, race := range races {
 		// Проверяем соответствие фильтрам
 		if (date == "" || race.Date.Format("2006-01-02") == date) &&
 			(class == "" || modelsViewApi.ClassMap[race.Class] == class) &&
-			(number == "0" || string(race.Number) == number) {
+			(number == "" || string(race.Number) == number) {
 			raceStr, _ := modelsViewApi.FromRaceModelToStringData(&race)
-			filteredRaces = append(filteredRaces, raceStr)
+			filteredRaces = append(filteredRaces, &raceStr)
 		}
 	}
 
@@ -147,6 +155,13 @@ func (s *ServicesAPI) getRaceByID(c *gin.Context) {
 	// Получение информации о гонке через сервисный уровень
 	race, err := s.Services.RaceService.GetRaceDataByID(raceID)
 	if err != nil {
+		if err == repository_errors.DoesNotExist {
+			c.JSON(http.StatusNotFound, modelsViewApi.BadRequestError{
+				Error:   "Race or rating not found",
+				Message: err.Error(),
+			})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, modelsViewApi.BadRequestError{
 			Error:   "Internal error",
 			Message: err.Error(),
@@ -218,6 +233,13 @@ func (s *ServicesAPI) updateRace(c *gin.Context) {
 
 	updatedRace, err := s.Services.RaceService.UpdateRaceByID(raceID, ratingID, input.Number, date, input.Class)
 	if err != nil {
+		if err == repository_errors.DoesNotExist {
+			c.JSON(http.StatusNotFound, modelsViewApi.BadRequestError{
+				Error:   "Race or rating not found",
+				Message: err.Error(),
+			})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, modelsViewApi.BadRequestError{
 			Error:   "Internal error",
 			Message: err.Error(),
@@ -268,6 +290,13 @@ func (s *ServicesAPI) deleteRace(c *gin.Context) {
 
 	err = s.Services.RaceService.DeleteRaceByID(raceID)
 	if err != nil {
+		if err == repository_errors.DoesNotExist {
+			c.JSON(http.StatusNotFound, modelsViewApi.BadRequestError{
+				Error:   "Race or rating not found",
+				Message: err.Error(),
+			})
+			return
+		}
 
 		c.JSON(http.StatusInternalServerError, modelsViewApi.BadRequestError{
 			Error:   "Internal error",

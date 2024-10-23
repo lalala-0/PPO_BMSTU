@@ -13,20 +13,20 @@
         {{ if .judge }}
         <h4>Действия над участником: </h4>
             {{ if .rating }}
-            <form method="post" action="/ratings/{{ .rating.ID }}/crews/{{ .crew.ID }}/participants/{{ $.participant.ID }}/delete">
+            <form method="post" action="/ui/ratings/{{ .rating.ID }}/crews/{{ .crew.ID }}/ui/participants/{{ $.participant.ID }}/delete">
                 <button type="submit" class="btn btn-danger">Удалить участника</button>
             </form>
-            <a class="btn btn-action" href="/ratings/{{ .rating.ID }}/crews/{{ .crew.ID }}/participants/{{ $.participant.ID }}/update">Изменить участника</a>
+            <a class="btn btn-action" href="/ui/ratings/{{ .rating.ID }}/crews/{{ .crew.ID }}/ui/participants/{{ $.participant.ID }}/update">Изменить участника</a>
             {{ else }}
-            <form method="post" action="/participants/{{ $.participant.ID }}/delete">
+            <form method="post" action="/ui/participants/{{ $.participant.ID }}/delete">
                 <button type="submit" class="btn btn-danger">Удалить участника</button>
             </form>
-            <a class="btn btn-action" href="/participants/{{ $.participant.ID }}/update">Изменить участника</a>
+            <a class="btn btn-action" href="/ui/participants/{{ $.participant.ID }}/update">Изменить участника</a>
             {{ end }}
         {{ end }}
 
         {{ if .rating }}
-        <a href="/ratings/{{ .rating.ID }}/crews/{{ .crew.ID }}" class="btn btn-primary">Вернуться к команде</a>
+        <a href="/ui/ratings/{{ .rating.ID }}/crews/{{ .crew.ID }}" class="btn btn-primary">Вернуться к команде</a>
         {{ else }}
         <a href="/" class="btn btn-primary">Вернуться к списку рейтингов</a>
         {{ end }}

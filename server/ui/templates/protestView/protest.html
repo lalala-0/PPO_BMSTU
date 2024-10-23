@@ -10,12 +10,12 @@
 
         {{ if .judge }}
         <h4>Действия над протестом: </h4>
-        <form method="post" action="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/delete">
+        <form method="post" action="/ui/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/delete">
             <button type="submit" class="btn btn-danger">Удалить протест</button>
         </form>
-        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/update">Изменить протест</a>
+        <a class="btn btn-action" href="/ui/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/update">Изменить протест</a>
         {{ if eq .protest.Status 1 }}
-        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/complete">Завершить рассмотрение протеста</a>
+        <a class="btn btn-action" href="/ui/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/complete">Завершить рассмотрение протеста</a>
         {{ end }}
         {{ end }}
 
@@ -31,7 +31,7 @@
                 <tbody>
                 {{ range .protestParticipants }}
                 <tr>
-                    <td><a href="/ratings/{{ $.rating.ID }}/crews/{{ .ID }}" class="btn btn-secondary">{{ .SailNum }}</a></td>
+                    <td><a href="/ui/ratings/{{ $.rating.ID }}/crews/{{ .ID }}" class="btn btn-secondary">{{ .SailNum }}</a></td>
                     <td>{{ .Role }}</td>
                 </tr>
                 {{ end }}
@@ -39,11 +39,11 @@
             </table>
         </div>
         {{ if .judge }}
-        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/attach">Добавить участника протеста</a>
-        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/detach">Удалить участника протеста</a>
+        <a class="btn btn-action" href="/ui/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/attach">Добавить участника протеста</a>
+        <a class="btn btn-action" href="/ui/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ $.protest.ID }}/detach">Удалить участника протеста</a>
         {{ end }}
 
-        <a href="/ratings/{{ .rating.ID }}/races/{{ .race.ID }}" class="btn btn-primary">Вернуться к гонке</a>
+        <a href="/ui/ratings/{{ .rating.ID }}/races/{{ .race.ID }}" class="btn btn-primary">Вернуться к гонке</a>
     </div>
 </div>
 {{ template "template_end" . }}

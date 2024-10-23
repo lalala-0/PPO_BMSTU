@@ -6,12 +6,47 @@ definitions:
       message:
         type: string
     type: object
+  modelsViewApi.CrewFormData:
+    properties:
+      class:
+        type: string
+      id:
+        type: string
+      name:
+        type: integer
+      rating-id:
+        type: string
+    type: object
+  modelsViewApi.CrewInput:
+    properties:
+      sailNum:
+        type: integer
+    required:
+    - sailNum
+    type: object
+  modelsViewApi.CrewParticipantAttachInput:
+    properties:
+      helmsman:
+        type: integer
+      participantID:
+        type: string
+    required:
+    - participantID
+    type: object
   modelsViewApi.ErrorResponse:
     properties:
       error:
         type: string
       message:
         type: string
+    type: object
+  modelsViewApi.FinishInput:
+    properties:
+      falseStartList:
+        description: Массив номеров команд в порядке финиша
+        items:
+          type: integer
+        type: array
     type: object
   modelsViewApi.JudgeFormData:
     properties:
@@ -26,6 +61,151 @@ definitions:
       role:
         type: string
     type: object
+  modelsViewApi.JudgeInput:
+    properties:
+      fio:
+        type: string
+      id:
+        type: string
+      login:
+        type: string
+      password:
+        type: string
+      post:
+        type: string
+      role:
+        type: integer
+    required:
+    - fio
+    - login
+    type: object
+  modelsViewApi.ParticipantFormData:
+    properties:
+      birthday:
+        type: string
+      category:
+        type: string
+      coach:
+        type: string
+      fio:
+        type: string
+      gender:
+        type: string
+      id:
+        type: string
+    type: object
+  modelsViewApi.ParticipantInput:
+    properties:
+      birthday:
+        type: string
+      category:
+        type: integer
+      coach:
+        type: string
+      fio:
+        type: string
+      gender:
+        type: integer
+      id:
+        type: string
+    required:
+    - birthday
+    - category
+    - coach
+    - fio
+    type: object
+  modelsViewApi.ProtestComplete:
+    properties:
+      comment:
+        type: string
+      resPoints:
+        type: integer
+    required:
+    - resPoints
+    type: object
+  modelsViewApi.ProtestCreate:
+    properties:
+      comment:
+        type: string
+      judge-id:
+        type: string
+      protestee:
+        type: integer
+      protestor:
+        type: integer
+      reviewDate:
+        type: string
+      ruleNum:
+        type: integer
+      witnesses:
+        items:
+          type: integer
+        type: array
+    required:
+    - protestee
+    - protestor
+    - reviewDate
+    - ruleNum
+    - witnesses
+    type: object
+  modelsViewApi.ProtestCrewFormData:
+    properties:
+      class:
+        type: string
+      id:
+        type: string
+      name:
+        type: integer
+      rating-id:
+        type: string
+      role:
+        type: string
+    type: object
+  modelsViewApi.ProtestFormData:
+    properties:
+      comment:
+        type: string
+      id:
+        type: string
+      judge-id:
+        type: string
+      race-id:
+        type: string
+      rating-id:
+        type: string
+      review-date:
+        type: string
+      rule-num:
+        type: integer
+      status:
+        type: string
+    type: object
+  modelsViewApi.ProtestInput:
+    properties:
+      comment:
+        type: string
+      judge-id:
+        type: string
+      reviewDate:
+        type: string
+      ruleNum:
+        type: integer
+      status:
+        type: integer
+    required:
+    - reviewDate
+    - ruleNum
+    type: object
+  modelsViewApi.ProtestParticipantAttachInput:
+    properties:
+      role:
+        type: integer
+      sailNum:
+        type: integer
+    required:
+    - role
+    - sailNum
+    type: object
   modelsViewApi.RaceFormData:
     properties:
       class:
@@ -39,6 +219,13 @@ definitions:
       rating-id:
         type: string
     type: object
+  modelsViewApi.RaceInfo:
+    properties:
+      RaceID:
+        type: string
+      RaceNum:
+        type: integer
+    type: object
   modelsViewApi.RaceInput:
     properties:
       class:
@@ -50,6 +237,17 @@ definitions:
     required:
     - date
     - number
+    type: object
+  modelsViewApi.RankingResponse:
+    properties:
+      Races:
+        items:
+          $ref: '#/definitions/modelsViewApi.RaceInfo'
+        type: array
+      RankingTable:
+        items:
+          $ref: '#/definitions/modelsViewApi.RatingTableLine'
+        type: array
     type: object
   modelsViewApi.RatingFormData:
     properties:
@@ -73,6 +271,46 @@ definitions:
     required:
     - class
     - name
+    type: object
+  modelsViewApi.RatingTableLine:
+    properties:
+      CoachNames:
+        items:
+          type: string
+        type: array
+      ParticipantBirthDates:
+        items:
+          type: string
+        type: array
+      ParticipantCategories:
+        items:
+          type: integer
+        type: array
+      ParticipantNames:
+        items:
+          type: string
+        type: array
+      PointsSum:
+        type: integer
+      Rank:
+        type: integer
+      ResInRace:
+        additionalProperties:
+          type: integer
+        type: object
+      SailNum:
+        type: integer
+    type: object
+  modelsViewApi.StartInput:
+    properties:
+      falseStartList:
+        description: Массив номеров фальш-стартовавших команд
+        items:
+          type: integer
+        type: array
+      specCircumstance:
+        description: Номер специального обстоятельства в случае фальш-старта
+        type: integer
     type: object
 info:
   contact: {}
@@ -113,6 +351,238 @@ paths:
       summary: Получить список всех судей
       tags:
       - Judge
+    post:
+      parameters:
+      - description: Данные для создания судьи
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.JudgeInput'
+      responses:
+        "201":
+          description: Судья успешно создан
+          schema:
+            $ref: '#/definitions/modelsViewApi.JudgeInput'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+      summary: Создать нового судью
+      tags:
+      - Judge
+  /api/judges/{judgeID}:
+    delete:
+      parameters:
+      - description: ID судьи
+        format: uuid
+        in: path
+        name: judgeID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Судья успешно удален
+          schema:
+            type: string
+        "404":
+          description: Судья не найден
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Удалить судью
+      tags:
+      - Judge
+    get:
+      parameters:
+      - description: ID судьи
+        format: uuid
+        in: path
+        name: judgeID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Информация о судье
+          schema:
+            $ref: '#/definitions/modelsViewApi.JudgeFormData'
+        "404":
+          description: Судья не найден
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить информацию о судье
+      tags:
+      - Judge
+    put:
+      parameters:
+      - description: ID судьи
+        format: uuid
+        in: path
+        name: judgeID
+        required: true
+        type: string
+      - description: Данные для обновления судьи
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.JudgeInput'
+      responses:
+        "200":
+          description: Информация о судье успешно обновлена
+          schema:
+            $ref: '#/definitions/modelsViewApi.JudgeFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Судья не найден
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Обновить информацию о судье
+      tags:
+      - Judge
+  /api/participants:
+    get:
+      description: Получает список всех участников с возможностью фильтрации
+      parameters:
+      - description: Фильтр по ФИО
+        in: query
+        name: fio
+        type: string
+      - description: Фильтр по категории
+        in: query
+        name: category
+        type: string
+      - description: Фильтр по полу
+        in: query
+        name: gender
+        type: string
+      - description: Фильтр по дате рождения
+        in: query
+        name: birthday
+        type: string
+      - description: Фильтр по тренеру
+        in: query
+        name: coach
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список всех участников
+          schema:
+            items:
+              $ref: '#/definitions/modelsViewApi.ParticipantFormData'
+            type: array
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+      summary: Получить список всех участников
+      tags:
+      - Participant
+    post:
+      parameters:
+      - description: Данные для создания участника
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.ParticipantInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Участник успешно создан
+          schema:
+            $ref: '#/definitions/modelsViewApi.ParticipantFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+      summary: Создать нового участника
+      tags:
+      - Participant
+  /api/participants/{participantID}:
+    delete:
+      parameters:
+      - description: Уникальный идентификатор участника
+        format: uuid
+        in: path
+        name: participantID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Участник успешно удален
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Участник не найден
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Удалить участника
+      tags:
+      - Participant
+    get:
+      parameters:
+      - description: Уникальный идентификатор участника
+        format: uuid
+        in: path
+        name: participantID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о конкретном участнике
+          schema:
+            $ref: '#/definitions/modelsViewApi.ParticipantFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Участник не найден
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить информацию о конкретном участнике
+      tags:
+      - Participant
+    put:
+      parameters:
+      - description: Уникальный идентификатор участника
+        format: uuid
+        in: path
+        name: participantID
+        required: true
+        type: string
+      - description: Данные для обновления участника
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.ParticipantInput'
+      responses:
+        "200":
+          description: Информация об участнике успешно обновлена
+          schema:
+            $ref: '#/definitions/modelsViewApi.ParticipantFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Участник не найден
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Обновить информацию об участнике
+      tags:
+      - Participant
   /api/ratings:
     get:
       description: Получает список всех рейтингов с возможностью фильтрации
@@ -124,7 +594,7 @@ paths:
       - description: Фильтр по классу лодки
         in: query
         name: class
-        type: integer
+        type: string
       - description: Фильтр по количеству гонок, не учитываемых в результате
         in: query
         name: blowoutCnt
@@ -254,6 +724,406 @@ paths:
       summary: Обновить информацию о рейтинге
       tags:
       - Rating
+  /api/ratings/{ratingID}/crews:
+    get:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список команд успешно получен
+          schema:
+            items:
+              $ref: '#/definitions/modelsViewApi.CrewFormData'
+            type: array
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Не найдены рейтинг или команды
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить все команды в рейтинге
+      tags:
+      - Crew
+    post:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Данные для создания новой команды
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.CrewInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Команда успешно создана
+          schema:
+            $ref: '#/definitions/modelsViewApi.CrewFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Рейтинг не найден
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Создать новую команду
+      tags:
+      - Crew
+  /api/ratings/{ratingID}/crews/{crewID}:
+    delete:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор команды
+        format: uuid
+        in: path
+        name: crewID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Команда успешно удалена
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Рейтинг или команда не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Удалить команду
+      tags:
+      - Crew
+    get:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор команды
+        format: uuid
+        in: path
+        name: crewID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о команде успешно получена
+          schema:
+            $ref: '#/definitions/modelsViewApi.CrewFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Рейтинг или команда не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить информацию о команде
+      tags:
+      - Crew
+    put:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор команды
+        format: uuid
+        in: path
+        name: crewID
+        required: true
+        type: string
+      - description: Данные для обновления команды
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.CrewInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Команда успешно обновлена
+          schema:
+            $ref: '#/definitions/modelsViewApi.CrewFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Рейтинг или команда не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Обновить номер паруса команды
+      tags:
+      - Crew
+  /api/ratings/{ratingID}/crews/{crewID}/members:
+    get:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор команды
+        format: uuid
+        in: path
+        name: crewID
+        required: true
+        type: string
+      - description: Фильтр по имени участника
+        in: query
+        name: name
+        type: string
+      - description: Фильтр по статусу рулевого (1 – рулевой, 0 – не рулевой)
+        in: query
+        name: helmsman
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список участников команды
+          schema:
+            items:
+              $ref: '#/definitions/modelsViewApi.ParticipantFormData'
+            type: array
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Рейтинг, команда или участники не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить список участников команды
+      tags:
+      - Crew Members
+    post:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор команды
+        format: uuid
+        in: path
+        name: crewID
+        required: true
+        type: string
+      - description: Данные для добавления участника
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.CrewParticipantAttachInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Участник успешно добавлен
+          schema:
+            type: string
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Рейтинг или команда не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Добавить участника в команду
+      tags:
+      - Crew Members
+  /api/ratings/{ratingID}/crews/{crewID}/members/{participantID}:
+    delete:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор команды
+        format: uuid
+        in: path
+        name: crewID
+        required: true
+        type: string
+      - description: Уникальный идентификатор участника
+        format: uuid
+        in: path
+        name: participantID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Участник успешно удален
+          schema:
+            type: string
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Рейтинг или команда не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Удалить участника из команды
+      tags:
+      - Crew Members
+    get:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор команды
+        format: uuid
+        in: path
+        name: crewID
+        required: true
+        type: string
+      - description: Уникальный идентификатор участника
+        format: uuid
+        in: path
+        name: participantID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация об участнике успешно получена
+          schema:
+            $ref: '#/definitions/modelsViewApi.ParticipantFormData'
+        "404":
+          description: Команда, рейтинг или участник не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить информацию об участнике команды
+      tags:
+      - Crew Members
+    put:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор команды
+        format: uuid
+        in: path
+        name: crewID
+        required: true
+        type: string
+      - description: Уникальный идентификатор участника
+        format: uuid
+        in: path
+        name: participantID
+        required: true
+        type: string
+      - description: Данные для обновления участника
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.ParticipantInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация об участнике успешно обновлена
+          schema:
+            $ref: '#/definitions/modelsViewApi.ParticipantFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Команда, рейтинг или участник не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Изменить информацию об участнике команды
+      tags:
+      - Crew Members
   /api/ratings/{ratingID}/races:
     get:
       parameters:
@@ -320,6 +1190,40 @@ paths:
       tags:
       - Race
   /api/ratings/{ratingID}/races/{raceID}:
+    delete:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки, которую нужно удалить
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Гонка успешно удалена
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Гонка не найдена
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Удалить гонку
+      tags:
+      - Race
     get:
       parameters:
       - description: Уникальный идентификатор рейтинга
@@ -394,10 +1298,466 @@ paths:
           schema:
             $ref: '#/definitions/modelsViewApi.ErrorResponse'
         "500":
-          description: Внутренняя ошибка серверав
+          description: Внутренняя ошибка сервера
           schema:
             $ref: '#/definitions/modelsViewApi.ErrorResponse'
       summary: Обновить информацию о гонке
       tags:
       - Race
+  /api/ratings/{ratingID}/races/{raceID}/finish:
+    post:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      - description: Входные данные для завершения финишной процедуры
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.FinishInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Процедура финиша успешно выполнена
+          schema:
+            type: string
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Гонка не найдена
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Завершить финишную процедуру гонки
+      tags:
+      - Race
+  /api/ratings/{ratingID}/races/{raceID}/protests:
+    get:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Список протестов успешно получен
+          schema:
+            items:
+              $ref: '#/definitions/modelsViewApi.ProtestFormData'
+            type: array
+        "404":
+          description: Рейтинг или гонка не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить все протесты для указанного рейтинга и гонки
+      tags:
+      - Protests
+    post:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      - description: Данные для создания протеста
+        in: body
+        name: protestInput
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.ProtestCreate'
+      responses:
+        "201":
+          description: Протест успешно создан
+          schema:
+            $ref: '#/definitions/modelsViewApi.ProtestFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Рейтинг или гонка не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Создать новый протест
+      tags:
+      - Protests
+  /api/ratings/{ratingID}/races/{raceID}/protests/{protestID}:
+    delete:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      - description: Уникальный идентификатор протеста
+        format: uuid
+        in: path
+        name: protestID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Протест успешно удален
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Протест, рейтинг или гонка не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Удалить протест
+      tags:
+      - Protests
+    get:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      - description: Уникальный идентификатор протеста
+        format: uuid
+        in: path
+        name: protestID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Информация о протесте
+          schema:
+            $ref: '#/definitions/modelsViewApi.ProtestFormData'
+        "404":
+          description: Протест, рейтинг или гонка не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить информацию о протесте
+      tags:
+      - Protests
+    put:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      - description: Уникальный идентификатор протеста
+        format: uuid
+        in: path
+        name: protestID
+        required: true
+        type: string
+      - description: Данные для обновления протеста
+        in: body
+        name: protestInput
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.ProtestInput'
+      responses:
+        "200":
+          description: Протест успешно обновлен
+          schema:
+            $ref: '#/definitions/modelsViewApi.ProtestFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Протест, рейтинг или гонка не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Обновить информацию о протесте
+      tags:
+      - Protests
+  /api/ratings/{ratingID}/races/{raceID}/protests/{protestID}/complete:
+    patch:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      - description: Уникальный идентификатор протеста
+        format: uuid
+        in: path
+        name: protestID
+        required: true
+        type: string
+      - description: Данные для завершения рассмотрения протеста
+        in: body
+        name: protestComplete
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.ProtestComplete'
+      responses:
+        "200":
+          description: Рассмотрение протеста успешно завершено
+          schema:
+            $ref: '#/definitions/modelsViewApi.ProtestFormData'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Протест, рейтинг или гонка не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Завершить рассмотрение протеста
+      tags:
+      - Protests
+  /api/ratings/{ratingID}/races/{raceID}/protests/{protestID}/members:
+    get:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      - description: Уникальный идентификатор протеста
+        format: uuid
+        in: path
+        name: protestID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Список команд-участников протеста
+          schema:
+            items:
+              $ref: '#/definitions/modelsViewApi.ProtestCrewFormData'
+            type: array
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Протест, гонка или команды не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить информацию о всех командах-участниках протеста
+      tags:
+      - Protest Members
+    post:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      - description: Уникальный идентификатор протеста
+        format: uuid
+        in: path
+        name: protestID
+        required: true
+        type: string
+      - description: Данные для добавления команды-участника
+        in: body
+        name: protestParticipantAttachInput
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.ProtestParticipantAttachInput'
+      responses:
+        "201":
+          description: Команда-участник успешно добавлена
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Протест, гонка или команда не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Добавить команду-участника протеста
+      tags:
+      - Protest Members
+  /api/ratings/{ratingID}/races/{raceID}/protests/{protestID}/members/{crewSailNum}:
+    delete:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      - description: Уникальный идентификатор протеста
+        format: uuid
+        in: path
+        name: protestID
+        required: true
+        type: string
+      - description: Номер паруса команды
+        format: int
+        in: path
+        name: crewSailNum
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: Команда-участник успешно удалена из протеста
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Протест, гонка или команда не найдены
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Удалить команду-участника из протеста
+      tags:
+      - Protest Members
+  /api/ratings/{ratingID}/races/{raceID}/start:
+    post:
+      parameters:
+      - description: Уникальный идентификатор рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      - description: Уникальный идентификатор гонки
+        format: uuid
+        in: path
+        name: raceID
+        required: true
+        type: string
+      - description: Входные данные для завершения стартовой процедуры
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/modelsViewApi.StartInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Процедура старта успешно выполнена
+          schema:
+            type: string
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Гонка не найдена
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Завершить стартовую процедуру гонки
+      tags:
+      - Race
+  /api/ratings/{ratingID}/rankings:
+    get:
+      parameters:
+      - description: ID рейтинга
+        format: uuid
+        in: path
+        name: ratingID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Рейтинговая таблица успешно получена
+          schema:
+            $ref: '#/definitions/modelsViewApi.RankingResponse'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/modelsViewApi.BadRequestError'
+        "404":
+          description: Рейтинг не найден
+          schema:
+            $ref: '#/definitions/modelsViewApi.ErrorResponse'
+      summary: Получить рейтинговую таблицу
+      tags:
+      - Ranking
 swagger: "2.0"

@@ -11,12 +11,12 @@
 
         {{ if .judge }}
         <h4>Действия над гонкой: </h4>
-        <form method="post" action="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/delete">
+        <form method="post" action="/ui/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/delete">
             <button type="submit" class="btn btn-danger">Удалить гонку</button>
         </form>
-        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/update">Изменить гонку</a>
-        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/start">Провести стартовую процедуру</a>
-        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/finish">Провести финишную процедуру</a>
+        <a class="btn btn-action" href="/ui/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/update">Изменить гонку</a>
+        <a class="btn btn-action" href="/ui/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/start">Провести стартовую процедуру</a>
+        <a class="btn btn-action" href="/ui/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/finish">Провести финишную процедуру</a>
         {{ end }}
 
         <h4>Список протестов: </h4>
@@ -34,7 +34,7 @@
                 <tbody>
                 {{ range .protests }}
                 <tr>
-                    <td><a href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ .ID }}" class="btn btn-secondary">>></a></td>
+                    <td><a href="/ui/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/{{ .ID }}" class="btn btn-secondary">>></a></td>
                     <td>{{ .RuleNum }}</td>
                     <td>{{ .ReviewDate }}</td>
                     <td>{{ .Status }}</td>
@@ -45,9 +45,9 @@
             </table>
         </div>
         {{ if .judge }}
-        <a class="btn btn-action" href="/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/create">Создать протест</a>
+        <a class="btn btn-action" href="/ui/ratings/{{ $.rating.ID }}/races/{{ $.race.ID }}/protests/create">Создать протест</a>
         {{ end }}
-        <a href="/ratings/{{ $.rating.ID }}" class="btn btn-primary">Вернуться к рейтингу</a>
+        <a href="/ui/ratings/{{ $.rating.ID }}" class="btn btn-primary">Вернуться к рейтингу</a>
     </div>
 </div>
 {{ template "template_end" . }}

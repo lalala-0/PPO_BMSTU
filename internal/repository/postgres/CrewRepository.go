@@ -65,12 +65,19 @@ func (w CrewRepository) Update(crew *models.Crew) (*models.Crew, error) {
 
 func (w CrewRepository) Delete(id uuid.UUID) error {
 	query := `DELETE FROM crews WHERE id = $1;`
-	_, err := w.db.Exec(query, id)
+	res, err := w.db.Exec(query, id)
 
 	if err != nil {
 		return repository_errors.DeleteError
 	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
 
+	if rowsAffected == 0 {
+		return repository_errors.DoesNotExist
+	}
 	return nil
 }
 
@@ -105,12 +112,19 @@ func (w CrewRepository) AttachParticipantToCrew(participantID uuid.UUID, crewID 
 
 func (w CrewRepository) DetachParticipantFromCrew(participantID uuid.UUID, crewID uuid.UUID) error {
 	query := `DELETE FROM participant_crew WHERE participant_id = $1 and crew_id = $2;`
-	_, err := w.db.Exec(query, participantID, crewID)
+	res, err := w.db.Exec(query, participantID, crewID)
 
 	if err != nil {
 		return repository_errors.DeleteError
 	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
 
+	if rowsAffected == 0 {
+		return repository_errors.DoesNotExist
+	}
 	return nil
 }
 
@@ -131,7 +145,7 @@ func (w CrewRepository) GetCrewsDataByRatingID(id uuid.UUID) ([]models.Crew, err
 	var crewDB []CrewDB
 	err := w.db.Select(&crewDB, query, id)
 
-	if errors.Is(err, sql.ErrNoRows) {
+	if errors.Is(err, sql.ErrNoRows) || len(crewDB) == 0 {
 		return nil, repository_errors.DoesNotExist
 	} else if err != nil {
 		return nil, repository_errors.SelectError
@@ -155,6 +169,9 @@ func (w CrewRepository) GetCrewsDataByProtestID(id uuid.UUID) ([]models.Crew, er
 		return nil, repository_errors.DoesNotExist
 	} else if err != nil {
 		return nil, repository_errors.SelectError
+	}
+	if len(crewDB) == 0 {
+		return nil, repository_errors.DoesNotExist
 	}
 
 	var crewModels []models.Crew

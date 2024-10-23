@@ -54,13 +54,13 @@ func (c CrewService) DeleteCrewByID(id uuid.UUID) error {
 	_, err := c.CrewRepository.GetCrewDataByID(id)
 	if err != nil {
 		c.logger.Error("SERVICE: GetCrewDataByID method failed", "id", id, "error", err)
-		return fmt.Errorf("SERVICE: GetCrewDataByID method failed")
+		return err
 	}
 
 	err = c.CrewRepository.Delete(id)
 	if err != nil {
 		c.logger.Error("SERVICE: Delete method failed", "error", err)
-		return fmt.Errorf("SERVICE: Delete method failed")
+		return err
 	}
 
 	c.logger.Info("SERVICE: Successfully deleted crew", "id", id)

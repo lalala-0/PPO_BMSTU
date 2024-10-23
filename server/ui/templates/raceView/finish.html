@@ -10,7 +10,7 @@
     </div>
     {{ end }}
 
-    <form action="/ratings/{{ .ratingView.ID }}/races/{{ .raceView.ID }}/finish" method="post">
+    <form action="/ui/ratings/{{ .ratingView.ID }}/races/{{ .raceView.ID }}/finish" method="post">
         <div class="form-group">
             <label for="ratingName">Рейтинг:</label>
             <input type="text" class="form-control" id="ratingName" name="ratingName" value="{{ .ratingView.Name }}" readonly>

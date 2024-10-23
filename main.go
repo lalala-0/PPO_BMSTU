@@ -4,49 +4,48 @@ import (
 	"PPO_BMSTU/cmd/views/mainMenus"
 	_ "PPO_BMSTU/docs"
 	"PPO_BMSTU/internal/registry"
-	controllersUI "PPO_BMSTU/server"
+	"PPO_BMSTU/server"
 	"fmt"
 	"github.com/charmbracelet/log"
+	"os"
 )
 
 func main() {
 	app := registry.App{}
 
-	err := app.Config.ParseConfig("config.json", "config")
+	// Чтение конфигурационного файла
+	configFile := "config1.json"
+	if len(os.Args) > 1 { // Если переданы аргументы командной строки
+		configFile = os.Args[1] // Использовать файл конфигурации, переданный в качестве аргумента
+	}
+	err := app.Config.ParseConfig(configFile, "config")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	err = app.Run()
-
 	if err != nil {
 		fmt.Println("Error")
 		log.Fatal(err)
 	}
 
-	if app.Config.Mode == "cmd" {
+	// Определяем режим работы приложения
+	switch app.Config.Mode {
+	case "cmd":
+		log.Info("Start with command mode!")
 		cmdErr := mainMenus.RunMenu(app.Services)
 		if cmdErr != nil {
 			log.Fatal(cmdErr)
-			return
 		}
-	} else if app.Config.Mode == "server" {
+
+	case "server":
 		log.Info("Start with server!")
-		err = controllersUI.RunServer(&app)
+		err = server.RunServer(&app)
 		if err != nil {
 			log.Fatal(err)
-			return
 		}
-	} else {
+
+	default:
 		log.Error("Wrong app mode", "mode", app.Config.Mode)
 	}
 }
-
-//else if app.Config.Mode == "api" {
-//log.Info("Start with api!")
-//err = controllersAPI.RunApi(&app)
-//if err != nil {
-//log.Fatal(err)
-//return
-//}
-//}

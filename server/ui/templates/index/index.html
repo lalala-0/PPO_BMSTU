@@ -25,7 +25,7 @@
                     <tbody>
                     {{ range .ratings }}
                     <tr>
-                        <td><a href="/ratings/{{ .ID }}" class="btn btn-secondary">{{ .Name }}</a></td>
+                        <td><a href="ratings/{{ .ID }}" class="btn btn-secondary">{{ .Name }}</a></td>
                         <td>{{ .Class }}</td>
                     </tr>
                     {{ end }}
@@ -33,7 +33,7 @@
                 </table>
             </div>
         </div>
-        <a class="btn btn-action" href="/ratings/create">Создать рейтинг</a>
+        <a class="btn btn-action" href="ratings/create">Создать рейтинг</a>
     </div>
 </div>
 

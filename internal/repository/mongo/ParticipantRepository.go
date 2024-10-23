@@ -98,9 +98,13 @@ func (p *ParticipantRepository) Delete(id uuid.UUID) error {
 	collection := p.db.Collection("participants")
 	filter := bson.M{"_id": id.String()}
 
-	_, err := collection.DeleteOne(context.TODO(), filter)
+	res, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return repository_errors.DeleteError
+	}
+
+	if res.DeletedCount == 0 {
+		return repository_errors.DoesNotExist
 	}
 
 	return nil

@@ -25,8 +25,12 @@ func RunServer(app *registry.App) error {
 	}
 	router.SetFuncMap(funcMap)
 
+	// Установка путей для ui и api
 	UI.SetupRouter(app.Services, router)
 	API.SetupRouter(app.Services, router)
+
+	// Вызов функции для добавления статических файлов
+	setupReadmeRote(router)
 
 	gin.SetMode(gin.DebugMode)
 
@@ -60,4 +64,14 @@ func inArray(arr []int, num int) bool {
 		}
 	}
 	return false
+}
+
+func setupReadmeRote(router *gin.Engine) {
+
+	// Настройка маршрута для статических файлов
+	//router.StaticFile("/readme.md", "E:/PPO_BMSTU/README.md")              // Обслуживание файла README.md из корня проекта
+	//router.StaticFile("/readme", "E:/PPO_BMSTU/server/static/readme.html") // Обслуживание файла README.md из корня проекта
+	//
+	//router.Static("/schemes", "E:/PPO_BMSTU/schemes")      // Путь к папке schemes
+	//router.Static("/static", "E:/PPO_BMSTU/server/static") // Путь к папке static
 }

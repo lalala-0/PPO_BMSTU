@@ -54,10 +54,19 @@ func (w CrewResInRaceRepository) Create(crewResInRace *models.CrewResInRace) (*m
 
 func (w CrewResInRaceRepository) Delete(raceID uuid.UUID, crewID uuid.UUID) error {
 	query := `DELETE FROM crew_race WHERE race_id = $1 and crew_id = $2;`
-	_, err := w.db.Exec(query, raceID, crewID)
+	res, err := w.db.Exec(query, raceID, crewID)
 
 	if err != nil {
 		return repository_errors.DeleteError
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return repository_errors.DoesNotExist
 	}
 
 	return nil

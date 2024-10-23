@@ -39,14 +39,15 @@ func FromProtestModelsToStringData(protests []models.Protest) ([]ProtestFormData
 }
 
 type ProtestInput struct {
-	RuleNum    int    `form:"ruleNum" binding:"required"`
-	ReviewDate string `form:"reviewDate" binding:"required"`
-	Status     int    `form:"status" binding:""`
-	Comment    string `form:"comment" binding:""`
+	JudgeID    uuid.UUID `json:"judge-id"`
+	RuleNum    int       `form:"ruleNum" binding:"required"`
+	ReviewDate string    `form:"reviewDate" binding:"required"`
+	Status     int       `form:"status" binding:""`
+	Comment    string    `form:"comment" binding:""`
 }
 
 func FromProtestModelToInputData(protest *models.Protest) (ProtestInput, error) {
-	res := ProtestInput{protest.RuleNum, protest.ReviewDate.String(), protest.Status, protest.Comment}
+	res := ProtestInput{protest.JudgeID, protest.RuleNum, protest.ReviewDate.String(), protest.Status, protest.Comment}
 	return res, nil
 }
 
@@ -58,11 +59,13 @@ func FromProtestModelToInputData(protest *models.Protest) (ProtestInput, error) 
 //}
 
 type ProtestCreate struct {
-	RuleNum          int    `form:"ruleNum" binding:"required"`
-	ReviewDate       string `form:"reviewDate" binding:"required"`
-	Comment          string `form:"comment" binding:""`
-	ProtesteeSailNum int    `form:"protestee" binding:"required"`
-	ProtestorSailNum int    `form:"protestor" binding:"required"`
+	JudgeID          uuid.UUID `json:"judge-id"`
+	RuleNum          int       `form:"ruleNum" binding:"required"`
+	ReviewDate       string    `form:"reviewDate" binding:"required"`
+	Comment          string    `form:"comment" binding:""`
+	ProtesteeSailNum int       `form:"protestee" binding:"required"`
+	ProtestorSailNum int       `form:"protestor" binding:"required"`
+	WitnessesSailNum []int     `form:"witnesses" binding:"required"`
 }
 
 type ProtestParticipantDetachInput struct {

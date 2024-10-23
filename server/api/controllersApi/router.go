@@ -15,29 +15,21 @@ type ServicesAPI struct {
 func SetupRouter(services *registry.Services, router *gin.Engine) {
 	s := ServicesAPI{Services: services}
 
+	// judge routs
 	judgeGroup := router.Group("/api/judges")
 
 	judgeGroup.GET("/", s.getAllJudges)
+	judgeGroup.POST("/", s.createJudge)
 
-	//judgeGroup.GET("/:judgeID/profile", s.judgeProfile)
+	judgeGroup.GET("/:judgeID", s.getJudgeByID)
+	judgeGroup.PUT("/:judgeID", s.updateJudge)
+	judgeGroup.DELETE("/:judgeID", s.deleteJudge)
 	//
 	//judgeGroup.GET("/:judgeID/profile/updatePassword", s.updatePasswordGet)
 	//judgeGroup.POST("/:judgeID/profile/updatePassword", s.updatePasswordPost)
 	//
-	//judgeGroup.GET("/:judgeID/profile/update", s.updateJudgeGet)
-	//judgeGroup.POST("/:judgeID/profile/update", s.updateJudgePost)
-	//
-	//judgeGroup.GET("/:judgeID", s.getJudgeMenu)
-	//
-	//judgeGroup.POST("/:judgeID/delete", s.deleteJudge)
-	//
-	//judgeGroup.GET("/create", s.createJudgeGet)
-	//judgeGroup.POST("/create", s.createJudgePost)
-	//
-	//judgeGroup.GET("/:judgeID/update", s.updateJudgeGet)
-	//judgeGroup.POST("/:judgeID/update", s.updateJudgePost)
-	//
-	//
+
+	// rating routs
 	ratingsGroup := router.Group("/api/ratings")
 
 	ratingsGroup.GET("/", s.getAllRatings)
@@ -47,8 +39,10 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 	ratingsGroup.PUT("/:ratingID", s.updateRating)
 	ratingsGroup.DELETE("/:ratingID", s.deleteRating)
 
-	//	ratingsGroup.GET("/:ratingID/ratingTable", s.getRatingTable)
+	ratingsGroup.GET("/:ratingID/rankings", s.getRankingTable)
 	//
+
+	// race routs
 	racesGroup := router.Group("/api/ratings/:ratingID/races")
 
 	racesGroup.GET("/", s.getRacesByRatingID)
@@ -61,75 +55,49 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 	racesGroup.POST("/:raceID/start", s.startProcedure)
 	racesGroup.POST("/:raceID/finish", s.finishProcedure)
 
-	//participantsGroup := router.Group("ratings/:ratingID/crews/:crewID/participants")
-	//participantsGroup.Use(authMiddleware.JudgeMiddleware())
-	//{
-	//	participantsGroup.GET("/:participantID", s.getParticipantMenu)
-	//
-	//	participantsGroup.POST("/:participantID/delete", s.deleteParticipant)
-	//
-	//	participantsGroup.GET("/create", s.createParticipantGet)
-	//	participantsGroup.POST("/create", s.createParticipantPost)
-	//
-	//	participantsGroup.GET("/:participantID/update", s.updateParticipantGet)
-	//	participantsGroup.POST("/:participantID/update", s.updateParticipantPost)
-	//}
-	//
-	//participantsShortGroup := router.Group("participants")
-	//participantsShortGroup.Use(authMiddleware.JudgeMiddleware())
-	//{
-	//	participantsShortGroup.GET("/:participantID", s.getParticipantMenu)
-	//
-	//	participantsShortGroup.POST("/:participantID/delete", s.deleteParticipant)
-	//
-	//	participantsShortGroup.GET("/create", s.createParticipantGet)
-	//	participantsShortGroup.POST("/create", s.createParticipantPost)
-	//
-	//	participantsShortGroup.GET("/:participantID/update", s.updateParticipantGet)
-	//	participantsShortGroup.POST("/:participantID/update", s.updateParticipantPost)
-	//}
-	//
-	// crewsGroup := router.Group("/api/ratings/:ratingID/crews")
+	// participant routs
+	participantsGroup := router.Group("/api/participants")
 
-	//	crewsGroup.GET("/:crewID", s.getCrewMenu)
-	//
-	//	crewsGroup.GET("/create", s.createCrewGet)
-	//	crewsGroup.POST("/create", s.createCrewPost)
-	//
-	//	crewsGroup.GET("/:crewID/update", s.updateCrewGet)
-	//	crewsGroup.POST("/:crewID/update", s.updateCrewPost)
-	//
-	//	crewsGroup.POST("/:crewID/delete", s.deleteCrew)
-	//
-	//	crewsGroup.GET("/:crewID/attach", s.attachCrewParticipantGet)
-	//	crewsGroup.POST("/:crewID/attach", s.attachCrewParticipantPost)
-	//
-	//	crewsGroup.GET("/:crewID/detach", s.detachCrewParticipantGet)
-	//	crewsGroup.POST("/:crewID/detach", s.detachCrewParticipantPost)
-	//
-	//
-	//protestsGroup := router.Group("/ratings/:ratingID/races/:raceID/protests")
-	//protestsGroup.Use()
-	//{
-	//	protestsGroup.GET("/:protestID", s.getProtestMenu)
-	//
-	//	protestsGroup.GET("/create", s.createProtestGet)
-	//	protestsGroup.POST("/create", s.createProtestPost)
-	//
-	//	protestsGroup.GET("/:protestID/update", s.updateProtestGet)
-	//	protestsGroup.POST("/:protestID/update", s.updateProtestPost)
-	//
-	//	protestsGroup.POST("/:protestID/delete", s.deleteProtest)
-	//
-	//	protestsGroup.GET("/:protestID/attach", s.attachProtestParticipantGet)
-	//	protestsGroup.POST("/:protestID/attach", s.attachProtestParticipantPost)
-	//
-	//	protestsGroup.GET("/:protestID/detach", s.detachProtestParticipantGet)
-	//	protestsGroup.POST("/:protestID/detach", s.detachProtestParticipantPost)
-	//
-	//	protestsGroup.GET("/:protestID/complete", s.completeProtestGet)
-	//	protestsGroup.POST("/:protestID/complete", s.completeProtestPost)
-	//}
+	participantsGroup.GET("/", s.getAllParticipants)
+	participantsGroup.POST("/", s.createParticipant)
+
+	participantsGroup.GET("/:participantID", s.getParticipantById)
+	participantsGroup.PUT("/:participantID", s.updateParticipant)
+	participantsGroup.DELETE("/:participantID", s.deleteParticipant)
+
+	// crew routs
+	crewsGroup := router.Group("/api/ratings/:ratingID/crews")
+
+	crewsGroup.GET("/", s.getCrewsByRatingID)
+	crewsGroup.POST("/", s.createCrew)
+
+	crewsGroup.GET("/:crewID", s.getCrewByID)
+	crewsGroup.PUT("/:crewID", s.updateCrewSailNumber)
+	crewsGroup.DELETE("/:crewID", s.deleteCrewByID)
+
+	crewsGroup.GET("/:crewID/members", s.getCrewMembersByID)
+	crewsGroup.POST("/:crewID/members", s.attachCrewMember)
+
+	crewsGroup.GET("/:crewID/members/:participantID", s.getCrewMember)
+	crewsGroup.PUT("/:crewID/members/:participantID", s.updateCrewMember)
+	crewsGroup.DELETE("/:crewID/members/:participantID", s.detachCrewMember)
+
+	// protest routs
+
+	protestsGroup := router.Group("/api/ratings/:ratingID/races/:raceID/protests")
+
+	protestsGroup.GET("/", s.getProtests)                          // Получить все протесты
+	protestsGroup.POST("/", s.createProtest)                       // Создать новый протест
+	protestsGroup.GET("/:protestID", s.getProtest)                 // Получить информацию о протесте
+	protestsGroup.PATCH("/:protestID/complete", s.completeProtest) // Завершить рассмотрение протеста
+	protestsGroup.DELETE("/:protestID", s.deleteProtest)           // Удалить протест
+	protestsGroup.PUT("/:protestID", s.updateProtest)              // Обновить информацию о протесте
+
+	// Маршруты для участников протеста
+	protestsGroup.POST("/:protestID/members", s.attachProtestMember)                // Добавить команду-участника протеста
+	protestsGroup.DELETE("/:protestID/members/:crewSailNum", s.detachProtestMember) // Добавить команду-участника протеста
+	protestsGroup.GET("/:protestID/members", s.getProtestMembers)                   // Получить информацию о всех командах-участниках протеста
+
 	// Путь к Swagger UI
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

@@ -1,8 +1,10 @@
 package controllersApi
 
 import (
+	"PPO_BMSTU/internal/repository/repository_errors"
 	"PPO_BMSTU/server/api/modelsViewApi"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
 )
 
@@ -57,4 +59,173 @@ func (s *ServicesAPI) getAllJudges(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, filteredJudges)
+}
+
+// @Summary Создать нового судью
+// @Tags Judge
+// @Param body body modelsViewApi.JudgeInput true "Данные для создания судьи"
+// @Success 201 {object} modelsViewApi.JudgeInput "Судья успешно создан"
+// @Failure 400 {object} modelsViewApi.BadRequestError "Ошибка валидации"
+// @Router /api/judges [post]
+func (s *ServicesAPI) createJudge(c *gin.Context) {
+	var input modelsViewApi.JudgeInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, modelsViewApi.BadRequestError{
+			Error:   "Invalid input data",
+			Message: "Failed to parse request body.",
+		})
+		return
+	}
+
+	// Создание нового судьи
+	judge, err := s.Services.JudgeService.CreateProfile(uuid.New(), input.FIO, input.Login, input.Password, input.Role, input.Post)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
+			Error:   "Internal error",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, judge)
+}
+
+// @Summary Получить информацию о судье
+// @Tags Judge
+// @Param judgeID path string true "ID судьи" format(uuid)
+// @Success 200 {object} modelsViewApi.JudgeFormData "Информация о судье"
+// @Failure 404 {object} modelsViewApi.ErrorResponse "Судья не найден"
+// @Router /api/judges/{judgeID} [get]
+func (s *ServicesAPI) getJudgeByID(c *gin.Context) {
+	judgeIDParam := c.Param("judgeID")
+
+	judgeID, err := uuid.Parse(judgeIDParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modelsViewApi.BadRequestError{
+			Error:   "Invalid judge ID",
+			Message: "The provided judge ID is not a valid UUID.",
+		})
+		return
+	}
+
+	judge, err := s.Services.JudgeService.GetJudgeDataByID(judgeID)
+	if err != nil {
+		if err == repository_errors.DoesNotExist {
+			c.JSON(http.StatusNotFound, modelsViewApi.ErrorResponse{
+				Error:   "Judge not found",
+				Message: "The specified judge ID does not exist.",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
+			Error:   "Internal error",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	judgeFormData, err := modelsViewApi.FromJudgeModelToStringData(judge)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
+			Error:   "Internal error",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, judgeFormData)
+}
+
+// @Summary Удалить судью
+// @Tags Judge
+// @Param judgeID path string true "ID судьи" format(uuid)
+// @Success 204 {string} string "Судья успешно удален"
+// @Failure 404 {object} modelsViewApi.ErrorResponse "Судья не найден"
+// @Router /api/judges/{judgeID} [delete]
+func (s *ServicesAPI) deleteJudge(c *gin.Context) {
+	judgeIDParam := c.Param("judgeID")
+
+	judgeID, err := uuid.Parse(judgeIDParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modelsViewApi.BadRequestError{
+			Error:   "Invalid judge ID",
+			Message: "The provided judge ID is not a valid UUID.",
+		})
+		return
+	}
+
+	err = s.Services.JudgeService.DeleteProfile(judgeID)
+	if err != nil {
+		if err == repository_errors.DoesNotExist {
+			c.JSON(http.StatusNotFound, modelsViewApi.ErrorResponse{
+				Error:   "Judge not found",
+				Message: "The specified judge ID does not exist.",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
+			Error:   "Internal error",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+// @Summary Обновить информацию о судье
+// @Tags Judge
+// @Param judgeID path string true "ID судьи" format(uuid)
+// @Param body body modelsViewApi.JudgeInput true "Данные для обновления судьи"
+// @Success 200 {object} modelsViewApi.JudgeFormData "Информация о судье успешно обновлена"
+// @Failure 400 {object} modelsViewApi.BadRequestError "Ошибка валидации"
+// @Failure 404 {object} modelsViewApi.ErrorResponse "Судья не найден"
+// @Router /api/judges/{judgeID} [put]
+func (s *ServicesAPI) updateJudge(c *gin.Context) {
+	judgeIDParam := c.Param("judgeID")
+
+	judgeID, err := uuid.Parse(judgeIDParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modelsViewApi.BadRequestError{
+			Error:   "Invalid judge ID",
+			Message: "The provided judge ID is not a valid UUID.",
+		})
+		return
+	}
+
+	var input modelsViewApi.JudgeInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, modelsViewApi.BadRequestError{
+			Error:   "Invalid input data",
+			Message: "Failed to parse request body.",
+		})
+		return
+	}
+
+	updatedJudge, err := s.Services.JudgeService.UpdateProfile(judgeID, input.FIO, input.Login, input.Password, input.Role)
+	if err != nil {
+		if err == repository_errors.DoesNotExist {
+			c.JSON(http.StatusNotFound, modelsViewApi.ErrorResponse{
+				Error:   "Judge not found",
+				Message: "The specified judge ID does not exist.",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
+			Error:   "Internal error",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	judgeFormData, err := modelsViewApi.FromJudgeModelToStringData(updatedJudge)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
+			Error:   "Internal error",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, judgeFormData)
 }

@@ -51,13 +51,7 @@ func (r RaceService) AddNewRace(raceID uuid.UUID, ratingID uuid.UUID, number int
 }
 
 func (r RaceService) DeleteRaceByID(id uuid.UUID) error {
-	_, err := r.RaceRepository.GetRaceDataByID(id)
-	if err != nil {
-		r.logger.Error("SERVICE: GetRaceDataByID method failed", "id", id, "error", err)
-		return err
-	}
-
-	err = r.RaceRepository.Delete(id)
+	err := r.RaceRepository.Delete(id)
 	if err != nil {
 		r.logger.Error("SERVICE: DeleteRaceByID method failed", "error", err)
 		return err

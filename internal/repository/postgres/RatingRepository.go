@@ -130,12 +130,20 @@ func (w RatingRepository) Update(rating *models.Rating) (*models.Rating, error) 
 
 func (w RatingRepository) Delete(id uuid.UUID) error {
 	query := `DELETE FROM ratings WHERE id = $1;`
-	_, err := w.db.Exec(query, id)
+	res, err := w.db.Exec(query, id)
 
 	if err != nil {
 		return repository_errors.DeleteError
 	}
 
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return repository_errors.DoesNotExist
+	}
 	return nil
 }
 
@@ -171,10 +179,11 @@ func (w RatingRepository) DetachJudgeFromRating(ratingID uuid.UUID, judgeID uuid
 	query := `DELETE FROM judge_rating WHERE judge_id = $1 and rating_id = $2;`
 	_, err := w.db.Exec(query, judgeID, ratingID)
 
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
+		return repository_errors.DoesNotExist
+	} else if err != nil {
 		return repository_errors.DeleteError
 	}
-
 	return nil
 }
 

@@ -159,9 +159,13 @@ func (w RatingRepository) Delete(id uuid.UUID) error {
 	collection := w.db.Collection("ratings")
 	filter := bson.M{"_id": id.String()}
 
-	_, err := collection.DeleteOne(context.TODO(), filter)
+	res, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return repository_errors.DeleteError
+	}
+
+	if res.DeletedCount == 0 {
+		return repository_errors.DoesNotExist
 	}
 
 	return nil
@@ -177,7 +181,7 @@ func (w RatingRepository) GetRatingDataByID(id uuid.UUID) (*models.Rating, error
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, repository_errors.DoesNotExist
 		}
-		return nil, repository_errors.SelectError
+		return nil, repository_errors.DeleteError
 	}
 
 	return copyRatingResultToModel(&ratingDB), nil
@@ -196,10 +200,14 @@ func (w RatingRepository) AttachJudgeToRating(ratingID uuid.UUID, judgeID uuid.U
 
 func (w RatingRepository) DetachJudgeFromRating(ratingID uuid.UUID, judgeID uuid.UUID) error {
 	collection := w.db.Collection("judge_rating")
-	_, err := collection.DeleteOne(context.TODO(), bson.M{"judge_id": judgeID.String(), "rating_id": ratingID.String()})
+	res, err := collection.DeleteOne(context.TODO(), bson.M{"judge_id": judgeID.String(), "rating_id": ratingID.String()})
 
 	if err != nil {
 		return repository_errors.DeleteError
+	}
+
+	if res.DeletedCount == 0 {
+		return repository_errors.DoesNotExist
 	}
 
 	return nil

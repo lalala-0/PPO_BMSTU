@@ -82,12 +82,19 @@ func (w ParticipantRepository) Update(participant *models.Participant) (*models.
 
 func (w ParticipantRepository) Delete(id uuid.UUID) error {
 	query := `DELETE FROM participants WHERE id = $1;`
-	_, err := w.db.Exec(query, id)
+	res, err := w.db.Exec(query, id)
 
 	if err != nil {
 		return repository_errors.DeleteError
 	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
 
+	if rowsAffected == 0 {
+		return repository_errors.DoesNotExist
+	}
 	return nil
 }
 

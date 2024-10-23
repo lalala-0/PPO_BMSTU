@@ -1,8 +1,8 @@
 package controllersApi
 
 import (
+	"PPO_BMSTU/internal/repository/repository_errors"
 	"PPO_BMSTU/server/api/modelsViewApi"
-	"database/sql"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -15,7 +15,7 @@ import (
 // @Tags Rating
 // @Produce json
 // @Param name query string false "Фильтр по названию рейтинга"
-// @Param class query int false "Фильтр по классу лодки"
+// @Param class query string false "Фильтр по классу лодки"
 // @Param blowoutCnt query int false "Фильтр по количеству гонок, не учитываемых в результате"
 // @Success 200 {array} modelsViewApi.RatingFormData "Список рейтингов"
 // @Failure 400 {object} modelsViewApi.BadRequestError "Ошибка валидации"
@@ -39,9 +39,16 @@ func (s *ServicesAPI) getAllRatings(c *gin.Context) {
 	// Конвертация моделей уровня сервиса в модели API
 	ratings, err := modelsViewApi.FromRatingModelsToStringData(ratingModels)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "Internal Server Error",
-			"message": "Не удалось конвертировать модели рейтингов.",
+		if err == repository_errors.DoesNotExist {
+			c.JSON(http.StatusNotFound, modelsViewApi.ErrorResponse{
+				Error:   "Rating not found",
+				Message: "The specified rating ID does not exist.",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
+			Error:   "Internal error",
+			Message: err.Error(),
 		})
 		return
 	}
@@ -50,7 +57,7 @@ func (s *ServicesAPI) getAllRatings(c *gin.Context) {
 	var filteredRatings []modelsViewApi.RatingFormData
 	for _, rating := range ratings {
 		if (name == "" || rating.Name == name) &&
-			(class == "" || fmt.Sprintf("%d", rating.Class) == class) &&
+			(class == "" || rating.Class == class) &&
 			(blowoutCnt == "" || fmt.Sprintf("%d", rating.BlowoutCnt) == blowoutCnt) {
 			filteredRatings = append(filteredRatings, rating)
 		}
@@ -119,7 +126,7 @@ func (s *ServicesAPI) getRating(c *gin.Context) {
 
 	rating, err := s.Services.RatingService.GetRatingDataByID(ratingID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == repository_errors.DoesNotExist {
 			c.JSON(http.StatusNotFound, modelsViewApi.ErrorResponse{
 				Error:   "Rating not found",
 				Message: "The rating with the provided ID does not exist.",
@@ -193,7 +200,7 @@ func (s *ServicesAPI) updateRating(c *gin.Context) {
 
 	class, exists := modelsViewApi.ClassMap[updatedRating.Class]
 	if !exists {
-		c.JSON(http.StatusBadRequest, modelsViewApi.BadRequestError{
+		c.JSON(http.StatusNotFound, modelsViewApi.BadRequestError{
 			Error:   "Invalid class",
 			Message: fmt.Sprintf("The class '%d' is not a valid class in modelsView ClassMap.", input.Class),
 		})
@@ -230,6 +237,13 @@ func (s *ServicesAPI) deleteRating(c *gin.Context) {
 
 	err = s.Services.RatingService.DeleteRatingByID(ratingID)
 	if err != nil {
+		if err == repository_errors.DoesNotExist {
+			c.JSON(http.StatusNotFound, modelsViewApi.ErrorResponse{
+				Error:   "Rating not found",
+				Message: "The rating with the provided ID does not exist.",
+			})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, modelsViewApi.BadRequestError{
 			Error:   "Internal error",
 			Message: err.Error(),
@@ -238,4 +252,70 @@ func (s *ServicesAPI) deleteRating(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// @Summary Получить рейтинговую таблицу
+// @Tags Ranking
+// @Param ratingID path string true "ID рейтинга" format(uuid)
+// @Success 200 {object} modelsViewApi.RankingResponse "Рейтинговая таблица успешно получена"
+// @Failure 400 {object} modelsViewApi.BadRequestError "Ошибка валидации"
+// @Failure 404 {object} modelsViewApi.ErrorResponse "Рейтинг не найден"
+// @Router /api/ratings/{ratingID}/rankings [get]
+func (s *ServicesAPI) getRankingTable(c *gin.Context) {
+	ratingIDParam := c.Param("ratingID")
+
+	ratingID, err := uuid.Parse(ratingIDParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, modelsViewApi.BadRequestError{
+			Error:   "Invalid rating ID",
+			Message: "The provided rating ID is not a valid UUID.",
+		})
+		return
+	}
+
+	rankingTable, err := s.Services.RatingService.GetRatingTable(ratingID)
+	if err != nil {
+		if err == repository_errors.DoesNotExist {
+			c.JSON(http.StatusNotFound, modelsViewApi.ErrorResponse{
+				Error:   "Rating not found",
+				Message: "The specified rating ID does not exist.",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
+			Error:   "Internal error",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	races, err := s.Services.RaceService.GetRacesDataByRatingID(ratingID)
+	if err != nil {
+		if err == repository_errors.DoesNotExist {
+			c.JSON(http.StatusNotFound, modelsViewApi.ErrorResponse{
+				Error:   "Race not found",
+				Message: "The specified race in rating does not exist.",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
+			Error:   "Internal error",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	resRankingTable := modelsViewApi.FromRatingTableLinesModelTiStringData(rankingTable)
+
+	var resRaces []modelsViewApi.RaceInfo
+	for _, race := range races {
+		resRaces = append(resRaces, modelsViewApi.RaceInfo{race.Number, race.ID})
+	}
+
+	response := modelsViewApi.RankingResponse{
+		RankingTable: resRankingTable,
+		Races:        resRaces,
+	}
+
+	c.JSON(http.StatusOK, response)
 }

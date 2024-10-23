@@ -1,0 +1,16 @@
+{
+  "dbConnectionFlags": {
+    "host": "127.0.0.1",
+    "user": "readonly_user",
+    "password": "password",
+    "port": "27018",
+    "dbname": "ppo_db"
+  },
+
+  "mode" : "server",
+  "dbtype": "mongo",
+  "loglevel": "info",
+  "logfile" : "info.log",
+  "port": ":8082",
+  "address": "127.0.0.1"
+}

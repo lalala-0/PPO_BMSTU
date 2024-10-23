@@ -79,10 +79,14 @@ func (c *CrewRepository) Update(crew *models.Crew) (*models.Crew, error) {
 func (c *CrewRepository) Delete(id uuid.UUID) error {
 	collection := c.db.Collection("crews")
 	filter := bson.M{"_id": id.String()}
-	_, err := collection.DeleteOne(context.Background(), filter)
+	res, err := collection.DeleteOne(context.Background(), filter)
 
 	if err != nil {
 		return repository_errors.DeleteError
+	}
+
+	if res.DeletedCount == 0 {
+		return repository_errors.DoesNotExist
 	}
 
 	return nil
@@ -122,12 +126,15 @@ func (c *CrewRepository) AttachParticipantToCrew(participantID uuid.UUID, crewID
 func (c *CrewRepository) DetachParticipantFromCrew(participantID uuid.UUID, crewID uuid.UUID) error {
 	m2mCollection := c.db.Collection("participant_crew")
 
-	_, err := m2mCollection.DeleteOne(context.Background(), bson.M{
+	res, err := m2mCollection.DeleteOne(context.Background(), bson.M{
 		"crew_id":        crewID.String(),
 		"participant_id": participantID.String(),
 	})
 	if err != nil {
-		return repository_errors.InsertError
+		return repository_errors.DeleteError
+	}
+	if res.DeletedCount == 0 {
+		return repository_errors.DoesNotExist
 	}
 
 	return nil

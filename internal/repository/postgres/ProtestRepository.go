@@ -78,10 +78,19 @@ func (w ProtestRepository) Update(protest *models.Protest) (*models.Protest, err
 
 func (w ProtestRepository) Delete(id uuid.UUID) error {
 	query := `DELETE FROM protests WHERE id = $1;`
-	_, err := w.db.Exec(query, id)
+	res, err := w.db.Exec(query, id)
 
 	if err != nil {
 		return repository_errors.DeleteError
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return repository_errors.DoesNotExist
 	}
 
 	return nil
@@ -117,12 +126,20 @@ func (w ProtestRepository) AttachCrewToProtest(crewID uuid.UUID, protestID uuid.
 
 func (w ProtestRepository) DetachCrewFromProtest(protestID uuid.UUID, crewID uuid.UUID) error {
 	query := `DELETE FROM crew_protest WHERE crew_id = $1 and protest_id = $2;`
-	_, err := w.db.Exec(query, crewID, protestID)
+	res, err := w.db.Exec(query, crewID, protestID)
 
 	if err != nil {
 		return repository_errors.DeleteError
 	}
 
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return repository_errors.DoesNotExist
+	}
 	return nil
 }
 

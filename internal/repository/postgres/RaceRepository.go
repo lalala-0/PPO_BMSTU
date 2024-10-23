@@ -70,12 +70,20 @@ func (w RaceRepository) Update(race *models.Race) (*models.Race, error) {
 
 func (w RaceRepository) Delete(id uuid.UUID) error {
 	query := `DELETE FROM races WHERE id = $1;`
-	_, err := w.db.Exec(query, id)
+	res, err := w.db.Exec(query, id)
 
 	if err != nil {
 		return repository_errors.DeleteError
 	}
 
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return repository_errors.DoesNotExist
+	}
 	return nil
 }
 

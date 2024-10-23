@@ -71,10 +71,18 @@ func (w JudgeRepository) UpdateProfile(judge *models.Judge) (*models.Judge, erro
 
 func (w JudgeRepository) DeleteProfile(id uuid.UUID) error {
 	query := `DELETE FROM judges WHERE id = $1;`
-	_, err := w.db.Exec(query, id)
+	res, err := w.db.Exec(query, id)
 
 	if err != nil {
 		return repository_errors.DeleteError
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return repository_errors.DoesNotExist
 	}
 
 	return nil
