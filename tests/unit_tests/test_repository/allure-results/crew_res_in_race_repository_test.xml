@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="9" failures="0" errors="0" time="1.730146">
+	<testsuite tests="9" failures="0" time="0.291000" name="command-line-arguments" timestamp="2024-10-10T01:16:21+03:00">
+		<properties>
+			<property name="go.version" value="go1.22.4 windows/amd64"></property>
+		</properties>
+		<testcase classname="command-line-arguments" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryCreate_Failure" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryCreate_Success" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryDelete_Failure" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryDelete_Success" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryGetCrewResByRaceIDAndCrewID_Failure" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryGetCrewResByRaceIDAndCrewID_Success" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryUpdate_Failure" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryUpdate_Success" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestCrewResInRaceRepository" time="0.000000"></testcase>
+	</testsuite>
+</testsuites>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="17" failures="0" errors="0" time="1.450119">
+	<testsuite tests="17" failures="0" time="0.281000" name="command-line-arguments" timestamp="2024-10-10T01:16:24+03:00">
+		<properties>
+			<property name="go.version" value="go1.22.4 windows/amd64"></property>
+		</properties>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryAttachCrewToProtest_Failure" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryAttachCrewToProtest_Success" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryCreate_Failure" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryCreate_Success" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryDelete_Failure" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryDelete_Success" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryDetachCrewFromProtest_Failure" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryDetachCrewFromProtest_Success" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryGetByID_Failure" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryGetByID_Success" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryGetProtestParticipantsIDByID_Failure" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryGetProtestParticipantsIDByID_Success" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryGetProtestsDataByRaceID_Failure" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryGetProtestsDataByRaceID_Success" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryUpdate_Failure" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository/TestProtestRepositoryUpdate_Success" time="0.000000"></testcase>
+		<testcase classname="command-line-arguments" name="TestIProtestRepository" time="0.000000"></testcase>
+	</testsuite>
+</testsuites>

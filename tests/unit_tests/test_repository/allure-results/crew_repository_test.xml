@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="0" failures="0" errors="0" time="0.990893">
+	<testsuite tests="0" failures="0" time="0.176000" name="command-line-arguments" timestamp="2024-10-10T01:16:20+03:00">
+		<properties>
+			<property name="go.version" value="go1.22.4 windows/amd64"></property>
+		</properties>
+	</testsuite>
+</testsuites>

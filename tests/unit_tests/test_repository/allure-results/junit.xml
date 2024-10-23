@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="67" failures="0" errors="0" time="0.692528">
+	<testsuite tests="67" failures="0" time="0.021000" name="PPO_BMSTU/tests/unit_tests/test_repository" timestamp="2024-10-10T01:13:59+03:00">
+		<properties>
+			<property name="go.version" value="go1.22.4 windows/amd64"></property>
+		</properties>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryCreate_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryCreate_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryDelete_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryDelete_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryGetCrewResByRaceIDAndCrewID_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryGetCrewResByRaceIDAndCrewID_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryUpdate_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestCrewResInRaceRepository/TestCrewResInRaceRepositoryUpdate_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestCrewResInRaceRepository" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestCreateProfile_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestCreateProfile_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryDelete_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryDelete_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryGetAllJudges_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryGetAllJudges_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryGetByID_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryGetByID_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryGetJudgeDataByLogin_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryGetJudgeDataByLogin_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryGetJudgeDataByProtestID_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryGetJudgeDataByProtestID_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryGetJudgesDataByRatingID_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryGetJudgesDataByRatingID_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryUpdate_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository/TestJudgeRepositoryUpdate_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestJudgeRepository" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryAttachCrewToProtest_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryAttachCrewToProtest_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryCreate_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryCreate_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryDelete_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryDelete_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryDetachCrewFromProtest_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryDetachCrewFromProtest_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryGetByID_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryGetByID_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryGetProtestParticipantsIDByID_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryGetProtestParticipantsIDByID_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryGetProtestsDataByRaceID_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryGetProtestsDataByRaceID_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryUpdate_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository/TestProtestRepositoryUpdate_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestIProtestRepository" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRaceRepositoryTestSuite/TestCreate_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRaceRepositoryTestSuite/TestCreate_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRaceRepositoryTestSuite/TestDelete_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRaceRepositoryTestSuite/TestDelete_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRaceRepositoryTestSuite/TestGetRaceDataByID_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRaceRepositoryTestSuite/TestGetRaceDataByID_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRaceRepositoryTestSuite/TestGetRacesDataByRatingID_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRaceRepositoryTestSuite/TestGetRacesDataByRatingID_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRaceRepositoryTestSuite/TestUpdate_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRaceRepositoryTestSuite/TestUpdate_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRaceRepositoryTestSuite" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite/TestAttachJudgeToRating_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite/TestAttachJudgeToRating_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite/TestCreateRating_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite/TestCreateRating_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite/TestDeleteRating_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite/TestDeleteRating_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite/TestDetachJudgeFromRating_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite/TestDetachJudgeFromRating_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite/TestGetRatingByID_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite/TestGetRatingByID_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite/TestUpdateRating_Failure" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite/TestUpdateRating_Success" time="0.000000"></testcase>
+		<testcase classname="PPO_BMSTU/tests/unit_tests/test_repository" name="TestRatingRepositoryTestSuite" time="0.000000"></testcase>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="PPO_BMSTU/tests/unit_tests/test_repository/mocks" timestamp="2024-10-10T01:13:59+03:00">
+		<properties>
+			<property name="go.version" value="go1.22.4 windows/amd64"></property>
+		</properties>
+	</testsuite>
+</testsuites>
