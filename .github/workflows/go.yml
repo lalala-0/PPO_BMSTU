@@ -1,0 +1,43 @@
+name: Go CI
+
+on:
+  push:
+    branches:
+      - main  # или другая ветка, которую вы используете
+  pull_request:
+    branches:
+      - main  # или другая ветка, которую вы используете
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Проверка репозитория
+      uses: actions/checkout@v2
+
+    - name: Установка Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.20'  # Укажите версию Go, которую вы хотите использовать
+
+    - name: Установка зависимостей
+      run: go mod tidy
+
+    - name: Запуск тестов
+      run: go test ./...  # Запускает тесты во всех пакетах
+      
+    - name: Запуск тестов с покрытием
+      run: go test -coverprofile=coverage.out ./...
+      
+    - name: Отображение покрытия
+      run: go tool cover -html=coverage.out -o coverage.html
+
+    - name: Кэширование модулей Go
+      uses: actions/cache@v2
+      with:
+        path: /tmp/gopath/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/*.go') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
