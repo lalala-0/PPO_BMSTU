@@ -148,7 +148,6 @@ var testCrewServiceDelete = []struct {
 			uuid.New(),
 		},
 		prepare: func(fields *crewServiceFields) {
-			fields.crewRepoMock.EXPECT().GetCrewDataByID(gomock.Any()).Return(builders.CrewMother.Default(), nil)
 			fields.crewRepoMock.EXPECT().Delete(gomock.Any()).Return(nil)
 		},
 		checkOutput: func(t *testing.T, err error) {
@@ -163,11 +162,11 @@ var testCrewServiceDelete = []struct {
 			uuid.New(),
 		},
 		prepare: func(fields *crewServiceFields) {
-			fields.crewRepoMock.EXPECT().GetCrewDataByID(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
+			fields.crewRepoMock.EXPECT().Delete(gomock.Any()).Return(repository_errors.DoesNotExist)
 		},
 		checkOutput: func(t *testing.T, err error) {
 			assert.Error(t, err)
-			assert.Equal(t, fmt.Errorf("SERVICE: GetCrewDataByID method failed"), err)
+			assert.Equal(t, repository_errors.DoesNotExist, err)
 		},
 	},
 	{
@@ -178,12 +177,11 @@ var testCrewServiceDelete = []struct {
 			uuid.New(),
 		},
 		prepare: func(fields *crewServiceFields) {
-			fields.crewRepoMock.EXPECT().GetCrewDataByID(gomock.Any()).Return(builders.CrewMother.Default(), nil)
-			fields.crewRepoMock.EXPECT().Delete(gomock.Any()).Return(repository_errors.DeleteError)
+			fields.crewRepoMock.EXPECT().Delete(gomock.Any()).Return(repository_errors.DoesNotExist)
 		},
 		checkOutput: func(t *testing.T, err error) {
 			assert.Error(t, err)
-			assert.Equal(t, fmt.Errorf("SERVICE: Delete method failed"), err)
+			assert.Equal(t, repository_errors.DoesNotExist, err)
 		},
 	},
 }

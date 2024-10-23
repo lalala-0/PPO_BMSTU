@@ -162,7 +162,6 @@ var testRaceServiceDelete = []struct {
 			uuid.New(),
 		},
 		prepare: func(fields *raceServiceFields) {
-			fields.raceRepoMock.EXPECT().GetRaceDataByID(gomock.Any()).Return(&models.Race{ID: uuid.UUID{}}, nil)
 			fields.raceRepoMock.EXPECT().Delete(gomock.Any()).Return(nil)
 		},
 		checkOutput: func(t *testing.T, err error) {
@@ -177,7 +176,7 @@ var testRaceServiceDelete = []struct {
 			uuid.New(),
 		},
 		prepare: func(fields *raceServiceFields) {
-			fields.raceRepoMock.EXPECT().GetRaceDataByID(gomock.Any()).Return(nil, repository_errors.DoesNotExist)
+			fields.raceRepoMock.EXPECT().Delete(gomock.Any()).Return(repository_errors.DoesNotExist)
 		},
 		checkOutput: func(t *testing.T, err error) {
 			assert.Error(t, err)
@@ -192,7 +191,6 @@ var testRaceServiceDelete = []struct {
 			uuid.New(),
 		},
 		prepare: func(fields *raceServiceFields) {
-			fields.raceRepoMock.EXPECT().GetRaceDataByID(gomock.Any()).Return(&models.Race{ID: uuid.UUID{}}, nil)
 			fields.raceRepoMock.EXPECT().Delete(gomock.Any()).Return(repository_errors.DeleteError)
 		},
 		checkOutput: func(t *testing.T, err error) {

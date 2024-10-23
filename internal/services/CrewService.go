@@ -51,13 +51,7 @@ func (c CrewService) AddNewCrew(crewID uuid.UUID, ratingID uuid.UUID, class int,
 }
 
 func (c CrewService) DeleteCrewByID(id uuid.UUID) error {
-	_, err := c.CrewRepository.GetCrewDataByID(id)
-	if err != nil {
-		c.logger.Error("SERVICE: GetCrewDataByID method failed", "id", id, "error", err)
-		return err
-	}
-
-	err = c.CrewRepository.Delete(id)
+	err := c.CrewRepository.Delete(id)
 	if err != nil {
 		c.logger.Error("SERVICE: Delete method failed", "error", err)
 		return err
