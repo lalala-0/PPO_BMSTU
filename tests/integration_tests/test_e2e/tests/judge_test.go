@@ -1,4 +1,4 @@
-package test_e2e
+package tests
 
 // TestJudgeCreatesRatingTeamsAndParticipants: основной тестовый сценарий: Судья создает рейтинг, добавляет три команды, по одному участнику в каждую команду, запускает стартовую процедуру гонки и завершает её финишной процедурой.
 func (suite *e2eTestSuite) TestJudgeCreatesRatingTeamsAndParticipants() {

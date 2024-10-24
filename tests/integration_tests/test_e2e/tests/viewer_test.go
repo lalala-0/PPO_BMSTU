@@ -1,4 +1,4 @@
-package test_e2e
+package tests
 
 import (
 	"PPO_BMSTU/tests/unit_tests/builders"

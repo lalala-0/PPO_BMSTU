@@ -1,4 +1,4 @@
-package test_e2e
+package tests
 
 import (
 	mongo_rep "PPO_BMSTU/internal/repository/mongo"
