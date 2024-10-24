@@ -8567,3 +8567,189 @@ ERRO SERVICE: DetachJudgeFromRating method failed jid=69823d9c-fb95-4249-a66b-d8
 INFO SERVICE: Successfully got rating with GetRatingByID id=9bc561db-e984-4d04-9d28-9b2183094eae
 ERRO SERVICE: GetRatingByID method failed id=91e1fabb-4276-400b-af63-b992ee3494e6 error="GET operation has failed. Such row does not exist"
 ERRO SERVICE: GetRatingByID method failed id=73877c27-b871-4bcc-b54a-011241c3eb62 error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Validating data
+INFO SERVICE: Creating new crew [34 31 112 124 16 75 64 65 132 213 81 84 188 207 246 224]
+INFO SERVICE: Successfully created new crew with  id=06d2e948-86ef-4a02-b087-ee476a719587
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid input class=90 sail number=-89
+INFO SERVICE: Validating data
+INFO SERVICE: Creating new crew [8 184 190 225 95 193 76 231 186 54 30 26 76 32 63 150]
+ERRO SERVICE: Create method failed error="DB ERROR: Insert operation was not successful"
+INFO SERVICE: Successfully deleted crew id=facebd3e-f862-4422-945a-596411a1eeea
+INFO SERVICE: Validating data
+INFO SERVICE: Successfully updated crew crew="&{ID:890f725e-dadb-4843-8036-5e9291a146a0 RatingID:0f0ad0ef-f4d9-4360-afa7-b664fb011852 SailNum:89 Class:1}"
+ERRO SERVICE: GetCrewByID method failed id=4fef5dda-c8df-49b8-80fa-6cae6fb58987 error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid input class=90 sail number=-89
+INFO SERVICE: Successfully attach participant pid to crew cid pid=f47445fa-7c90-464e-a27d-9836c81c1c6a cid=9d5029e0-b812-4528-9869-ccc52dffae4e
+ERRO SERVICE: AttachParticipantToCrew method failed pid=b42a922a-0bfd-47cc-bf94-49e8f135a5b7 cid=e008589a-1774-445c-a0ab-fc936e90656b error="DB ERROR: Update operation was not successful"
+INFO SERVICE: Successfully attach participant pid to crew cid pid=b613a222-f734-40ed-a51d-baf6a0c05ada cid=39bd9414-2c7a-4219-9035-81c1c643c7a5
+INFO SERVICE: Successfully detached participant pid from crew cid pid=664a9c93-e83f-4ebd-9b9b-812899d708a6 cid=a712c19b-a83e-4e13-b614-75a363deea89
+ERRO SERVICE: DetachParticipantFromCrew method failed pid=6ea58c04-0481-4a3e-a3b8-6307eceab2d3 cid=0a0eed27-28a0-4e74-a081-9a744008a308 error="DB ERROR: Update operation was not successful"
+INFO SERVICE: Successfully replaced participant pid in crew cid pid=667b951a-2b54-4a11-8a2c-72adc00322ad cid=4140cbed-3310-42dd-ada4-804babcb5314
+ERRO SERVICE: ReplaceParticipantStatusInCrew method failed pid=cf284355-2b05-4fc7-adb1-661f73153f5f cid=04902012-51a8-4ec3-9953-99f938ec5b0e error="DB ERROR: Update operation was not successful"
+ERRO SERVICE: Invalid input helmsman=1 active=-1
+INFO SERVICE: Successfully got crew with GetCrewByID id=f754825f-44b1-4bb0-9ec3-4908ca245472
+ERRO SERVICE: GetCrewByID method failed id=5c3a1f7f-ebc8-4264-956e-c70de7658836 error="GET operation has failed. Such row does not exist"
+ERRO SERVICE: GetCrewByID method failed id=8ceec493-68cf-487d-849d-b65e6ffd0e18 error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Successfully got user with GetJudgeByID id=76b1eb5e-3d1b-44cf-bcea-6b722a7778bf
+ERRO SERVICE: GetJudgeByID method failed id=9b2cdf71-4805-4515-84c4-f8408a6bbf88 error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Successfully got user with GetJudgeByID id=6a7a3b45-6256-41f3-a502-c93cd242b5c8
+ERRO SERVICE: GetJudgeByID method failed id=87d6ad25-4a68-4b6f-a91b-d48482eb0625 error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Successfully got judges with GetJudgesByRatingID id=44200e54-ae79-49ef-9e30-c1ca1a3b3747
+INFO SERVICE: Successfully got judges with GetJudgesByRatingID id=7ad56c42-24be-4871-9051-6d0c4614d795
+INFO SERVICE: Successfully deleted judgeView id=9a148b93-a628-451f-af74-ffff76ec76a5
+ERRO SERVICE: GetJudgeDataByID method failed id=9f9a09a7-e58a-4eb9-b872-b086e8bba37e error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Validating data
+INFO SERVICE: Creating new judgeView: Test
+INFO SERVICE: Successfully updated judgeView coach judgeView="&{ID:5aef2465-6f71-4466-a452-99c68cc1b230 FIO:Test Login:Test Password:hash Role:1 Post:mmm}"
+ERRO SERVICE: GetJudgeByID method failed id=3cd083b9-f7fd-48a8-904b-53aca08c66d9 error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid password password=123
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid fio fio=""
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid role role=10
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid login login=""
+INFO SERVICE: Validating data
+INFO SERVICE: Checking if judgeView with login Test exists
+INFO SERVICE: Checking if Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Creating new judgeView: Test
+INFO SERVICE: Successfully created new user with  id=09cf8e22-8f33-4b91-91f3-9d67f4d18e55
+INFO SERVICE: Validating data
+INFO SERVICE: Checking if judgeView with login Test exists
+INFO SERVICE: Checking if Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Judge with login exists login=Test
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid input data fio="" login=Test role=1 password=password123
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid input data fio=aa login="" role=1 password=password123
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid input data fio=hgrtunju login=Test role=10 password=password123
+INFO SERVICE: Validating data
+ERRO SERVICE: Invalid input data fio=Test login=Test role=1 password=123
+INFO SERVICE: Checking if Judge with login abcdef exists
+INFO SERVICE: Checking if Judge with login exists login=abcdef
+INFO SERVICE: Judge with login exists login=abcdef
+INFO SERVICE: Checking if password is correct for Judge with login abcdef
+INFO SERVICE: Successfully logged in Judge with login login=abcdef
+INFO SERVICE: Checking if Judge with login notFound exists
+INFO SERVICE: Checking if Judge with login exists login=notFound
+INFO SERVICE: Judge with login does not exist login=notFound
+INFO SERVICE: Judge with login does not exist login=notFound
+INFO SERVICE: Checking if Judge with login abcdef exists
+INFO SERVICE: Checking if Judge with login exists login=abcdef
+INFO SERVICE: Judge with login exists login=abcdef
+INFO SERVICE: Checking if password is correct for Judge with login abcdef
+INFO SERVICE: Password is incorrect for Judge with login login=abcdef
+INFO SERVICE: Successfully got participant with GetParticipantByID id=7978bb23-d554-4b95-a3f9-76381645e9ed
+ERRO SERVICE: GetParticipantByID method failed id=a61c198e-2849-4fd6-aa57-868bcb90033b error="GET operation has failed. Such row does not exist"
+INFO SERVICE: Successfully created new participant participant="&{ID:00000000-0000-0000-0000-000000000000 FIO:Test Category:4 Gender:1 Birthday:2002-11-10 23:00:00 +0000 UTC Coach:Test}"
+ERRO SERVICE: GetParticipantByID method failed id=a47f3cf3-1a8b-40d2-bfcc-50d648129c74 error="DB ERROR: Select operation was not successful"
+ERRO SERVICE: Invalid input data fio="" category=8 birthDate="2009-11-10 23:00:00 +0000 UTC" coach=Test
+ERRO SERVICE: Invalid input data fio=test category=90 birthDate="2009-11-10 23:00:00 +0000 UTC" coach=Test
+ERRO SERVICE: Invalid input data fio=test category=5 birthDate="2009-11-10 23:00:00 +0000 UTC" coach=""
+ERRO SERVICE: Invalid input data fio=jet category=5 birthDate="2023-11-10 23:00:00 +0000 UTC" coach=Test
+ERRO SERVICE: UpdateParticipant method failed error="DB ERROR: Update operation was not successful"
+INFO SERVICE: Successfully created new participant participant="&{ID:00000000-0000-0000-0000-000000000000 FIO:Test Category:5 Gender:1 Birthday:2002-11-10 23:00:00 +0000 UTC Coach:Test}"
+ERRO SERVICE: CreateNewParticipant method failed error="DB ERROR: Insert operation was not successful"
+ERRO SERVICE: Invalid input data fio="" category=5 gender=1 birthDate="2009-11-10 23:00:00 +0000 UTC" coach=Test
+ERRO SERVICE: Invalid input data fio=test category=99 gender=1 birthDate="2009-11-10 23:00:00 +0000 UTC" coach=Test
+ERRO SERVICE: Invalid input data fio=test category=5 gender=0 birthDate="2009-11-10 23:00:00 +0000 UTC" coach=Test
+ERRO SERVICE: Invalid input data fio=test category=5 gender=1 birthDate="2009-11-10 23:00:00 +0000 UTC" coach=""
+ERRO SERVICE: Invalid input data fio=test category=5 gender=1 birthDate="2023-11-10 23:00:00 +0000 UTC" coach=Test
+INFO SERVICE: Successfully created new protest protest="&{ID:ba56da71-a645-44b3-9b10-9cbed2093502 RaceID:00000000-0000-0000-0000-000000000000 JudgeID:00000000-0000-0000-0000-000000000000 RuleNum:0 ReviewDate:0001-01-01 00:00:00 +0000 UTC Status:0 Comment: RatingID:00000000-0000-0000-0000-000000000000}"
+ERRO SERVICE: Invalid input data ruleNum=30
+ERRO SERVICE: CreateNewProtest method failed error="DB ERROR: Insert operation was not successful"
+ERRO SERVICE: GetCrewDataBySailNumAndRatingID method failed error="DB ERROR: Select operation was not successful"
+ERRO SERVICE: AttachCrewToProtest method failed error="DB ERROR: Insert operation was not successful"
+ERRO SERVICE: AttachCrewToProtest method failed error="DB ERROR: Insert operation was not successful"
+ERRO SERVICE: AttachCrewToProtest method failed error="DB ERROR: Insert operation was not successful"
+INFO SERVICE: Successfully created new protest protest="&{ID:cf1b1399-6964-4681-8016-6c5a4012121e RaceID:3280bff3-9747-4048-a5d6-79d1eb4d37ec JudgeID:50724de3-080d-4dd6-863c-b41a493a1bb1 RuleNum:31 ReviewDate:2024-11-10 23:00:00 +0000 UTC Status:1 Comment:Test RatingID:e8fddd82-ecd0-42a1-9004-dfe7a92aa2bc}"
+INFO SERVICE: Successfully created new protest protest="&{ID:5a33e7d3-5dfd-45c3-90b6-d9118308d423 RaceID:fcd9ee3c-1653-4099-8df3-cc41b5010045 JudgeID:00000000-0000-0000-0000-000000000000 RuleNum:31 ReviewDate:2024-11-10 23:00:00 +0000 UTC Status:2 Comment:Test RatingID:175dd493-682f-463d-b34c-1060927fc57d}"
+ERRO SERVICE: Invalid ruleNum ruleNum=30
+ERRO SERVICE: Invalid status status=10
+ERRO SERVICE: Invalid ruleNum ruleNum=30
+INFO SERVICE: Successfully deleted protest protest=70738736-96f8-449c-b4a8-266a77b3101f
+ERRO SERVICE: GetProtestDataByID method failed id=585ccb54-563d-4ef3-ad9d-de0712b44782 error="GET operation has failed. Such row does not exist"
+ERRO SERVICE: DeleteProtestByID method failed error="DB ERROR: Delete operation was not successful"
+INFO SERVICE: Successfully got protest with GetProtestDataByID id=6d58d234-dbf7-48a6-97b1-6f354f0c8876
+ERRO SERVICE: GetProtestByID method failed id=23b6c6b6-883d-4b9b-8b22-82e3d4b7bc9c error="GET operation has failed. Such row does not exist"
+ERRO SERVICE: GetProtestByID method failed id=e4c1d571-b9c5-44e9-bc59-98a14debc40a error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Successfully got protests by protest id protests="[{ID:5640c70c-f28f-4884-8db2-dfa38e13357b RaceID:00000000-0000-0000-0000-000000000000 JudgeID:00000000-0000-0000-0000-000000000000 RuleNum:0 ReviewDate:0001-01-01 00:00:00 +0000 UTC Status:0 Comment: RatingID:00000000-0000-0000-0000-000000000000} {ID:2bb29654-43ce-4651-8509-4fa6b983afab RaceID:00000000-0000-0000-0000-000000000000 JudgeID:00000000-0000-0000-0000-000000000000 RuleNum:0 ReviewDate:0001-01-01 00:00:00 +0000 UTC Status:0 Comment: RatingID:00000000-0000-0000-0000-000000000000}]"
+ERRO SERVICE: GetProtestsDataByRaceID method failed error="GET operation has failed. Such row does not exist"
+ERRO SERVICE: GetProtestsDataByRaceID method failed error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Successfully attach crew jid to protest rid jid=81d195a4-289c-44e0-a270-7c539c2313ea rid=3c9d3165-8000-4fcd-ba1e-11d4339efc1b
+ERRO SERVICE: AttachCrewToProtest method failed rid=c87a235b-a4a4-46b1-92ee-9fab64e5c572 jid=f79b432b-1444-4ee2-bd6a-92023ba2affb error="DB ERROR: Insert operation was not successful"
+ERRO SERVICE: Invalid protest role protest role=100
+ERRO SERVICE: Invalid protest role protest role=100
+INFO SERVICE: Successfully detached crew jid from protest rid jid=3ad35436-1195-46d5-a094-3486cc5bc207 rid=2129fa3d-1f3f-48fd-b3f6-1ee5d68c47d9
+ERRO SERVICE: DetachCrewFromProtest method failed jid=2e317a8f-560e-41a5-b171-7cc669d8bd61 rid=b520f031-0834-4c07-bccc-ec56ae521da1 error="DB ERROR: Update operation was not successful"
+ERRO SERVICE: GetCrewDataBySailNumAndRatingID method failed id=00000000-0000-0000-0000-000000000000 error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Successfully reviewed protest id id=e12a6c0f-cea0-4c4b-a23c-3a3334e5742e
+ERRO SERVICE: GetProtestDataByID method failed id=e53b2a7e-7a23-4e42-b105-0455c7ca42b1 error="DB ERROR: Select operation was not successful"
+ERRO SERVICE: CompleteReview method failed id=b210b5fd-7942-4914-9bc6-ac6e97453b7c error="DB ERROR: Update operation was not successful"
+ERRO SERVICE: CompleteReview method failed error="DB ERROR: Update operation was not successful"
+ERRO SERVICE: GetCrewResByRaceIDAndCrewID method failed id=00000000-0000-0000-0000-000000000000 error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Successfully got protest participants id by protest id ids=map[]
+ERRO SERVICE: GetProtestsDataByRaceID method failed error="GET operation has failed. Such row does not exist"
+ERRO SERVICE: GetProtestsDataByRaceID method failed error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Successfully created new race race="&{ID:57d43d51-aebc-44c4-9cb3-c965c768700e RatingID:00000000-0000-0000-0000-000000000000 Date:0001-01-01 00:00:00 +0000 UTC Number:0 Class:0}"
+ERRO SERVICE: Invalid input data number=-89 class=1
+ERRO SERVICE: CreateNewRace method failed error="DB ERROR: Insert operation was not successful"
+INFO SERVICE: Successfully deleted race race=b43817fb-15c4-405e-8f8b-c7c66bc5dc70
+INFO SERVICE: Successfully created new race race="&{ID:58f0019c-58e8-4de7-b47a-cd56707bfb6d RatingID:00000000-0000-0000-0000-000000000000 Date:0001-01-01 00:00:00 +0000 UTC Number:0 Class:0}"
+ERRO SERVICE: Invalid input data class=1 number=-89
+ERRO SERVICE: GetRaceByID method failed id=6d3a729d-934a-4549-93b2-1e8983c516a6 error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Successfully got race with GetRaceByID id=90e06649-d263-4d72-a3b6-a617d5e8a050
+ERRO SERVICE: GetRaceByID method failed id=863bddda-f50d-4305-a564-f790eac12d18 error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Successfully got races by rating id races="[{ID:92e6247c-556a-4f73-beef-59167ce95deb RatingID:00000000-0000-0000-0000-000000000000 Date:0001-01-01 00:00:00 +0000 UTC Number:0 Class:0} {ID:7df5bd69-bf89-4226-8215-b98ba07a18a4 RatingID:00000000-0000-0000-0000-000000000000 Date:0001-01-01 00:00:00 +0000 UTC Number:0 Class:0}]"
+ERRO SERVICE: GetRacesDataByRatingID method failed error="GET operation has failed. Such row does not exist"
+ERRO SERVICE: GetRacesDataByRatingID method failed error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Successfully created new raceSailing raceSailing="&{CrewID:00000000-0000-0000-0000-000000000000 RaceID:7cd98e32-69eb-4a09-9540-abe2af926adf Points:0 SpecCircumstance:0}"
+INFO SERVICE: Successfully created new raceSailing raceSailing="&{CrewID:00000000-0000-0000-0000-000000000000 RaceID:bd397380-7633-4221-8883-bddb29071bf0 Points:0 SpecCircumstance:0}"
+INFO SERVICE: Successfully start procedure
+INFO SERVICE: Successfully start procedure
+INFO SERVICE: Successfully start procedure
+ERRO SERVICE: MakeStartProcedure method failed id=e686713a-bab9-4d47-87f1-da14c4c01b2c error="DB ERROR: Select operation was not successful"
+ERRO SERVICE: GetCrewsDataByRatingID method failed id=afae5785-e82f-4413-a4ac-43eafa157479 error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Successfully created new raceSailing raceSailing="&{CrewID:00000000-0000-0000-0000-000000000000 RaceID:86515d20-43b1-4e7d-8d37-edfdbe4cb502 Points:0 SpecCircumstance:0}"
+INFO SERVICE: Successfully created new raceSailing raceSailing="&{CrewID:00000000-0000-0000-0000-000000000000 RaceID:6e7869db-25d3-45ae-803a-3c08a41130d5 Points:0 SpecCircumstance:0}"
+ERRO SERVICE: MakeStartProcedure method failed id=5ec70796-0ad6-44f6-9fa8-26fd0a6f0fc8 error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Successfully created new raceSailing
+INFO SERVICE: Successfully created new raceSailing
+INFO SERVICE: Successfully created new raceSailing
+INFO SERVICE: Successfully MakeFinishProcedure
+INFO SERVICE: Successfully MakeFinishProcedure
+INFO SERVICE: Successfully MakeFinishProcedure
+INFO SERVICE: Successfully finish procedure
+ERRO SERVICE: MakeStartProcedure method failed id=6b60671d-b4f0-4682-bc33-9344f8c5cb05 error="DB ERROR: Select operation was not successful"
+ERRO SERVICE: MakeStartProcedure method failed id=50622a91-157d-4a65-ad4e-f6d2a8369358 error="DB ERROR: Select operation was not successful"
+ERRO SERVICE: GetCrewResByRaceIDAndCrewID method failed error="DB ERROR: Select operation was not successful"
+INFO SERVICE: Successfully created new raceSailing
+INFO SERVICE: Successfully created new raceSailing
+ERRO SERVICE: UpdateRaceSailing method failed error="DB ERROR: Update operation was not successful"
+ERRO SERVICE: MakeFinishProcedure method failed error="DB ERROR: Update operation was not successful"
+INFO SERVICE: Successfully created new rating rating="&{ID:23f6032e-9617-48d7-b05e-10f3b26879a0 Name: Class:0 BlowoutCnt:0}"
+ERRO SERVICE: Invalid input data class=90 BlowoutCnt=0
+ERRO SERVICE: Invalid input data class=1 BlowoutCnt=-90
+ERRO SERVICE: CreateNewRating method failed error="DB ERROR: Insert operation was not successful"
+INFO SERVICE: Successfully deleted rating rating=6894813b-c848-4c1c-becd-53fb59daa4ec
+ERRO SERVICE: GetRatingDataByID method failed id=c2a653ea-a019-486f-ab2a-3ef9abc749af error="GET operation has failed. Such row does not exist"
+ERRO SERVICE: GetJudgesDataByRatingID method failed id=5422bc57-a02d-421f-a018-0948e452e89b error="DB ERROR: Select operation was not successful"
+ERRO SERVICE: DetachJudgeFromRating method failed id=2962e076-9944-4f23-adbd-72621bb29bc7 error="DB ERROR: Delete operation was not successful"
+ERRO SERVICE: DeleteRatingByID method failed error="DB ERROR: Delete operation was not successful"
+INFO SERVICE: Successfully updated rating rating="&{ID:e2d32613-ecf9-4619-a458-9a6b250a9dc3 Name:test Class:1 BlowoutCnt:0}"
+ERRO SERVICE: GetRatingByID method failed id=5e049b72-19b4-4013-bb25-8a529743e46f error="GET operation has failed. Such row does not exist"
+ERRO SERVICE: Invalid input data class=900 BlowoutCnt=0
+ERRO SERVICE: Invalid input data class=1 BlowoutCnt=-10
+INFO SERVICE: Successfully attach judgeView jid to rating rid jid=b2f6844c-543d-424e-89e9-bd9dfd201f80 rid=727ddd8f-4778-4710-8b99-f4d6f9b806d8
+ERRO SERVICE: AttachJudgeToRating method failed rid=f77a27d7-b787-451b-a5e0-f8fc8b9647cf jid=e8df1d4d-1c95-46d7-9d74-8087f0d208d8 error="DB ERROR: Update operation was not successful"
+INFO SERVICE: Successfully detached judgeView jid from rating rid jid=e2c1d122-cf08-4ceb-9fd7-3efb0e999055 rid=1d9eec97-675c-4753-b84e-d176e9d4aac4
+ERRO SERVICE: DetachJudgeFromRating method failed jid=a6145582-f8dd-49bf-bf27-cf8919af6c8b rid=c3d19bc9-d201-4254-a8ed-9adea0cacb59 error="DB ERROR: Update operation was not successful"
+INFO SERVICE: Successfully got rating with GetRatingByID id=854ce790-735e-49a3-baf6-590cf97fd3fc
+ERRO SERVICE: GetRatingByID method failed id=5babd558-ef96-4198-aff4-c103eb6f53a8 error="GET operation has failed. Such row does not exist"
+ERRO SERVICE: GetRatingByID method failed id=4d898fbd-383e-4408-bce1-a25ddbef6391 error="DB ERROR: Select operation was not successful"
