@@ -31,10 +31,16 @@ jobs:
         run: mkdir -p ./tests/allure-results
 
       - name: Запуск unit тестов репозиториев
-        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests_repo.xml" -- ./tests/unit_tests/test_repository
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests_repo.xml" -- ./tests/unit_tests/test_repository/...
 
       - name: Запуск unit тестов сервисов
-        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests_service.xml" -- ./tests/unit_tests/test_service
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests_service.xml" -- ./tests/unit_tests/test_service/...
+
+      - name: Запуск integration тестов репозиториев
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integration_tests_repo.xml" -- ./tests/integration_tests/test_repository/...
+
+      - name: Запуск integration тестов сервисов
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_service.xml" -- ./tests/integration_tests/test_service/...
 
       # Установка Allure для генерации отчетов
       - name: Установка Allure

@@ -1,405 +1,228 @@
 package db_init
 
-//
-//import (
-//	"PPO_BMSTU/internal/models"
-//	"PPO_BMSTU/internal/repository/mongo"
-//	"context"
-//	"fmt"
-//	"github.com/google/uuid"
-//	"time"
-//
-//	"go.mongodb.org/mongo-driver/bson"
-//)
-//
-//// mongoRepository реализует интерфейс MongoRepository и использует соединение с MongoDB.
-//type mongoRepository struct {
-//	mongoConnection *mongo.MongoConnection
-//}
-//
-//func NewMongoRepository(m *mongo.MongoConnection) TestRepository {
-//	return &mongoRepository{mongoConnection: m}
-//}
-//
-//func (r *mongoRepository) 	CreateParticipant(participant *models.Participant) (*models.Participant, error) {
-//	collection := r.mongoConnection.DB.Collection("participants")
-//
-//	participantDB := participantToDB(participant)
-//
-//	_, err := collection.InsertOne(context.Background(), participantDB)
-//	if err != nil {
-//		fmt.Println("Error creating participant:", err)
-//		return nil, fmt.Errorf("error creating participant: %v", err)
-//	}
-//
-//	res := participantDB(participantDB)
-//
-//	return res
-//}
-//
-//func (r *mongoRepository) CreateRating() *models.Rating {
-//	collection := r.mongoConnection.DB.Collection("ratings")
-//	id := uuid.New()
-//
-//	rating := &mongo.RatingDB{
-//		ID:         id.String(),
-//		Name:       "Name",
-//		Class:      models.Laser,
-//		BlowoutCnt: 1,
-//	}
-//
-//	_, err := collection.InsertOne(context.Background(), rating)
-//	if err != nil {
-//		fmt.Println("Error creating rating:", err)
-//		return nil
-//	}
-//	return &models.Rating{
-//		ID:         id,
-//		Name:       rating.Name,
-//		Class:      rating.Class,
-//		BlowoutCnt: rating.BlowoutCnt,
-//	}
-//}
-//
-//func (r *mongoRepository) CreateCrew() *models.Crew {
-//	collection := r.mongoConnection.DB.Collection("crews")
-//
-//	crew := mongo.CrewDB{
-//		ID:       uuid.New().String(),
-//		RatingID: ratingID.String(),
-//		Class:    2,
-//		SailNum:  123,
-//	}
-//
-//	_, err := collection.InsertOne(context.Background(), crew)
-//	if err != nil {
-//		fmt.Println("Error creating crew:", err)
-//		return nil
-//	}
-//	id, _ := uuid.Parse(crew.ID)
-//
-//	return &models.Crew{
-//		ID:       id,
-//		RatingID: ratingID,
-//		Class:    crew.Class,
-//		SailNum:  crew.SailNum,
-//	}
-//}
-//
-//func (r *mongoRepository) CreateCrewResInRace() *models.CrewResInRace {
-//	collection := r.mongoConnection.DB.Collection("crew_race")
-//
-//	crewRes := &mongo.CrewResInRaceDB{
-//		CrewID:           crewID.String(),
-//		RaceID:           raceID.String(),
-//		Points:           12,
-//		SpecCircumstance: 0,
-//	}
-//
-//	_, err := collection.InsertOne(context.Background(), crewRes)
-//	if err != nil {
-//		fmt.Println("Error creating crew result in race:", err)
-//		return nil
-//	}
-//
-//	return &models.CrewResInRace{
-//		CrewID:           crewID,
-//		RaceID:           raceID,
-//		Points:           crewRes.Points,
-//		SpecCircumstance: crewRes.SpecCircumstance,
-//	}
-//}
-//
-//func (r *mongoRepository) CreateRace() *models.Race {
-//	collection := r.mongoConnection.DB.Collection("races")
-//	id := uuid.New()
-//
-//	race := &mongo.RaceDB{
-//		ID:       id.String(),
-//		RatingID: ratingID.String(),
-//		Date:     time.Date(2012, time.November, 10, 23, 0, 0, 0, time.UTC),
-//		Number:   1,
-//		Class:    4,
-//	}
-//
-//	_, err := collection.InsertOne(context.Background(), race)
-//	if err != nil {
-//		fmt.Println("Error creating race:", err)
-//		return nil
-//	}
-//
-//	return &models.Race{
-//		ID:       id,
-//		RatingID: ratingID,
-//		Date:     race.Date,
-//		Number:   race.Number,
-//		Class:    race.Class,
-//	}
-//}
-//
-//func (r *mongoRepository) CreateJudge() *models.Judge {
-//	collection := r.mongoConnection.DB.Collection("judges")
-//
-//	id := uuid.New()
-//	judge := &mongo.JudgeDB{
-//		ID:       id.String(),
-//		FIO:      "Test",
-//		Login:    "Test",
-//		Password: "test123",
-//		Post:     "Test",
-//		Role:     1,
-//	}
-//
-//	_, err := collection.InsertOne(context.Background(), judge)
-//	if err != nil {
-//		fmt.Println("Error creating judge:", err)
-//		return nil
-//	}
-//
-//	return &models.Judge{
-//		ID:       id,
-//		FIO:      judge.FIO,
-//		Login:    judge.Login,
-//		Password: judge.Password,
-//		Post:     judge.Post,
-//		Role:     judge.Role,
-//	}
-//}
-//
-//func (r *mongoRepository) CreateProtest() *models.Protest {
-//	collection := r.mongoConnection.DB.Collection("protests")
-//	id := uuid.New()
-//	protest := &mongo.ProtestDB{
-//		ID:         id.String(),
-//		RaceID:     raceID.String(),
-//		JudgeID:    judgeID.String(),
-//		RatingID:   ratingID.String(),
-//		RuleNum:    23,
-//		ReviewDate: time.Date(2024, time.November, 10, 23, 0, 0, 0, time.UTC),
-//		Status:     1,
-//		Comment:    "",
-//	}
-//
-//	_, err := collection.InsertOne(context.Background(), protest)
-//	if err != nil {
-//		fmt.Println("Error creating protest:", err)
-//		return nil
-//	}
-//
-//	return &models.Protest{
-//		ID:         id,
-//		RaceID:     raceID,
-//		JudgeID:    judgeID,
-//		RatingID:   ratingID,
-//		RuleNum:    protest.RuleNum,
-//		ReviewDate: protest.ReviewDate,
-//		Status:     protest.Status,
-//		Comment:    protest.Comment,
-//	}
-//}
-//
-//func (r *mongoRepository) AttachCrewToProtest() {
-//	collection := r.mongoConnection.DB.Collection("crew_protest")
-//
-//	_, err := collection.InsertOne(context.Background(), bson.M{
-//		"_id":         uuid.New().String(),
-//		"crew_id":     crewID.String(),
-//		"protest_id":  protestID.String(),
-//		"crew_status": 1,
-//	})
-//	if err != nil {
-//		fmt.Println("Error attaching crew to protest:", err)
-//	}
-//}
-//
-//func (r *mongoRepository) AttachCrewToProtestStatus() {
-//	collection := r.mongoConnection.DB.Collection("crew_protest")
-//
-//	_, err := collection.InsertOne(context.Background(), bson.M{
-//		"_id":         uuid.New().String(),
-//		"crew_id":     crewID.String(),
-//		"protest_id":  protestID.String(),
-//		"crew_status": status})
-//	if err != nil {
-//		fmt.Println("Error updating crew status in protest:", err)
-//	}
-//}
-//
-//func (r *mongoRepository) AttachJudgeToRating() {
-//	collection := r.mongoConnection.DB.Collection("judge_rating")
-//
-//	_, err := collection.InsertOne(context.Background(), bson.M{
-//		"_id":       uuid.New().String(),
-//		"judge_id":  judgeID.String(),
-//		"rating_id": ratingID.String(),
-//	})
-//	if err != nil {
-//		fmt.Println("Error attaching judge to rating:", err)
-//	}
-//}
-//
-//func (r *mongoRepository) AttachParticipantToCrew() {
-//	collection := r.mongoConnection.DB.Collection("participant_crew")
-//
-//	_, err := collection.InsertOne(context.Background(), bson.M{
-//		"_id":            uuid.New().String(),
-//		"participant_id": participantID.String(),
-//		"crew_id":        crewID.String(),
-//		"helmsman":       false,
-//		"active":         true,
-//	})
-//	if err != nil {
-//		fmt.Println("Error attaching participant to crew:", err)
-//	}
-//}
-//
-//
-//
-//func participantToDB(participant *models.Participant) *mongo.ParticipantDB {
-//	var gender bool
-//	if participant.Gender == 1{
-//		gender = true
-//	} else{
-//		gender= false
-//	}
-//	return &mongo.ParticipantDB{
-//		ID:       participant.ID.String(),
-//		FIO:      participant.FIO,
-//		Gender:   gender,
-//		Category: participant.Category,
-//		Coach:    participant.Coach,
-//		Birthday: participant.Birthday,
-//	}
-//}
-//
-//func participantFromDB(participantDB *mongo.ParticipantDB) *models.Participant {
-//	id, _ := uuid.Parse(participantDB.ID) // Обработка ошибки при необходимости
-//	var gender int
-//	if participantDB.Gender{
-//		gender = 1
-//	} else{
-//		gender= 0
-//	}
-//	return &models.Participant{
-//		ID:       id,
-//		FIO:      participantDB.FIO,
-//		Gender:   gender,
-//		Category: participantDB.Category,
-//		Coach:    participantDB.Coach,
-//		Birthday: participantDB.Birthday,
-//	}
-//}
-//
-//func ratingToDB(rating *models.Rating) *mongo.RatingDB {
-//	return &mongo.RatingDB{
-//		ID:         rating.ID.String(),
-//		Name:       rating.Name,
-//		Class:      rating.Class,
-//		BlowoutCnt: rating.BlowoutCnt,
-//	}
-//}
-//
-//func ratingFromDB(ratingDB *mongo.RatingDB) *models.Rating {
-//	id, _ := uuid.Parse(ratingDB.ID) // Обработка ошибки при необходимости
-//	return &models.Rating{
-//		ID:         id,
-//		Name:       ratingDB.Name,
-//		Class:      ratingDB.Class,
-//		BlowoutCnt: ratingDB.BlowoutCnt,
-//	}
-//}
-//
-//func crewToDB(crew *models.Crew) *mongo.CrewDB {
-//	return &mongo.CrewDB{
-//		ID:       crew.ID.String(),
-//		RatingID: crew.RatingID.String(),
-//		Class:    crew.Class,
-//		SailNum:  crew.SailNum,
-//	}
-//}
-//
-//func crewFromDB(crewDB *mongo.CrewDB) *models.Crew {
-//	id, _ := uuid.Parse(crewDB.ID) // Обработка ошибки при необходимости
-//	ratingID, _ := uuid.Parse(crewDB.RatingID) // Обработка ошибки при необходимости
-//	return &models.Crew{
-//		ID:       id,
-//		RatingID: ratingID,
-//		Class:    crewDB.Class,
-//		SailNum:  crewDB.SailNum,
-//	}
-//}
-//
-//func raceToDB(race *models.Race) *mongo.RaceDB {
-//	return &mongo.RaceDB{
-//		ID:       race.ID.String(),
-//		RatingID: race.RatingID.String(),
-//		Date:     race.Date,
-//		Number:   race.Number,
-//		Class:    race.Class,
-//	}
-//}
-//
-//func raceFromDB(raceDB *mongo.RaceDB) *models.Race {
-//	id, _ := uuid.Parse(raceDB.ID) // Обработка ошибки при необходимости
-//	ratingID, _ := uuid.Parse(raceDB.RatingID) // Обработка ошибки при необходимости
-//	return &models.Race{
-//		ID:       id,
-//		RatingID: ratingID,
-//		Date:     raceDB.Date,
-//		Number:   raceDB.Number,
-//		Class:    raceDB.Class,
-//	}
-//}
-//
-//func judgeToDB(judge *models.Judge) *mongo.JudgeDB {
-//	return &mongo.JudgeDB{
-//		ID:       judge.ID.String(),
-//		FIO:      judge.FIO,
-//		Login:    judge.Login,
-//		Password: judge.Password,
-//		Post:     judge.Post,
-//		Role:     judge.Role,
-//	}
-//}
-//
-//func judgeFromDB(judgeDB *mongo.JudgeDB) *models.Judge {
-//	id, _ := uuid.Parse(judgeDB.ID) // Обработка ошибки при необходимости
-//	return &models.Judge{
-//		ID:       id,
-//		FIO:      judgeDB.FIO,
-//		Login:    judgeDB.Login,
-//		Password: judgeDB.Password,
-//		Post:     judgeDB.Post,
-//		Role:     judgeDB.Role,
-//	}
-//}
-//
-//func protestToDB(protest *models.Protest) *mongo.ProtestDB {
-//	return &mongo.ProtestDB{
-//		ID:         protest.ID.String(),
-//		RaceID:     protest.RaceID.String(),
-//		JudgeID:    protest.JudgeID.String(),
-//		RatingID:   protest.RatingID.String(),
-//		RuleNum:    protest.RuleNum,
-//		ReviewDate: protest.ReviewDate,
-//		Status:     protest.Status,
-//		Comment:    protest.Comment,
-//	}
-//}
-//
-//func protestFromDB(protestDB *mongo.ProtestDB) *models.Protest {
-//	id, _ := uuid.Parse(protestDB.ID) // Обработка ошибки при необходимости
-//	raceID, _ := uuid.Parse(protestDB.RaceID) // Обработка ошибки при необходимости
-//	judgeID, _ := uuid.Parse(protestDB.JudgeID) // Обработка ошибки при необходимости
-//	ratingID, _ := uuid.Parse(protestDB.RatingID) // Обработка ошибки при необходимости
-//	return &models.Protest{
-//		ID:         id,
-//		RaceID:     raceID,
-//		JudgeID:    judgeID,
-//		RatingID:   ratingID,
-//		RuleNum:    protestDB.RuleNum,
-//		ReviewDate: protestDB.ReviewDate,
-//		Status:     protestDB.Status,
-//		Comment:    protestDB.Comment,
-//	}
-//}
+import (
+	"PPO_BMSTU/internal/models"
+	"context"
+	"fmt"
+	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+)
+
+// mongoRepository реализует интерфейс TestRepositoryInitializer и использует соединение с MongoDB.
+type mongoRepository struct {
+	mongoDB *mongo.Database
+}
+
+// NewMongoRepository создает новый экземпляр mongoRepository.
+func NewMongoRepository(m *mongo.Database) TestRepositoryInitializer {
+	return &mongoRepository{mongoDB: m}
+}
+
+// CreateParticipant создает нового участника и возвращает его.
+func (r *mongoRepository) CreateParticipant(participant *models.Participant) (*models.Participant, error) {
+	collection := r.mongoDB.Collection("participants")
+
+	_, err := collection.InsertOne(context.Background(), participant)
+	if err != nil {
+		fmt.Println("Error creating participant:", err)
+		return nil, fmt.Errorf("error creating participant: %v", err)
+	}
+
+	return participant, nil
+}
+
+// CreateRating создает новый рейтинг и возвращает его.
+func (r *mongoRepository) CreateRating(rating *models.Rating) (*models.Rating, error) {
+	collection := r.mongoDB.Collection("ratings")
+
+	_, err := collection.InsertOne(context.Background(), rating)
+	if err != nil {
+		fmt.Println("Error creating rating:", err)
+		return nil, fmt.Errorf("error creating rating: %v", err)
+	}
+
+	return rating, nil
+}
+
+// CreateCrew создает новую команду и возвращает ее.
+func (r *mongoRepository) CreateCrew(crew *models.Crew) (*models.Crew, error) {
+	collection := r.mongoDB.Collection("crews")
+
+	_, err := collection.InsertOne(context.Background(), crew)
+	if err != nil {
+		fmt.Println("Error creating crew:", err)
+		return nil, fmt.Errorf("error creating crew: %v", err)
+	}
+
+	return crew, nil
+}
+
+// CreateCrewResInRace создает результат команды в гонке и возвращает его.
+func (r *mongoRepository) CreateCrewResInRace(crewResInRace *models.CrewResInRace) (*models.CrewResInRace, error) {
+	collection := r.mongoDB.Collection("crew_race")
+
+	_, err := collection.InsertOne(context.Background(), crewResInRace)
+	if err != nil {
+		fmt.Println("Error creating crew result in race:", err)
+		return nil, fmt.Errorf("error creating crew result in race: %v", err)
+	}
+
+	return crewResInRace, nil
+}
+
+// CreateRace создает новую гонку и возвращает ее.
+func (r *mongoRepository) CreateRace(race *models.Race) (*models.Race, error) {
+	collection := r.mongoDB.Collection("races")
+
+	_, err := collection.InsertOne(context.Background(), race)
+	if err != nil {
+		fmt.Println("Error creating race:", err)
+		return nil, fmt.Errorf("error creating race: %v", err)
+	}
+
+	return race, nil
+}
+
+// CreateJudge создает нового судью и возвращает его.
+func (r *mongoRepository) CreateJudge(judge *models.Judge) (*models.Judge, error) {
+	collection := r.mongoDB.Collection("judges")
+
+	_, err := collection.InsertOne(context.Background(), judge)
+	if err != nil {
+		fmt.Println("Error creating judge:", err)
+		return nil, fmt.Errorf("error creating judge: %v", err)
+	}
+
+	return judge, nil
+}
+
+// CreateProtest создает новый протест и возвращает его.
+func (r *mongoRepository) CreateProtest(protest *models.Protest) (*models.Protest, error) {
+	collection := r.mongoDB.Collection("protests")
+
+	_, err := collection.InsertOne(context.Background(), protest)
+	if err != nil {
+		fmt.Println("Error creating protest:", err)
+		return nil, fmt.Errorf("error creating protest: %v", err)
+	}
+
+	return protest, nil
+}
+
+// AttachCrewToProtest прикрепляет команду к протесту.
+func (r *mongoRepository) AttachCrewToProtest(crewID uuid.UUID, protestID uuid.UUID) error {
+	collection := r.mongoDB.Collection("crew_protest")
+
+	_, err := collection.InsertOne(context.Background(), bson.M{
+		"_id":         uuid.New().String(),
+		"crew_id":     crewID.String(),
+		"protest_id":  protestID.String(),
+		"crew_status": 1,
+	})
+	if err != nil {
+		fmt.Println("Error attaching crew to protest:", err)
+		return fmt.Errorf("error attaching crew to protest: %v", err)
+	}
+	return nil
+}
+
+// AttachCrewToProtestStatus обновляет статус команды в протесте.
+func (r *mongoRepository) AttachCrewToProtestStatus(crewID uuid.UUID, protestID uuid.UUID, status int) error {
+	collection := r.mongoDB.Collection("crew_protest")
+
+	_, err := collection.UpdateOne(context.Background(),
+		bson.M{"crew_id": crewID.String(), "protest_id": protestID.String()},
+		bson.M{"$set": bson.M{"crew_status": status}})
+	if err != nil {
+		fmt.Println("Error updating crew status in protest:", err)
+		return fmt.Errorf("error updating crew status in protest: %v", err)
+	}
+	return nil
+}
+
+// AttachJudgeToRating прикрепляет судью к рейтингу.
+func (r *mongoRepository) AttachJudgeToRating(judgeID uuid.UUID, ratingID uuid.UUID) error {
+	collection := r.mongoDB.Collection("judge_rating")
+
+	_, err := collection.InsertOne(context.Background(), bson.M{
+		"_id":       uuid.New().String(),
+		"judge_id":  judgeID.String(),
+		"rating_id": ratingID.String(),
+	})
+	if err != nil {
+		fmt.Println("Error attaching judge to rating:", err)
+		return fmt.Errorf("error attaching judge to rating: %v", err)
+	}
+	return nil
+}
+
+// AttachParticipantToCrew прикрепляет участника к команде.
+func (r *mongoRepository) AttachParticipantToCrew(participantID uuid.UUID, crewID uuid.UUID) error {
+	collection := r.mongoDB.Collection("participant_crew")
+
+	_, err := collection.InsertOne(context.Background(), bson.M{
+		"_id":            uuid.New().String(),
+		"participant_id": participantID.String(),
+		"crew_id":        crewID.String(),
+	})
+	if err != nil {
+		fmt.Println("Error attaching participant to crew:", err)
+		return fmt.Errorf("error attaching participant to crew: %v", err)
+	}
+	return nil
+}
+
+func (r *mongoRepository) ClearAll() error {
+	collection := r.mongoDB.Collection("crew_protest")
+	_, err := collection.DeleteMany(context.Background(), bson.M{})
+	if err != nil {
+		fmt.Println("Error clearing crew:", err)
+	}
+	collection = r.mongoDB.Collection("crew_race")
+	_, err = collection.DeleteMany(context.Background(), bson.M{})
+	if err != nil {
+		fmt.Println("Error clearing crew_race:", err)
+	}
+	collection = r.mongoDB.Collection("crews")
+	_, err = collection.DeleteMany(context.Background(), bson.M{})
+	if err != nil {
+		fmt.Println("Error clearing crews:", err)
+	}
+	collection = r.mongoDB.Collection("judge_rating")
+	_, err = collection.DeleteMany(context.Background(), bson.M{})
+	if err != nil {
+		fmt.Println("Error clearing judge_rating:", err)
+	}
+	collection = r.mongoDB.Collection("judges")
+	_, err = collection.DeleteMany(context.Background(), bson.M{})
+	if err != nil {
+		fmt.Println("Error clearing judge:", err)
+	}
+	collection = r.mongoDB.Collection("participant_crew")
+	_, err = collection.DeleteMany(context.Background(), bson.M{})
+	if err != nil {
+		fmt.Println("Error clearing participant_crew:", err)
+	}
+	collection = r.mongoDB.Collection("participants")
+	_, err = collection.DeleteMany(context.Background(), bson.M{})
+	if err != nil {
+		fmt.Println("Error clearing participant:", err)
+	}
+	collection = r.mongoDB.Collection("protests")
+	_, err = collection.DeleteMany(context.Background(), bson.M{})
+	if err != nil {
+		fmt.Println("Error clearing protest:", err)
+	}
+	collection = r.mongoDB.Collection("races")
+	_, err = collection.DeleteMany(context.Background(), bson.M{})
+	if err != nil {
+		fmt.Println("Error clearing race:", err)
+	}
+	collection = r.mongoDB.Collection("rating")
+	_, err = collection.DeleteMany(context.Background(), bson.M{})
+	if err != nil {
+		fmt.Println("Error clearing rating:", err)
+	}
+	return err
+}
