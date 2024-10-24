@@ -55,7 +55,7 @@ func SetupTestDatabasePostgres() (testcontainers.Container, *sqlx.DB, error) {
 		return dbContainer, nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	text, err := os.ReadFile("D:/PPO_BMSTU/db/init.sql")
+	text, err := os.ReadFile("../../PPO_BMSTU/db/init.sql")
 	if err != nil {
 		return dbContainer, nil, fmt.Errorf("failed to read init.sql: %w", err)
 	}
