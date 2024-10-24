@@ -42,6 +42,9 @@ jobs:
       - name: Запуск integration тестов сервисов
         run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_service.xml" -- ./tests/integration_tests/test_service/...
 
+      - name: Запуск e2e тестов
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_e2e.xml" -- ./tests/integration_tests/test_e2e/...
+
       # Установка Allure для генерации отчетов
       - name: Установка Allure
         uses: actions/setup-node@v2
