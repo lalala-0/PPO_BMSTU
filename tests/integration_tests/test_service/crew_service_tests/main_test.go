@@ -12,7 +12,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"github.com/testcontainers/testcontainers-go"
 	"go.mongodb.org/mongo-driver/mongo"
 	"os"
 	"runtime"
@@ -23,8 +22,6 @@ type crewServiceTestSuite struct {
 	suite.Suite
 	postgresClient *sqlx.DB
 	mongoClient    *mongo.Database
-	postgresC      testcontainers.Container
-	mongoC         testcontainers.Container
 	repo           repository_interfaces.ICrewRepository
 	initializer    db_init.TestRepositoryInitializer
 	service        service_interfaces.ICrewService
@@ -49,7 +46,7 @@ func (suite *crewServiceTestSuite) SetupSuite() {
 	dbType := os.Getenv("DB_TYPE") // Получаем значение переменной окружения DB_TYPE
 	var err error
 	if dbType == "postgres" || dbType == "" { // По умолчанию тестируем PostgreSQL, если не указано
-		suite.postgresC, suite.postgresClient, err = db_init.SetupTestDatabasePostgres()
+		suite.postgresClient, err = db_init.ConnectTestDatabasePostgres()
 		require.NoError(suite.T(), err)
 
 		suite.repo = postgres_rep.NewCrewRepository(suite.postgresClient)
@@ -60,11 +57,8 @@ func (suite *crewServiceTestSuite) SetupSuite() {
 	}
 
 	if dbType == "mongo" { // Тестируем MongoDB, если указано
-		suite.mongoC, suite.mongoClient = db_init.SetupTestDatabaseMongo()
-
-		// Проверяем, что клиент MongoDB и контейнер не nil
-		require.NotNil(suite.T(), suite.mongoClient, "Mongo client is nil")
-		require.NotNil(suite.T(), suite.mongoC, "Mongo container is nil")
+		suite.mongoClient, err = db_init.ConnectTestDatabaseMongo()
+		require.NoError(suite.T(), err)
 
 		suite.repo = mongo_rep.NewCrewRepository(suite.mongoClient)
 
@@ -86,18 +80,6 @@ func (suite *crewServiceTestSuite) SetupSuite() {
 
 // TearDownSuite выполняется один раз после завершения тестов
 func (suite *crewServiceTestSuite) TearDownSuite() {
-	// Завершаем работу с PostgreSQL контейнером
-	if suite.postgresC != nil {
-		err := suite.postgresC.Terminate(context.Background())
-		require.NoError(suite.T(), err)
-	}
-
-	// Завершаем работу с MongoDB контейнером
-	if suite.mongoC != nil {
-		err := suite.mongoC.Terminate(context.Background())
-		require.NoError(suite.T(), err)
-	}
-
 	// Закрываем подключение к PostgreSQL
 	if suite.postgresClient != nil {
 		err := suite.postgresClient.Close()

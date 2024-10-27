@@ -110,7 +110,7 @@ func (w RatingRepository) Create(rating *models.Rating) (*models.Rating, error) 
 	}
 
 	return &models.Rating{
-		ID:         ratingID,
+		ID:         rating.ID,
 		Name:       rating.Name,
 		Class:      rating.Class,
 		BlowoutCnt: rating.BlowoutCnt,

@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: testuser          # Имя пользователя
+      POSTGRES_DB: testDB               # Имя базы данных
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5433:5432"                     # Порт
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql # Монтируем файл init.sql
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"

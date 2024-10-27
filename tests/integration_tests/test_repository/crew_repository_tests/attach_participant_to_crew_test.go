@@ -4,6 +4,7 @@ import (
 	"PPO_BMSTU/internal/repository/repository_errors"
 	"PPO_BMSTU/tests/unit_tests/builders"
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -11,12 +12,12 @@ import (
 func (suite *CrewRepositoryTestSuite) TestCrewRepositoryAttachParticipantToCrew_Success() {
 	// arrange
 	// чистим бд
-	suite.initializer.ClearAll()
-	// добавляем все нужные записи
-	rating, err := suite.initializer.CreateRating(builders.RatingMother.Default())
-	require.NoError(suite.T(), err)
-	crew, err := suite.initializer.CreateCrew(builders.CrewMother.CustomCrew(uuid.New(), rating.ID, 1, 1))
-	require.NoError(suite.T(), err)
+	err := suite.initializer.ClearAll()
+	assert.NoError(suite.T(), err)
+	inputRating, err := suite.initializer.CreateRating(builders.RatingMother.Default())
+	assert.NoError(suite.T(), err)
+	crew, err := suite.initializer.CreateCrew(builders.CrewMother.WithRatingID(inputRating.ID))
+	assert.NoError(suite.T(), err)
 	participant, err := suite.initializer.CreateParticipant(builders.ParticipantMother.Default())
 	require.NoError(suite.T(), err)
 

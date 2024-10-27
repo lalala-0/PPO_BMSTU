@@ -16,6 +16,13 @@ jobs:
       - name: Проверка репозитория
         uses: actions/checkout@v2
 
+      - name: Установка Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io docker-compose
+          sudo systemctl start docker
+          sudo systemctl enable docker
+
       - name: Установка Go
         uses: actions/setup-go@v2
         with:
@@ -30,20 +37,20 @@ jobs:
       - name: Создание директории для Allure результатов
         run: mkdir -p ./tests/allure-results
 
-      - name: Запуск unit тестов репозиториев
-        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests_repo.xml" -- ./tests/unit_tests/test_repository/...
+      - name: Запуск Docker Compose для инициализации базы данных
+        run: docker-compose up -d
 
-      - name: Запуск unit тестов сервисов
-        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests_service.xml" -- ./tests/unit_tests/test_service/...
+      - name: Запуск unit тестов (репозитории и сервисы)
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests.xml" -- -parallel 5 ./tests/unit_tests/test_repository/... ./tests/unit_tests/test_service/...
 
       - name: Запуск integration тестов репозиториев
-        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integration_tests_repo.xml" -- ./tests/integration_tests/test_repository/...
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integration_tests_repo.xml" -- -parallel 1 ./tests/integration_tests/test_repository/...
 
       - name: Запуск integration тестов сервисов
-        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_service.xml" -- ./tests/integration_tests/test_service/...
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_service.xml" -- -parallel 1 ./tests/integration_tests/test_service/...
 
       - name: Запуск e2e тестов
-        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_e2e.xml" -- ./tests/integration_tests/test_e2e/...
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_e2e.xml" -- -parallel 1 ./tests/integration_tests/test_e2e/...
 
       # Установка Allure для генерации отчетов
       - name: Установка Allure
