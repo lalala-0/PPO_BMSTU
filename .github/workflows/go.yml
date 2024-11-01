@@ -62,16 +62,16 @@ jobs:
         run: |
           # Установка директории для артефактов
           mkdir -p artifacts
-          
           # Запуск tcpdump с таймаутом
           echo "Starting tcpdump..."
           sudo timeout 10s tcpdump -i any -w artifacts/traffic.pcap &
-          
           # Запуск тестов
           gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_e2e.xml" -- -parallel 1 ./tests/integration_tests/test_e2e/...
-          
           # Ожидание завершения tcpdump
           wait
+          # Вывод информации о захваченном трафике
+          echo "TCPDUMP LOG:"
+          tcpdump -r artifacts/traffic.pcap -n -A
 
       # Установка Allure для генерации отчетов
       - name: Установка Allure
