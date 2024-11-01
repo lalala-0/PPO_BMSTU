@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -21,16 +22,25 @@ func (suite *e2eTestSuite) TestJudgeE2E() {
 	suite.router.ServeHTTP(resp, req)
 	assert.Equal(suite.T(), http.StatusCreated, resp.Code, "Создание рейтинга не удалось")
 
-	// 2. Создаем трех участников
-	participantNames := []string{"Alice", "Bob", "Charlie"}
+	// Создаем трех участников
+	participantNames := []string{"Test fio1", "Test fio2", "Test fio3"}
 	for _, name := range participantNames {
-		reqBody = strings.NewReader(`{"name": "` + name + `", "age": 30}`)
-		req, _ = http.NewRequest("POST", "/api/participants/", reqBody)
+		reqBody = strings.NewReader(`{
+			"birthday": "2003-04-23",
+			"category": 1,
+			"coach": "Test coach",
+			"fio": "` + name + `",
+			"gender": 1,
+			"id": "` + uuid.New().String() + `"
+   		}`)
+		req, _ = http.NewRequest("POST", "/api/participants/", reqBody) // Изменил путь на "/api/participants"
+		req.Header.Set("accept", "application/json")                    // Установил заголовок 'accept'
 		req.Header.Set("Content-Type", "application/json")
 		resp = httptest.NewRecorder()
 		suite.router.ServeHTTP(resp, req)
 		assert.Equal(suite.T(), http.StatusCreated, resp.Code, "Создание участника "+name+" не удалось")
 	}
+
 	//
 	//// 3. Создаем три команды
 	//teamNames := []string{"Team 1", "Team 2", "Team 3"}
