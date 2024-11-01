@@ -50,6 +50,7 @@ func (suite *CrewRepositoryTestSuite) SetupSuite() {
 
 		// инициализатор элементов бд
 		suite.initializer = db_init.NewPostgresRepository(suite.postgresClient)
+		suite.initializer.ClearAll()
 	}
 
 	if dbType == "mongo" { // Тестируем MongoDB, если указано
@@ -61,12 +62,14 @@ func (suite *CrewRepositoryTestSuite) SetupSuite() {
 
 		// инициализатор элементов бд
 		suite.initializer = db_init.NewMongoRepository(suite.mongoClient)
+		suite.initializer.ClearAll()
 	}
 
 }
 
 // TearDownSuite выполняется один раз после завершения тестов
 func (suite *CrewRepositoryTestSuite) TearDownSuite() {
+	suite.initializer.ClearAll()
 	// Закрываем подключение к PostgreSQL
 	if suite.postgresClient != nil {
 		err := suite.postgresClient.Close()

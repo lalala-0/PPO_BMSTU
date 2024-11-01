@@ -48,8 +48,15 @@ func (s *ServicesAPI) getCrewsByRatingID(c *gin.Context) {
 		})
 		return
 	}
+	res, err := modelsViewApi.FromCrewModelsToStringData(crews)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, modelsViewApi.BadRequestError{
+			Error:   "Internal error",
+			Message: err.Error(),
+		})
+	}
 
-	c.JSON(http.StatusOK, crews)
+	c.JSON(http.StatusOK, res)
 }
 
 // createCrew godoc

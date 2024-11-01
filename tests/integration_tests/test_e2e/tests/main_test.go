@@ -3,9 +3,11 @@ package tests
 import (
 	"PPO_BMSTU/internal/registry"
 	API "PPO_BMSTU/server/api/controllersApi"
+	"PPO_BMSTU/tests/integration_tests/db_init"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"html/template"
 
 	"github.com/stretchr/testify/suite"
@@ -16,8 +18,9 @@ import (
 // e2eTestSuite описывает тестовый набор для Ie2e
 type e2eTestSuite struct {
 	suite.Suite
-	app    registry.App
-	router *gin.Engine
+	app         registry.App
+	router      *gin.Engine
+	initializer db_init.TestRepositoryInitializer
 }
 
 // TestIe2e запускает тесты в наборе
@@ -43,11 +46,16 @@ func (suite *e2eTestSuite) SetupSuite() {
 	assert.NoError(suite.T(), err)
 
 	suite.router = runServer(&app)
+
+	postgresClient, err := db_init.ConnectTestDatabasePostgres()
+	require.NoError(suite.T(), err)
+	suite.initializer = db_init.NewPostgresRepository(postgresClient)
+	suite.initializer.ClearAll()
 }
 
 // TearDownSuite выполняется один раз после завершения тестов
 func (suite *e2eTestSuite) TearDownSuite() {
-
+	suite.initializer.ClearAll()
 }
 
 func runServer(app *registry.App) *gin.Engine {

@@ -58,7 +58,7 @@ jobs:
       - name: Запуск integration тестов сервисов
         run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_service.xml" -- -parallel 1 ./tests/integration_tests/test_service/...
 
-      - name: Запуск e2e тестов + захват трафика
+      - name: Запуск e2e теста + захват трафика
         run: |
           # Установка директории для артефактов
           mkdir -p artifacts
