@@ -60,10 +60,18 @@ jobs:
 
       - name: Запуск e2e тестов + захват трафика
         run: |
+          # Установка директории для артефактов
           mkdir -p artifacts
-          sudo tcpdump -i any -w artifacts/traffic.pcap &
+          
+          # Запуск tcpdump с таймаутом
+          echo "Starting tcpdump..."
+          sudo timeout 10s tcpdump -i any -w artifacts/traffic.pcap &
+          
+          # Запуск тестов
           gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_e2e.xml" -- -parallel 1 ./tests/integration_tests/test_e2e/...
-          wait # Дождитесь завершения tcpdump
+          
+          # Ожидание завершения tcpdump
+          wait
 
       # Установка Allure для генерации отчетов
       - name: Установка Allure
