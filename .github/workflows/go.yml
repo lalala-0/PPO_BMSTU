@@ -31,7 +31,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose
 
-
       - name: Установка Go
         uses: actions/setup-go@v2
         with:
@@ -73,12 +72,17 @@ jobs:
           echo "TCPDUMP LOG:"
           tcpdump -r artifacts/traffic.pcap -n -A
 
-      - name: Upload artifact
+      - name: Upload traffic artifact
         uses: actions/upload-artifact@v3
         with:
-          name: my-artifact
-          path: path/to/artifact
+          name: traffic-pcap
+          path: artifacts/traffic.pcap
 
+      - name: Upload test reports artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: ./tests/allure-results/*
 
       # Установка Allure для генерации отчетов
       - name: Установка Allure
