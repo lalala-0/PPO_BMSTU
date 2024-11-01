@@ -58,8 +58,12 @@ jobs:
       - name: Запуск integration тестов сервисов
         run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_service.xml" -- -parallel 1 ./tests/integration_tests/test_service/...
 
-      - name: Запуск e2e тестов
-        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_e2e.xml" -- -parallel 1 ./tests/integration_tests/test_e2e/...
+      - name: Запуск e2e тестов + захват трафика
+        run: |
+          mkdir -p artifacts
+          sudo tcpdump -i any -w artifacts/traffic.pcap &
+          gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_e2e.xml" -- -parallel 1 ./tests/integration_tests/test_e2e/...
+          wait # Дождитесь завершения tcpdump
 
       # Установка Allure для генерации отчетов
       - name: Установка Allure

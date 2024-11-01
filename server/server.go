@@ -10,7 +10,7 @@ import (
 	"html/template"
 )
 
-func RunServer(app *registry.App) error {
+func RunServer(app *registry.App) (*gin.Engine, error) {
 
 	router := gin.Default()
 
@@ -37,7 +37,7 @@ func RunServer(app *registry.App) error {
 	port := app.Config.Port
 	address := app.Config.Address
 	err := router.Run(address + port)
-	return err
+	return router, err
 }
 
 func add(a, b int) int {

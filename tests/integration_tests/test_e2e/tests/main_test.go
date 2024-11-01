@@ -1,20 +1,12 @@
 package tests
 
 import (
-	mongo_rep "PPO_BMSTU/internal/repository/mongo"
-	"PPO_BMSTU/internal/repository/repository_interfaces"
-	"PPO_BMSTU/internal/services"
-	"PPO_BMSTU/internal/services/service_interfaces"
-	mock_password_hash "PPO_BMSTU/tests/hasher_mocks"
-	"github.com/charmbracelet/log"
+	"PPO_BMSTU/internal/registry"
+	"PPO_BMSTU/server"
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 
-	postgres_rep "PPO_BMSTU/internal/repository/postgres"
-	"PPO_BMSTU/tests/integration_tests/db_init"
-	"context"
-	"github.com/jmoiron/sqlx"
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"go.mongodb.org/mongo-driver/mongo"
 	"os"
 	"runtime"
 	"testing"
@@ -23,26 +15,8 @@ import (
 // e2eTestSuite описывает тестовый набор для Ie2e
 type e2eTestSuite struct {
 	suite.Suite
-	postgresClient *sqlx.DB
-	mongoClient    *mongo.Database
-	initializer    db_init.TestRepositoryInitializer
-	logger         *log.Logger
-	hash           *mock_password_hash.MockPasswordHash
-
-	crewService        service_interfaces.ICrewService
-	judgeService       service_interfaces.IJudgeService
-	participantService service_interfaces.IParticipantService
-	protestService     service_interfaces.IProtestService
-	raceService        service_interfaces.IRaceService
-	ratingService      service_interfaces.IRatingService
-
-	crewRepository          repository_interfaces.ICrewRepository
-	crewResInRaceRepository repository_interfaces.ICrewResInRaceRepository
-	judgeRepository         repository_interfaces.IJudgeRepository
-	participantRepository   repository_interfaces.IParticipantRepository
-	protestRepository       repository_interfaces.IProtestRepository
-	raceRepository          repository_interfaces.IRaceRepository
-	ratingRepository        repository_interfaces.IRatingRepository
+	app    registry.App
+	router *gin.Engine
 }
 
 // TestIe2e запускает тесты в наборе
@@ -59,71 +33,20 @@ func TestIe2e(t *testing.T) {
 }
 
 func (suite *e2eTestSuite) SetupSuite() {
-	dbType := os.Getenv("DB_TYPE") // Получаем значение переменной окружения DB_TYPE
+	app := registry.App{}
 
-	var err error
-	if dbType == "postgres" || dbType == "" { // По умолчанию тестируем PostgreSQL, если не указано
-		suite.postgresClient, err = db_init.ConnectTestDatabasePostgres()
-		require.NoError(suite.T(), err)
+	configFile := "../../../config/config_test.json"
+	err := app.Config.ParseConfig(configFile, "config")
+	assert.NoError(suite.T(), err)
 
-		// все репозитории
-		suite.crewRepository = postgres_rep.NewCrewRepository(suite.postgresClient)
-		suite.crewResInRaceRepository = postgres_rep.NewCrewResInRaceRepository(suite.postgresClient)
-		suite.judgeRepository = postgres_rep.NewJudgeRepository(suite.postgresClient)
-		suite.participantRepository = postgres_rep.NewParticipantRepository(suite.postgresClient)
-		suite.protestRepository = postgres_rep.NewProtestRepository(suite.postgresClient)
-		suite.raceRepository = postgres_rep.NewRaceRepository(suite.postgresClient)
-		suite.ratingRepository = postgres_rep.NewRatingRepository(suite.postgresClient)
+	err = app.Run()
+	assert.NoError(suite.T(), err)
 
-		// инициализатор элементов бд
-		suite.initializer = db_init.NewPostgresRepository(suite.postgresClient)
-	}
-
-	if dbType == "mongo" { // Тестируем MongoDB, если указано
-		suite.mongoClient, err = db_init.ConnectTestDatabaseMongo()
-		require.NoError(suite.T(), err)
-
-		// тестируемый репозиторий
-		suite.crewRepository = mongo_rep.NewCrewRepository(suite.mongoClient)
-		suite.crewResInRaceRepository = mongo_rep.NewCrewResInRaceRepository(suite.mongoClient)
-		suite.judgeRepository = mongo_rep.NewJudgeRepository(suite.mongoClient)
-		suite.participantRepository = mongo_rep.NewParticipantRepository(suite.mongoClient)
-		suite.protestRepository = mongo_rep.NewProtestRepository(suite.mongoClient)
-		suite.raceRepository = mongo_rep.NewRaceRepository(suite.mongoClient)
-		suite.ratingRepository = mongo_rep.NewRatingRepository(suite.mongoClient)
-
-		// инициализатор элементов бд
-		suite.initializer = db_init.NewMongoRepository(suite.mongoClient)
-	}
-
-	// Инициализация лога
-	f, err := os.OpenFile("tests.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
-	suite.logger = log.New(f)
-
-	// Инициализация тестируемого сервиса
-	suite.crewService = services.NewCrewService(suite.crewRepository, suite.logger)
-	suite.judgeService = services.NewJudgeService(suite.judgeRepository, suite.hash, suite.logger)
-	suite.participantService = services.NewParticipantService(suite.participantRepository, suite.logger)
-	suite.protestService = services.NewProtestService(suite.protestRepository, suite.crewResInRaceRepository, suite.crewRepository, suite.logger)
-	suite.raceService = services.NewRaceService(suite.raceRepository, suite.crewRepository, suite.crewResInRaceRepository, suite.logger)
-	suite.ratingService = services.NewRatingService(suite.ratingRepository, suite.judgeRepository, suite.logger)
-
+	suite.router, err = server.RunServer(&app)
+	assert.NoError(suite.T(), err)
 }
 
 // TearDownSuite выполняется один раз после завершения тестов
 func (suite *e2eTestSuite) TearDownSuite() {
-	// Закрываем подключение к PostgreSQL
-	if suite.postgresClient != nil {
-		err := suite.postgresClient.Close()
-		require.NoError(suite.T(), err)
-	}
 
-	// Закрываем подключение к MongoDB
-	if suite.mongoClient != nil {
-		err := suite.mongoClient.Client().Disconnect(context.Background())
-		require.NoError(suite.T(), err)
-	}
 }

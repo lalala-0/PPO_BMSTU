@@ -40,7 +40,7 @@ func main() {
 
 	case "server":
 		log.Info("Start with server!")
-		err = server.RunServer(&app)
+		_, err = server.RunServer(&app)
 		if err != nil {
 			log.Fatal(err)
 		}
