@@ -15,8 +15,7 @@ func (suite *e2eTestSuite) TestJudgeE2E() {
 	  "class": 1,
 	  "name": "Test Rating"
 	}`)
-	req, _ := http.NewRequest("POST", "/api/ratings", reqBody) // Обратите внимание на изменение пути
-	req.Header.Set("accept", "application/json")               // Добавлен заголовок 'accept'
+	req, _ := http.NewRequest("POST", "/api/ratings/", reqBody) // Обратите внимание на изменение пути
 	req.Header.Set("Content-Type", "application/json")
 	resp := httptest.NewRecorder()
 	suite.router.ServeHTTP(resp, req)
