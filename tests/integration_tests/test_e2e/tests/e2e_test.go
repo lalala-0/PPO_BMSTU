@@ -21,16 +21,16 @@ func (suite *e2eTestSuite) TestJudgeE2E() {
 	suite.router.ServeHTTP(resp, req)
 	assert.Equal(suite.T(), http.StatusCreated, resp.Code, "Создание рейтинга не удалось")
 
-	//// 2. Создаем трех участников
-	//participantNames := []string{"Alice", "Bob", "Charlie"}
-	//for _, name := range participantNames {
-	//	reqBody = strings.NewReader(`{"name": "` + name + `", "age": 30}`)
-	//	req, _ = http.NewRequest("POST", "/api/participants/", reqBody)
-	//	req.Header.Set("Content-Type", "application/json")
-	//	resp = httptest.NewRecorder()
-	//	suite.router.ServeHTTP(resp, req)
-	//	assert.Equal(suite.T(), http.StatusCreated, resp.Code, "Создание участника "+name+" не удалось")
-	//}
+	// 2. Создаем трех участников
+	participantNames := []string{"Alice", "Bob", "Charlie"}
+	for _, name := range participantNames {
+		reqBody = strings.NewReader(`{"name": "` + name + `", "age": 30}`)
+		req, _ = http.NewRequest("POST", "/api/participants/", reqBody)
+		req.Header.Set("Content-Type", "application/json")
+		resp = httptest.NewRecorder()
+		suite.router.ServeHTTP(resp, req)
+		assert.Equal(suite.T(), http.StatusCreated, resp.Code, "Создание участника "+name+" не удалось")
+	}
 	//
 	//// 3. Создаем три команды
 	//teamNames := []string{"Team 1", "Team 2", "Team 3"}

@@ -73,6 +73,12 @@ jobs:
           echo "TCPDUMP LOG:"
           tcpdump -r artifacts/traffic.pcap -n -A
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-logs
+          path: artifacts/*
+          
       # Установка Allure для генерации отчетов
       - name: Установка Allure
         uses: actions/setup-node@v2
