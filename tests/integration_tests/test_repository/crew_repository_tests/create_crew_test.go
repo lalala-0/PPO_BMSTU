@@ -10,7 +10,6 @@ import (
 // TestCrewRepositoryCreate_Success тестирует успешное создание записи о команде
 func (suite *CrewRepositoryTestSuite) TestCrewRepositoryCreate_Success() {
 	// чистим бд
-	suite.initializer.ClearAll()
 	// добавляем все нужные записи
 	rating, err := suite.initializer.CreateRating(builders.RatingMother.Default())
 	require.NoError(suite.T(), err)

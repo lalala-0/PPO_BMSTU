@@ -52,7 +52,7 @@ func (p *DbConnectionFlags) InitMongoDB(logger *log.Logger) (*mongo.Database, er
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	dsnMongoConn := "mongodb://localhost:27017/"
+	dsnMongoConn := "mongodb://" + p.Host + ":" + p.Port + "/"
 
 	// Подключаемся к MongoDB
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(dsnMongoConn))

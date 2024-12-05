@@ -99,3 +99,4 @@ create table judge_rating
     judge_id uuid references judges (id) ON DELETE CASCADE,
     rating_id  uuid references ratings (id) ON DELETE CASCADE
 );
+

@@ -10,7 +10,6 @@ import (
 // TestCrewRepositoryDelete_Success тестирует успешное удаление записи о команде
 func (suite *CrewRepositoryTestSuite) TestCrewRepositoryDelete_Success() {
 	// Чистим БД
-	suite.initializer.ClearAll()
 	// Добавляем нужные записи
 	rating, err := suite.initializer.CreateRating(builders.RatingMother.Default())
 	require.NoError(suite.T(), err)

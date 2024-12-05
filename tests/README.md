@@ -20,3 +20,34 @@
 
 - узнаем, сколько ядер есть: ` [Environment]::ProcessorCount`
 - `go test -parallel n ./...`, где n - кол-во ядер
+
+# ЛР3
+
+## Запуск контейнеров бд в докере 
+```
+
+docker run -d `
+  --name postgres `
+-e POSTGRES_USER=postgres `
+  -e POSTGRES_PASSWORD=postgres `
+-e POSTGRES_DB=postgres `
+  -p 5433:5432 `
+postgres
+
+
+docker run -d `
+  --name mongodb `
+-p 27017:27017 `
+mongo
+
+```
+
+
+
+## Запуск locust
+
+
+## Запуск prometheus
+
+
+## Запуск graphana

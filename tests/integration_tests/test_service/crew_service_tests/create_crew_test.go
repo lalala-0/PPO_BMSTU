@@ -36,9 +36,7 @@ var testCrewServiceAddNewCrew = []struct {
 			models.Laser,
 		},
 		prepare: func(t *testing.T, suite *crewServiceTestSuite, data inputDataType) {
-			err := suite.initializer.ClearAll()
-			assert.NoError(t, err)
-			_, err = suite.initializer.CreateRating(builders.RatingMother.WithID(data.ratingID))
+			_, err := suite.initializer.CreateRating(builders.RatingMother.WithID(data.ratingID))
 			assert.NoError(t, err)
 		},
 		checkOutput: func(t *testing.T, crew *models.Crew, err error) {
@@ -60,8 +58,6 @@ var testCrewServiceAddNewCrew = []struct {
 			90,
 		},
 		prepare: func(t *testing.T, suite *crewServiceTestSuite, data inputDataType) {
-			err := suite.initializer.ClearAll()
-			assert.NoError(t, err)
 		},
 		checkOutput: func(t *testing.T, crew *models.Crew, err error) {
 			assert.Error(t, err)
@@ -83,8 +79,6 @@ var testCrewServiceAddNewCrew = []struct {
 			models.Laser,
 		},
 		prepare: func(t *testing.T, suite *crewServiceTestSuite, data inputDataType) {
-			err := suite.initializer.ClearAll()
-			assert.NoError(t, err)
 		},
 		checkOutput: func(t *testing.T, crew *models.Crew, err error) {
 			assert.Error(t, err)

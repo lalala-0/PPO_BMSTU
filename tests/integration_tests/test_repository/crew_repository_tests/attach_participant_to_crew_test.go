@@ -12,8 +12,6 @@ import (
 func (suite *CrewRepositoryTestSuite) TestCrewRepositoryAttachParticipantToCrew_Success() {
 	// arrange
 	// чистим бд
-	err := suite.initializer.ClearAll()
-	assert.NoError(suite.T(), err)
 	inputRating, err := suite.initializer.CreateRating(builders.RatingMother.Default())
 	assert.NoError(suite.T(), err)
 	crew, err := suite.initializer.CreateCrew(builders.CrewMother.WithRatingID(inputRating.ID))

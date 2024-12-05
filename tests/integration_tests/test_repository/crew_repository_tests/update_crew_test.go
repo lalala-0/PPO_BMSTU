@@ -10,7 +10,6 @@ import (
 // TestCrewRepositoryUpdate_Success тестирует успешное обновление записи о команде
 func (suite *CrewRepositoryTestSuite) TestCrewRepositoryUpdate_Success() {
 	// Чистим БД
-	suite.initializer.ClearAll()
 	// Добавляем нужные записи
 	rating, err := suite.initializer.CreateRating(builders.RatingMother.Default())
 	require.NoError(suite.T(), err)
@@ -39,7 +38,6 @@ func (suite *CrewRepositoryTestSuite) TestCrewRepositoryUpdate_Success() {
 // TestCrewRepositoryUpdate_Failure тестирует ошибку при обновлении записи о команде
 func (suite *CrewRepositoryTestSuite) TestCrewRepositoryUpdate_Failure() {
 	// Чистим БД
-	suite.initializer.ClearAll()
 	// Создаем запись о команде с помощью Object Mother
 	inputCrew := builders.CrewMother.CustomCrew(uuid.New(), uuid.New(), 0, 0) // Некорректное значение для номера паруса
 

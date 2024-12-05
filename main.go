@@ -14,7 +14,7 @@ func main() {
 	app := registry.App{}
 
 	// Чтение конфигурационного файла
-	configFile := "config4.json"
+	configFile := "config.json"
 	if len(os.Args) > 1 { // Если переданы аргументы командной строки
 		configFile = os.Args[1] // Использовать файл конфигурации, переданный в качестве аргумента
 	}

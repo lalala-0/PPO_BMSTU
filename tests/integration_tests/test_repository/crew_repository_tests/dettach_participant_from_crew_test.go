@@ -11,7 +11,6 @@ import (
 func (suite *CrewRepositoryTestSuite) TestCrewRepositoryDetachParticipantFromCrew_Success() {
 	// arrange
 	// чистим бд
-	suite.initializer.ClearAll()
 	// добавляем все нужные записи
 	rating, err := suite.initializer.CreateRating(builders.RatingMother.Default())
 	require.NoError(suite.T(), err)

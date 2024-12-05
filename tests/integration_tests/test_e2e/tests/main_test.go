@@ -50,12 +50,10 @@ func (suite *e2eTestSuite) SetupSuite() {
 	postgresClient, err := db_init.ConnectTestDatabasePostgres()
 	require.NoError(suite.T(), err)
 	suite.initializer = db_init.NewPostgresRepository(postgresClient)
-	suite.initializer.ClearAll()
 }
 
 // TearDownSuite выполняется один раз после завершения тестов
 func (suite *e2eTestSuite) TearDownSuite() {
-	suite.initializer.ClearAll()
 }
 
 func runServer(app *registry.App) *gin.Engine {
