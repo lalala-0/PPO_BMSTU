@@ -1,0 +1,10 @@
+linters:
+  enable:
+    - gocyclo          # Цикломатическая сложность
+    - unused          # Проверка на неиспользуемый код
+    - gocognit         # Когнитивная сложность
+    - gosec            # Поиск уязвимостей
+
+linters-settings:
+  gocyclo:
+    min-complexity: 10   # Установить порог цикломатической сложности
