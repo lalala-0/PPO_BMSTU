@@ -519,14 +519,16 @@ var testRaceMakeStartProcedureFail = []struct {
 		},
 		prepare: func(fields *raceServiceFields) {
 			fields.raceRepoMock.EXPECT().GetRaceDataByID(gomock.Any()).Return(&models.Race{ID: uuid.New()}, nil)
-			fields.crewRepoMock.EXPECT().GetCrewsDataByRatingID(gomock.Any()).Return([]models.Crew{{ID: uuid.New()}, {ID: uuid.New()}}, nil)
+			fields.crewRepoMock.EXPECT().GetCrewsDataByRatingID(gomock.Any()).Return([]models.Crew{{ID: uuid.New(), SailNum: 1}, {ID: uuid.New(), SailNum: 345}, {ID: uuid.New(), SailNum: 654}}, nil)
+			fields.crewResInRaceRepoMock.EXPECT().Create(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
+			fields.crewResInRaceRepoMock.EXPECT().Create(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
+			fields.crewResInRaceRepoMock.EXPECT().Create(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 			fields.crewRepoMock.EXPECT().GetCrewDataBySailNumAndRatingID(gomock.Any(), gomock.Any()).Return(&models.Crew{ID: uuid.New()}, repository_errors.SelectError)
 			fields.crewRepoMock.EXPECT().GetCrewDataBySailNumAndRatingID(gomock.Any(), gomock.Any()).Return(&models.Crew{ID: uuid.New()}, nil)
 			fields.crewRepoMock.EXPECT().GetCrewDataBySailNumAndRatingID(gomock.Any(), gomock.Any()).Return(&models.Crew{ID: uuid.New()}, nil)
 			fields.crewResInRaceRepoMock.EXPECT().GetCrewResByRaceIDAndCrewID(gomock.Any(), gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 			fields.crewResInRaceRepoMock.EXPECT().GetCrewResByRaceIDAndCrewID(gomock.Any(), gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
-			fields.crewResInRaceRepoMock.EXPECT().Create(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
-			fields.crewResInRaceRepoMock.EXPECT().Create(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
+
 			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 			fields.crewResInRaceRepoMock.EXPECT().Update(gomock.Any()).Return(&models.CrewResInRace{RaceID: uuid.New()}, nil)
 		},

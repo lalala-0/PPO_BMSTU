@@ -40,10 +40,8 @@ func (suite *e2eTestSuite) SetupSuite() {
 	configFile := "../../../../../config/config_test.json"
 	err := app.Config.ParseConfig(configFile, "config")
 	assert.NoError(suite.T(), err)
-
 	err = app.Run()
 	assert.NoError(suite.T(), err)
-
 	suite.router = runServer(&app)
 
 	postgresClient, err := db_init.ConnectTestDatabasePostgres()

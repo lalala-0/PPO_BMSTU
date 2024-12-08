@@ -8,7 +8,7 @@ import (
 
 // ConnectTestDatabasePostgres создает контейнер с PostgreSQL и возвращает подключение к базе данных
 func ConnectTestDatabasePostgres() (*sqlx.DB, error) {
-	postgresDSN := "host=localhost user=testuser dbname=testDB port=5433 sslmode=disable"
+	postgresDSN := "host=localhost user=testuser dbname=testDB port=5434 sslmode=disable"
 
 	// Подключаемся к базе данных
 	db, err := sqlx.Connect("postgres", postgresDSN)

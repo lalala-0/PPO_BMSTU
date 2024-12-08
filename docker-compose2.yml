@@ -14,8 +14,3 @@ services:
       - "5434:5432"                     # Порт
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql # Монтируем файл init.sql
-
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"

@@ -3,7 +3,7 @@
     "host": "localhost",
     "user": "testuser",
     "password": "testpassword",
-    "port": "5433",
+    "port": "5434",
     "dbname": "testDB"
   },
 

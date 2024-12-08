@@ -133,12 +133,9 @@ func (r RaceService) MakeStartProcedure(raceID uuid.UUID, falseStartYachtList ma
 	}
 
 	rc = r.processFalseStartYachts(falseStartYachtList, race, crews)
-	if rc != nil {
-		return rc
-	}
 
 	r.logger.Info("SERVICE: Successfully start procedure")
-	return nil
+	return rc
 }
 
 // createRaceSailings создает записи о старте для всех экипажей.
@@ -159,6 +156,8 @@ func (r RaceService) createRaceSailings(crews []models.Crew, raceID uuid.UUID) e
 
 // processFalseStartYachts обрабатывает яхты с ложным стартом.
 func (r RaceService) processFalseStartYachts(falseStartYachtList map[int]int, race *models.Race, crews []models.Crew) error {
+	var rc error
+	rc = nil
 	for sailNum, specCircumstance := range falseStartYachtList {
 		if !validSpecCircumstance(specCircumstance) {
 			r.logger.Error("SERVICE: invalid input data", "SpecCircumstance", specCircumstance)
@@ -168,25 +167,29 @@ func (r RaceService) processFalseStartYachts(falseStartYachtList map[int]int, ra
 		crew, err := r.CrewRepository.GetCrewDataBySailNumAndRatingID(sailNum, race.RatingID)
 		if err != nil {
 			r.logError("SERVICE: GetCrewDataBySailNumAndRatingID method failed", err)
-			return err
-		}
+			rc = err
+		} else {
 
-		res, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(race.ID, crew.ID)
-		if err != nil {
-			r.logError("SERVICE: GetCrewResByRaceIDAndCrewID method failed", err)
-			return err
-		}
+			res, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(race.ID, crew.ID)
+			if err != nil {
+				r.logError("SERVICE: GetCrewResByRaceIDAndCrewID method failed", err)
+				return err
+			}
 
-		res.SpecCircumstance = specCircumstance
-		res.Points = len(crews) + 1
-		if err := r.updateCrewRes(res); err != nil {
-			return err
+			res.SpecCircumstance = specCircumstance
+			res.Points = len(crews) + 1
+			if err := r.updateCrewRes(res); err != nil {
+				return err
+			}
 		}
 	}
-	return nil
+	return rc
 }
 
 func (r RaceService) MakeFinishProcedure(raceID uuid.UUID, finishersList map[int]int, nonFinishersList map[int]int) error {
+	var err error
+	err = nil
+
 	race, rc := r.RaceRepository.GetRaceDataByID(raceID)
 	if rc != nil {
 		r.logError("SERVICE: MakeStartProcedure method failed", raceID, rc)
@@ -195,12 +198,12 @@ func (r RaceService) MakeFinishProcedure(raceID uuid.UUID, finishersList map[int
 
 	rc = r.processFinishers(finishersList, race)
 	if rc != nil {
-		return rc
+		err = rc
 	}
 
 	rc = r.processNonFinishers(nonFinishersList, race)
 	if rc != nil {
-		return rc
+		err = rc
 	}
 
 	rc = r.finalizeRaceResults(raceID)
@@ -209,21 +212,25 @@ func (r RaceService) MakeFinishProcedure(raceID uuid.UUID, finishersList map[int
 	}
 
 	r.logger.Info("SERVICE: Successfully finish procedure")
-	return nil
+	return err
 }
 
 // processFinishers обрабатывает список финишировавших участников.
 func (r RaceService) processFinishers(finishersList map[int]int, race *models.Race) error {
+	var rc error
+	rc = nil
 	for sailNum, points := range finishersList {
 		crew, err := r.CrewRepository.GetCrewDataBySailNumAndRatingID(sailNum, race.RatingID)
 		if err != nil {
 			r.logError("SERVICE: MakeStartProcedure method failed", race.ID, err)
+			rc = err
 			continue
 		}
 
 		res, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(race.ID, crew.ID)
 		if err != nil {
 			r.logError("SERVICE: GetCrewResByRaceIDAndCrewID method failed", err)
+			rc = err
 			continue
 		}
 
@@ -232,11 +239,13 @@ func (r RaceService) processFinishers(finishersList map[int]int, race *models.Ra
 			return err
 		}
 	}
-	return nil
+	return rc
 }
 
 // processNonFinishers обрабатывает список не финишировавших участников.
 func (r RaceService) processNonFinishers(nonFinishersList map[int]int, race *models.Race) error {
+	var rc error
+	rc = nil
 	for sailNum, specCircumstance := range nonFinishersList {
 		if !validSpecCircumstance(specCircumstance) {
 			r.logger.Error("SERVICE: invalid input data", "SpecCircumstance", specCircumstance)
@@ -246,12 +255,14 @@ func (r RaceService) processNonFinishers(nonFinishersList map[int]int, race *mod
 		crew, err := r.CrewRepository.GetCrewDataBySailNumAndRatingID(sailNum, race.RatingID)
 		if err != nil {
 			r.logError("SERVICE: MakeStartProcedure method failed", race.ID, err)
+			rc = err
 			continue
 		}
 
 		res, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(race.ID, crew.ID)
 		if err != nil {
 			r.logError("SERVICE: CreateNewRaceSailing method failed", err)
+			rc = err
 			continue
 		}
 
@@ -264,7 +275,7 @@ func (r RaceService) processNonFinishers(nonFinishersList map[int]int, race *mod
 			r.logger.Info("SERVICE: the field SpecCircumstance was already filled in at the start")
 		}
 	}
-	return nil
+	return rc
 }
 
 // finalizeRaceResults завершает обработку всех результатов.
