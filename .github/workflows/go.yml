@@ -54,7 +54,7 @@ jobs:
         run: mkdir -p ./tests/allure-results
 
       - name: Запуск Docker Compose для инициализации базы данных
-        run: docker-compose -f docker-compose2.yml up
+        run: docker-compose -f docker-compose2.yml up -d
 
       - name: Запуск unit тестов (репозитории и сервисы)
         run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests.xml" -- -parallel 5 ./tests/unit_tests/test_repository/... ./tests/unit_tests/test_service/...
