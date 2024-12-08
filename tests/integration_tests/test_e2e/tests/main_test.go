@@ -18,7 +18,6 @@ import (
 // e2eTestSuite описывает тестовый набор для Ie2e
 type e2eTestSuite struct {
 	suite.Suite
-	app         registry.App
 	router      *gin.Engine
 	initializer db_init.TestRepositoryInitializer
 }
@@ -105,12 +104,12 @@ func inArray(arr []int, num int) bool {
 	return false
 }
 
-func setupReadmeRote(router *gin.Engine) {
-
-	// Настройка маршрута для статических файлов
-	//router.StaticFile("/readme.md", "E:/PPO_BMSTU/README.md")              // Обслуживание файла README.md из корня проекта
-	//router.StaticFile("/readme", "E:/PPO_BMSTU/server/static/readme.html") // Обслуживание файла README.md из корня проекта
-	//
-	//router.Static("/schemes", "E:/PPO_BMSTU/schemes")      // Путь к папке schemes
-	//router.Static("/static", "E:/PPO_BMSTU/server/static") // Путь к папке static
-}
+//func setupReadmeRote(router *gin.Engine) {
+//
+//	// Настройка маршрута для статических файлов
+//	//router.StaticFile("/readme.md", "E:/PPO_BMSTU/README.md")              // Обслуживание файла README.md из корня проекта
+//	//router.StaticFile("/readme", "E:/PPO_BMSTU/server/static/readme.html") // Обслуживание файла README.md из корня проекта
+//	//
+//	//router.Static("/schemes", "E:/PPO_BMSTU/schemes")      // Путь к папке schemes
+//	//router.Static("/static", "E:/PPO_BMSTU/server/static") // Путь к папке static
+//}

@@ -26,8 +26,14 @@ func DeleteProtest(service registry.Services, protest *models.Protest) error {
 func UpdateProtest(service registry.Services, protest *models.Protest) error {
 	race := models.Race{}
 	err := views.GetRaceInRating(service, protest.RatingID, &race)
+	if err != nil {
+		return err
+	}
 	judge := models.Judge{}
 	err = views.GetJudge(service, &judge)
+	if err != nil {
+		return err
+	}
 	ruleNum := utils.EndlessReadInt(stringConst.RuleNumRequest)
 	reviewDate := utils.EndlessReadDateTime(stringConst.DateRequest)
 	status := utils.EndlessReadInt(stringConst.ProtestStatusRequest)
@@ -39,7 +45,7 @@ func UpdateProtest(service registry.Services, protest *models.Protest) error {
 		return err
 	}
 
-	fmt.Printf("%s %s %s %s Протест успешно обновлён\n\n\n", updatedProtest.RuleNum, updatedProtest.ReviewDate, updatedProtest.Status, updatedProtest.Comment)
+	fmt.Printf("%d %s %d %s Протест успешно обновлён\n\n\n", updatedProtest.RuleNum, updatedProtest.ReviewDate, updatedProtest.Status, updatedProtest.Comment)
 
 	return nil
 }
@@ -47,6 +53,9 @@ func UpdateProtest(service registry.Services, protest *models.Protest) error {
 func CreateProtest(service registry.Services, race *models.Race) error {
 	judge := models.Judge{}
 	err := views.GetJudge(service, &judge)
+	if err != nil {
+		return err
+	}
 	ruleNum := utils.EndlessReadInt(stringConst.RuleNumRequest)
 	reviewDate := utils.EndlessReadDateTime(stringConst.DateRequest)
 	comment := utils.EndlessReadRow(stringConst.CommentRequest)
@@ -80,7 +89,7 @@ func CreateProtest(service registry.Services, race *models.Race) error {
 		return err
 	}
 
-	fmt.Printf("%s %s %s %s Протест успешно создан\n\n\n", createdProtest.RuleNum, createdProtest.ReviewDate, createdProtest.Status, createdProtest.Comment)
+	fmt.Printf("%d %s %d %s Протест успешно создан\n\n\n", createdProtest.RuleNum, createdProtest.ReviewDate, createdProtest.Status, createdProtest.Comment)
 
 	return nil
 }
@@ -103,6 +112,9 @@ func CompleteProtestReview(service registry.Services, protest *models.Protest) e
 func GetProtestJudgeMenu(service registry.Services, judge *models.Judge, race *models.Race) error {
 	protest := models.Protest{}
 	err := views.GetProtestInRace(service, &protest, race)
+	if err != nil {
+		return err
+	}
 
 	err = protestJudgeMenu(service, &protest)
 	if err != nil {
@@ -122,6 +134,9 @@ func GetAllProtestsInRace(services registry.Services, race *models.Race) error {
 func GetProtestViewerMenu(service registry.Services, race *models.Race) error {
 	protest := models.Protest{}
 	err := views.GetProtestInRace(service, &protest, race)
+	if err != nil {
+		return err
+	}
 
 	err = protestViewerMenu(service, &protest)
 	if err != nil {

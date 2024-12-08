@@ -156,5 +156,4 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 		protestsGroup.GET("/:protestID/complete", s.completeProtestGet)
 		protestsGroup.POST("/:protestID/complete", s.completeProtestPost)
 	}
-	return
 }

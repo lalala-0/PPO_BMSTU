@@ -36,6 +36,11 @@ func (m *Middleware) JudgeMiddleware() gin.HandlerFunc {
 		}
 		// Check if the user exists
 		judgeID, err := uuid.Parse(strJudgeId)
+		if err != nil {
+			c.Redirect(http.StatusMovedPermanently, "/auth/signin")
+			c.Abort()
+			return
+		}
 		judge, err := m.Services.JudgeService.GetJudgeDataByID(judgeID)
 		if err != nil || judge.ID == uuid.Nil {
 			c.Redirect(http.StatusMovedPermanently, "/auth/signin")

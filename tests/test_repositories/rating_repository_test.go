@@ -159,7 +159,7 @@ func TestRatingRepositoryUpdate(t *testing.T) {
 	for _, test := range testRatingRepositoryUpdateSuccess {
 		rating := postgres_init.CreateRating(&fields)
 
-		createdRating, err := ratingRepository.Create(test.InputData)
+		createdRating, _ := ratingRepository.Create(test.InputData)
 
 		updatedRating, err := ratingRepository.Update(
 			&models.Rating{

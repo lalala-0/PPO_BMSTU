@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"net/http"
 	"strings"
+	"time"
 )
 
 // getAllParticipants godoc
@@ -25,12 +26,14 @@ import (
 // @Failure 400 {object} modelsViewApi.BadRequestError "Ошибка валидации"
 // @Router /api/participants [get]
 func (s *ServicesAPI) getAllParticipants(c *gin.Context) {
+	// Получаем фильтры из query параметров
 	fio := c.Query("fio")
 	category := c.Query("category")
 	gender := c.Query("gender")
 	birthday := c.Query("birthday")
 	coach := c.Query("coach")
 
+	// Получение всех участников
 	participants, err := s.Services.ParticipantService.GetAllParticipants()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, modelsViewApi.BadRequestError{
@@ -40,31 +43,10 @@ func (s *ServicesAPI) getAllParticipants(c *gin.Context) {
 		return
 	}
 
-	var filteredParticipants []models.Participant
-	for _, participant := range participants {
-		match := true
+	// Применяем фильтры
+	filteredParticipants := s.filterParticipants(participants, fio, category, gender, birthday, coach)
 
-		if fio != "" && !strings.Contains(strings.ToLower(participant.FIO), strings.ToLower(fio)) {
-			match = false
-		}
-		if category != "" && modelsViewApi.CategoryMap[participant.Category] != category {
-			match = false
-		}
-		if gender != "" && modelsViewApi.GenderMap[participant.Gender] != gender {
-			match = false
-		}
-		if birthday != "" && participant.Birthday.Format("2006-01-02") != birthday {
-			match = false
-		}
-		if coach != "" && !strings.Contains(strings.ToLower(participant.Coach), strings.ToLower(coach)) {
-			match = false
-		}
-
-		if match {
-			filteredParticipants = append(filteredParticipants, participant)
-		}
-	}
-
+	// Конвертируем данные участников в форму API
 	participantFormData, err := modelsViewApi.FromParticipantModelsToStringData(filteredParticipants)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
@@ -74,7 +56,58 @@ func (s *ServicesAPI) getAllParticipants(c *gin.Context) {
 		return
 	}
 
+	// Возвращаем ответ
 	c.JSON(http.StatusOK, participantFormData)
+}
+
+// Функция для фильтрации участников
+func (s *ServicesAPI) filterParticipants(participants []models.Participant, fio, category, gender, birthday, coach string) []models.Participant {
+	var filteredParticipants []models.Participant
+	for _, participant := range participants {
+		if s.matchParticipantFilters(participant, fio, category, gender, birthday, coach) {
+			filteredParticipants = append(filteredParticipants, participant)
+		}
+	}
+	return filteredParticipants
+}
+
+func (s *ServicesAPI) matchParticipantFilters(participant models.Participant, fio, category, gender, birthday, coach string) bool {
+	if !s.matchFio(participant.FIO, fio) {
+		return false
+	}
+	if !s.matchCategory(participant.Category, category) {
+		return false
+	}
+	if !s.matchGender(participant.Gender, gender) {
+		return false
+	}
+	if !s.matchBirthday(participant.Birthday, birthday) {
+		return false
+	}
+	if !s.matchCoach(participant.Coach, coach) {
+		return false
+	}
+	return true
+}
+
+func (s *ServicesAPI) matchFio(fio, filterFio string) bool {
+	return filterFio == "" || strings.Contains(strings.ToLower(fio), strings.ToLower(filterFio))
+}
+
+func (s *ServicesAPI) matchCategory(category int, filterCategory string) bool {
+	return filterCategory == "" || modelsViewApi.CategoryMap[category] == filterCategory
+}
+
+func (s *ServicesAPI) matchGender(gender int, filterGender string) bool {
+	return filterGender == "" || modelsViewApi.GenderMap[gender] == filterGender
+}
+
+func (s *ServicesAPI) matchBirthday(birthday time.Time, filterBirthday string) bool {
+	return filterBirthday == "" || birthday.Format("2006-01-02") == filterBirthday
+}
+
+func (s *ServicesAPI) matchCoach(coach, filterCoach string) bool {
+	return filterCoach == "" || strings.Contains(strings.ToLower(coach), strings.ToLower(filterCoach))
 }
 
 // @Summary Создать нового участника

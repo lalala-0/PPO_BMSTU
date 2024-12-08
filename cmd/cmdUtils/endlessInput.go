@@ -14,7 +14,7 @@ func EndlessReadWord(requestString string) string {
 	var input string
 	var err error
 
-	fmt.Printf(requestString + ": ")
+	fmt.Printf("%s: ", requestString)
 	for {
 		input, err = StringReader(true)
 		if err == nil && len(input) > 0 {
@@ -86,7 +86,7 @@ func EndlessReadDateTime(requestString string) time.Time {
 		if err == nil && len(input) > 0 {
 			break
 		}
-		dateTime, err = time.Parse(dateTimeLayout, EndlessReadWord(requestString))
+		dateTime, _ = time.Parse(dateTimeLayout, EndlessReadWord(requestString))
 		fmt.Print(InvalidInput + ": ")
 	}
 

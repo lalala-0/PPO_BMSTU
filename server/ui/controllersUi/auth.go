@@ -2,20 +2,12 @@ package controllersUi
 
 import (
 	"PPO_BMSTU/internal/models"
+	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
 )
-
-type fullFormData struct {
-	Login          string `form:"InputLogin"`
-	Password       string `form:"InputPassword"`
-	PasswordRepeat string `form:"InputPassword2"`
-	FIO            string `form:"InputFIO"`
-	Role           string `form:"InputRole"`
-	Post           string `form:"InputPost"`
-}
 
 func (s *ServicesUI) authenticatedJudge(c *gin.Context) *models.Judge {
 	session := sessions.Default(c)
@@ -87,7 +79,10 @@ func (s *ServicesUI) logout(c *gin.Context) {
 	// Delete the session
 	session := sessions.Default(c)
 	session.Clear()
-	session.Save()
+	err := session.Save()
+	if err != nil {
+		log.Error("Error save session while logout: %s", err)
+	}
 	c.Status(http.StatusAccepted)
 	c.Redirect(http.StatusFound, "/")
 }

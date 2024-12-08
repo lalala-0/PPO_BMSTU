@@ -21,7 +21,7 @@ func (s *ServicesUI) getRatingMenu(c *gin.Context) {
 	}
 
 	rating, err := s.Services.RatingService.GetRatingDataByID(ratingID)
-	if rating == nil {
+	if rating == nil || err != nil {
 		c.String(http.StatusNotFound, "Rating not found")
 		return
 	}
@@ -119,13 +119,14 @@ func (s *ServicesUI) getRatingTable(c *gin.Context) {
 	})
 }
 
-func (s *ServicesUI) ratingTable(rating *models.Rating, lines []models.RatingTableLine) gin.H {
-	var result = gin.H{
-		"title": rating.Name, // Здесь можно использовать любое поле рейтинга для заголовка
-		"lines": lines,
-	}
-	return result
-}
+//
+//func (s *ServicesUI) ratingTable(rating *models.Rating, lines []models.RatingTableLine) gin.H {
+//	var result = gin.H{
+//		"title": rating.Name, // Здесь можно использовать любое поле рейтинга для заголовка
+//		"lines": lines,
+//	}
+//	return result
+//}
 
 // UPDATE
 func (s *ServicesUI) updateRatingGet(c *gin.Context) {

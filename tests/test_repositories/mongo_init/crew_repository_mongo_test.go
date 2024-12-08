@@ -245,7 +245,7 @@ func TestCrewRepositoryUpdate(t *testing.T) {
 	for _, test := range testCrewRepositoryUpdateSuccess {
 		rating := CreateRating(&fields)
 		test.InputData.Crew.RatingID = rating.ID
-		createdCrew, err := crewRepository.Create(test.InputData.Crew)
+		createdCrew, _ := crewRepository.Create(test.InputData.Crew)
 
 		updatedCrew, err := crewRepository.Update(
 			&models.Crew{

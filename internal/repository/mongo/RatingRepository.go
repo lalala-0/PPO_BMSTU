@@ -236,9 +236,30 @@ func (w RatingRepository) GetAllRatings() ([]models.Rating, error) {
 }
 
 func (r *RatingRepository) GetRatingTable(id uuid.UUID) ([]models.RatingTableLine, error) {
+	crewModels, err := r.getCrewsByRatingID(id)
+	if err != nil {
+		return nil, err
+	}
 
-	var ratingTableDB []RatingTableDB
+	racesDB, err := r.getRacesByRatingID(id)
+	if err != nil {
+		return nil, err
+	}
 
+	ratingTableDB, err := r.buildRatingTable(crewModels, racesDB)
+	if err != nil {
+		return nil, err
+	}
+
+	r.sortRatingTable(ratingTableDB)
+
+	// Преобразуем результат в модель
+	ratingTable := copyRatingTableResultToModel(ratingTableDB)
+	return ratingTable, nil
+}
+
+// getCrewsByRatingID получает данные экипажей по RatingID.
+func (r *RatingRepository) getCrewsByRatingID(id uuid.UUID) ([]CrewDB, error) {
 	crewCollection := r.db.Collection("crews")
 	filter := bson.M{"rating_id": id.String()}
 	cur, err := crewCollection.Find(context.Background(), filter)
@@ -249,16 +270,18 @@ func (r *RatingRepository) GetRatingTable(id uuid.UUID) ([]models.RatingTableLin
 	var crewModels []CrewDB
 	for cur.Next(context.Background()) {
 		var crew CrewDB
-		err := cur.Decode(&crew)
-		if err != nil {
+		if err := cur.Decode(&crew); err != nil {
 			return nil, err
 		}
 		crewModels = append(crewModels, crew)
 	}
+	return crewModels, nil
+}
 
+// getRacesByRatingID получает данные гонок по RatingID.
+func (r *RatingRepository) getRacesByRatingID(id uuid.UUID) ([]RaceDB, error) {
 	raceCollection := r.db.Collection("races")
-	filter = bson.M{"rating_id": id.String()}
-
+	filter := bson.M{"rating_id": id.String()}
 	cursor, err := raceCollection.Find(context.Background(), filter)
 	if err != nil {
 		return nil, repository_errors.SelectError
@@ -268,12 +291,17 @@ func (r *RatingRepository) GetRatingTable(id uuid.UUID) ([]models.RatingTableLin
 	var racesDB []RaceDB
 	for cursor.Next(context.Background()) {
 		var raceDB RaceDB
-		err := cursor.Decode(&raceDB)
-		if err != nil {
+		if err := cursor.Decode(&raceDB); err != nil {
 			return nil, err
 		}
 		racesDB = append(racesDB, raceDB)
 	}
+	return racesDB, nil
+}
+
+// buildRatingTable формирует таблицу результатов.
+func (r *RatingRepository) buildRatingTable(crewModels []CrewDB, racesDB []RaceDB) ([]RatingTableDB, error) {
+	var ratingTableDB []RatingTableDB
 
 	for i, race := range racesDB {
 		for _, crew := range crewModels {
@@ -289,23 +317,24 @@ func (r *RatingRepository) GetRatingTable(id uuid.UUID) ([]models.RatingTableLin
 				return nil, repository_errors.SelectError
 			}
 
-			ratingTableDB = append(ratingTableDB, RatingTableDB{SailNum: crew.SailNum, Points: crewResInRaceDB.Points, RaceNumber: i + 1, PointsSum: crewResInRaceDB.Points * len(racesDB)})
+			ratingTableDB = append(ratingTableDB, RatingTableDB{
+				SailNum:    crew.SailNum,
+				Points:     crewResInRaceDB.Points,
+				RaceNumber: i + 1,
+				PointsSum:  crewResInRaceDB.Points * len(racesDB),
+			})
 		}
 	}
+	return ratingTableDB, nil
+}
 
-	sort.Slice(ratingTableDB, func(i, j int) bool {
-		return false
-	})
+// sortRatingTable выполняет сортировку таблицы результатов.
+func (r *RatingRepository) sortRatingTable(ratingTableDB []RatingTableDB) {
 	// Сортировка по полю SailNum
 	sort.Slice(ratingTableDB, func(i, j int) bool {
 		return ratingTableDB[i].SailNum < ratingTableDB[j].SailNum
 	})
 	calculatePointsSum(ratingTableDB)
-
-	// Преобразуем результат в модель
-	ratingTable := copyRatingTableResultToModel(ratingTableDB)
-
-	return ratingTable, nil
 }
 
 //func (r *RatingRepository) GetRatingTable(id uuid.UUID) ([]models.RatingTableLine, error) {

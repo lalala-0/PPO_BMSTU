@@ -18,7 +18,7 @@ func (s *ServicesUI) getCrewMenu(c *gin.Context) {
 		c.String(http.StatusBadRequest, "Неверный формат UUID")
 		return
 	}
-	crew, err := s.Services.CrewService.GetCrewDataByID(crewID)
+	crew, _ := s.Services.CrewService.GetCrewDataByID(crewID)
 	if crew == nil {
 		c.String(http.StatusNotFound, "Crew not found")
 		return
@@ -30,13 +30,13 @@ func (s *ServicesUI) getCrewMenu(c *gin.Context) {
 		c.String(http.StatusBadRequest, "Неверный формат UUID")
 		return
 	}
-	rating, err := s.Services.RatingService.GetRatingDataByID(ratingID)
+	rating, _ := s.Services.RatingService.GetRatingDataByID(ratingID)
 	if rating == nil {
 		c.String(http.StatusNotFound, "Rating not found")
 		return
 	}
 
-	participants, err := s.Services.ParticipantService.GetParticipantsDataByCrewID(crewID)
+	participants, _ := s.Services.ParticipantService.GetParticipantsDataByCrewID(crewID)
 	//if participants == nil {
 	//	c.String(http.StatusNotFound, "Crew participants not found")
 	//	return
@@ -366,7 +366,21 @@ func (s *ServicesUI) detachCrewParticipantGet(c *gin.Context) {
 	CrewView, _ := modelsUI2.FromCrewModelToStringData(crew)
 
 	participantModels, err := s.Services.ParticipantService.GetAllParticipants()
+	if err != nil {
+		c.HTML(400, "detachCrewParticipant", gin.H{
+			"title": "Удалить участника команды",
+			"error": "Не удалось получать всех участников",
+		})
+		return
+	}
 	participants, err := modelsUI2.FromParticipantModelsToInputData(participantModels)
+	if err != nil {
+		c.HTML(400, "detachCrewParticipant", gin.H{
+			"title": "Удалить участника команды",
+			"error": "Не удалось конвертировать информацию об участниках команды из БД",
+		})
+		return
+	}
 
 	c.HTML(200, "detachCrewParticipant", gin.H{
 		"title":        "Удалить участника команды",

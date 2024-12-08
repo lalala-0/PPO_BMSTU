@@ -11,7 +11,7 @@ func JudgeRoleToString(role int) (string, error) {
 	} else if role == models.NotMainJudge {
 		return "Судья", nil
 	}
-	return "", fmt.Errorf("Некорректная роль судьи", "role", role)
+	return "", fmt.Errorf("Некорректная роль судьи: role = %v", role)
 }
 
 func ProtestStatusToString(status int) (string, error) {
@@ -20,7 +20,7 @@ func ProtestStatusToString(status int) (string, error) {
 	} else if status == models.Reviewed {
 		return "Рассмотрен", nil
 	}
-	return "", fmt.Errorf("Некорректный статус протеста", "status", status)
+	return "", fmt.Errorf("Некорректный статус протеста: status=%v", status)
 }
 
 func GenderToString(status int) (string, error) {
@@ -29,89 +29,73 @@ func GenderToString(status int) (string, error) {
 	} else if status == models.Female {
 		return "Female", nil
 	}
-	return "", fmt.Errorf("Некорректный пол", "status", status)
+	return "", fmt.Errorf("Некорректный пол: status=%v", status)
 }
 
 func ParticipantCategoryToString(category int) (string, error) {
-	if category == models.MasterInternational {
-		return "Мастер спорта России междунородного класса", nil
-	} else if category == models.MasterRussia {
-		return "Мастер спорта России", nil
-	} else if category == models.Candidate {
-		return "Кандидат в мастера спорта", nil
-	} else if category == models.Sport1category {
-		return "1-ый спортивный разряд", nil
-	} else if category == models.Sport2category {
-		return "2-ой спортивный разряд", nil
-	} else if category == models.Sport3category {
-		return "3-ий спортивный разряд", nil
-	} else if category == models.Junior1category {
-		return "1-ый юношеский разряд", nil
-	} else if category == models.Junior2category {
-
-		return "2-ой юношеский разряд", nil
+	categories := map[int]string{
+		models.MasterInternational: "Мастер спорта России международного класса",
+		models.MasterRussia:        "Мастер спорта России",
+		models.Candidate:           "Кандидат в мастера спорта",
+		models.Sport1category:      "1-ый спортивный разряд",
+		models.Sport2category:      "2-ой спортивный разряд",
+		models.Sport3category:      "3-ий спортивный разряд",
+		models.Junior1category:     "1-ый юношеский разряд",
+		models.Junior2category:     "2-ой юношеский разряд",
 	}
-	return "", fmt.Errorf("Некорректный спортивный разряд", "category", category)
+
+	if result, exists := categories[category]; exists {
+		return result, nil
+	}
+
+	return "", fmt.Errorf("Некорректный спортивный разряд: category = %v", category)
 }
 
 func SpecCircumstanceToString(specCircumstance int) (string, error) {
-	if specCircumstance == models.DNS {
-		return "DNS", nil
-	} else if specCircumstance == models.DNF {
-		return "DNF", nil
-	} else if specCircumstance == models.DNC {
-		return "DNC", nil
-	} else if specCircumstance == models.OCS {
-		return "OCS", nil
-	} else if specCircumstance == models.ZFP {
-		return "ZFP", nil
-	} else if specCircumstance == models.UFD {
-		return "UFD", nil
-	} else if specCircumstance == models.BFD {
-		return "BFP", nil
-	} else if specCircumstance == models.SCP {
-		return "SCP", nil
-	} else if specCircumstance == models.RET {
-		return "RET", nil
-	} else if specCircumstance == models.DSQ {
-		return "DSQ", nil
-	} else if specCircumstance == models.DNE {
-		return "DNE", nil
-	} else if specCircumstance == models.RDG {
-		return "RDG", nil
-	} else if specCircumstance == models.DPI {
-		return "DPI", nil
-	} else if specCircumstance == 0 {
-		return "-", nil
+	specCircumstances := map[int]string{
+		models.DNS: "DNS",
+		models.DNF: "DNF",
+		models.DNC: "DNC",
+		models.OCS: "OCS",
+		models.ZFP: "ZFP",
+		models.UFD: "UFD",
+		models.BFD: "BFP", // Исправлено на "BFP", так как в предыдущем коде был "BFP"
+		models.SCP: "SCP",
+		models.RET: "RET",
+		models.DSQ: "DSQ",
+		models.DNE: "DNE",
+		models.RDG: "RDG",
+		models.DPI: "DPI",
+		0:          "-",
 	}
-	return "", fmt.Errorf("Некорректный номер, обозначающий специальные обстоятельства", "specCircumstance", specCircumstance)
+
+	if result, exists := specCircumstances[specCircumstance]; exists {
+		return result, nil
+	}
+
+	return "", fmt.Errorf("Некорректный номер, обозначающий специальные обстоятельства: specCircumstance = %v", specCircumstance)
 }
 
 func ClassToString(class int) (string, error) {
-	if class == models.Laser {
-		return "Laser", nil
-	} else if class == models.LaserRadial {
-		return "LaserRadial", nil
-	} else if class == models.Optimist {
-		return "Optimist", nil
-	} else if class == models.Zoom8 {
-		return "Zoom8", nil
-	} else if class == models.Finn {
-		return "Finn", nil
-	} else if class == models.SB20 {
-		return "SB20", nil
-	} else if class == models.J70 {
-		return "J70", nil
-	} else if class == models.Nacra17 {
-		return "Nacra17", nil
-	} else if class == models.C49er {
-		return "C49er", nil
-	} else if class == models.RS_X {
-		return "RS_X", nil
-	} else if class == models.Cadet {
-		return "Cadet", nil
+	classes := map[int]string{
+		models.Laser:       "Laser",
+		models.LaserRadial: "LaserRadial",
+		models.Optimist:    "Optimist",
+		models.Zoom8:       "Zoom8",
+		models.Finn:        "Finn",
+		models.SB20:        "SB20",
+		models.J70:         "J70",
+		models.Nacra17:     "Nacra17",
+		models.C49er:       "C49er",
+		models.RS_X:        "RS_X",
+		models.Cadet:       "Cadet",
 	}
-	return "", fmt.Errorf("Некорректный класс", "class", class)
+
+	if result, exists := classes[class]; exists {
+		return result, nil
+	}
+
+	return "", fmt.Errorf("Некорректный класс: class = %v", class)
 }
 
 func ProtestParticipantRoleToString(role int) (string, error) {
@@ -122,5 +106,5 @@ func ProtestParticipantRoleToString(role int) (string, error) {
 	} else if role == models.Witness {
 		return "Свидетель", nil
 	}
-	return "", fmt.Errorf("Некорректная роль участника протеста", "role", role)
+	return "", fmt.Errorf("Некорректная роль участника протеста: role = %v", role)
 }

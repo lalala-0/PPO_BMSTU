@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"PPO_BMSTU/cmd/menu"
+	"PPO_BMSTU/cmd/views/mainMenus"
 	"PPO_BMSTU/cmd/views/ratingViews"
 	"PPO_BMSTU/internal/registry"
 	"fmt"
@@ -21,13 +22,13 @@ func RunMenu(a *registry.Services) error {
 			{
 				Name: "судья",
 				Handler: func() error {
-					return judgeViews.JudgeLoginMenu(*a)
+					return mainMenus.JudgeLoginMenu(*a)
 				},
 			},
 			{
 				Name: "главный судья",
 				Handler: func() error {
-					return judgeViews.JudgeLoginMenu(*a)
+					return mainMenus.JudgeLoginMenu(*a)
 				},
 			},
 		},

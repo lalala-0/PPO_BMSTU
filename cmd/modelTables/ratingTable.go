@@ -47,68 +47,79 @@ func Ratings(ratings []models.Rating) error {
 	}
 
 	_, err = fmt.Fprintf(t, "\n")
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func RatingTableLines(lines []models.RatingTableLine) error {
-	var err error
-
 	t := new(tabwriter.Writer)
-
 	t.Init(os.Stdout, 2, 4, 8, ' ', 0)
 
-	_, err = fmt.Fprintf(t, "\n %s\t%s\t%s",
-		"№", "№ паруса", "Рулевой")
-	if err != nil {
-		fmt.Println(err)
-	}
-	for i := range len(lines[1].ResInRace) {
-		_, err = fmt.Fprintf(t, "\t %s %d", "гон.", i+1)
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
-	_, err = fmt.Fprintf(t, "\t%s\t%s\n", "Очки", "Место")
-	if err != nil {
-		fmt.Println(err)
+	if err := printHeader(t, lines); err != nil {
+		return err
 	}
 
 	for i, line := range lines {
-		if len(line.ParticipantNames) > 0 {
-			_, err = fmt.Fprintf(t, " %d\t%d\t%s",
-				i+1, line.SailNum, line.ParticipantNames[0])
-		} else {
-			_, err = fmt.Fprintf(t, " %d\t%d\t%s",
-				i+1, line.SailNum, "")
-		}
-		if err != nil {
-			fmt.Println(err)
-		}
-		//for i, _ := range line.ParticipantNames {
-		//	category, err := ParticipantCategoryToString(line.ParticipantCategories[i])
-		//	_, err = fmt.Fprintf(t, "\t%s\t%s\t%s",
-		//		line.ParticipantNames[i], category, line.CoachNames[i])
-		//	if err != nil {
-		//		fmt.Println(err)
-		//	}
-		//}
-		for i, _ := range line.ResInRace {
-			_, err = fmt.Fprintf(t, "\t %d", line.ResInRace[i])
-			if err != nil {
-				fmt.Println(err)
-			}
-		}
-		_, err = fmt.Fprintf(t, "\t%d\t%d\n", line.PointsSum, line.Rank)
-		if err != nil {
-			fmt.Println(err)
+		if err := printLine(t, i+1, line); err != nil {
+			return err
 		}
 	}
 
-	err = t.Flush()
+	return t.Flush()
+}
+
+func printHeader(t *tabwriter.Writer, lines []models.RatingTableLine) error {
+	// Проверка на наличие элементов в lines
+	if len(lines) == 0 {
+		return fmt.Errorf("no rating table lines provided")
+	}
+
+	_, err := fmt.Fprintf(t, "\n %s\t%s\t%s", "№", "№ паруса", "Рулевой")
 	if err != nil {
 		return err
 	}
 
-	_, err = fmt.Fprintf(t, "\n")
-	return nil
+	// Цикл для вывода гонок, если строки не пустые
+	for i := 0; i < len(lines[0].ResInRace); i++ {
+		_, err = fmt.Fprintf(t, "\t %s %d", "гон.", i+1)
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = fmt.Fprintf(t, "\t%s\t%s\n", "Очки", "Место")
+	return err
+}
+
+func printLine(t *tabwriter.Writer, i int, line models.RatingTableLine) error {
+	// Печать информации о гонке
+	_, err := fmt.Fprintf(t, " %d\t%d\t%s", i, line.SailNum, getParticipantName(line))
+	if err != nil {
+		return err
+	}
+
+	// Печать результатов в гонке
+	for _, res := range line.ResInRace {
+		if err := printResult(t, res); err != nil {
+			return err
+		}
+	}
+
+	// Печать итоговых очков и места
+	_, err = fmt.Fprintf(t, "\t%d\t%d\n", line.PointsSum, line.Rank)
+	return err
+}
+
+func getParticipantName(line models.RatingTableLine) string {
+	if len(line.ParticipantNames) > 0 {
+		return line.ParticipantNames[0]
+	}
+	return ""
+}
+
+func printResult(t *tabwriter.Writer, result int) error {
+	_, err := fmt.Fprintf(t, "\t %d", result)
+	return err
 }

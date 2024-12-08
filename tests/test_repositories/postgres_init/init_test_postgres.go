@@ -4,6 +4,7 @@ import (
 	"PPO_BMSTU/internal/models"
 	"PPO_BMSTU/internal/repository/postgres"
 	"database/sql"
+	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"time"
 )
@@ -156,23 +157,37 @@ func CreateProtest(fields *postgres.PostgresConnection, raceID uuid.UUID, judgeI
 func AttachCrewToProtest(fields *postgres.PostgresConnection, crewID uuid.UUID, protestID uuid.UUID) {
 	query := `INSERT INTO crew_protest(crew_id, protest_id, crew_status) VALUES ($1, $2, $3);`
 
-	fields.DB.Exec(query, crewID, protestID, 1)
+	_, err := fields.DB.Exec(query, crewID, protestID, 1)
+	if err != nil {
+		log.Error("Error while attach crew to protest in test repo", err)
+	}
+
 }
 
 func AttachCrewToProtestStatus(fields *postgres.PostgresConnection, crewID uuid.UUID, protestID uuid.UUID, status int) {
 	query := `INSERT INTO crew_protest(crew_id, protest_id, crew_status) VALUES ($1, $2, $3);`
 
-	fields.DB.Exec(query, crewID, protestID, status)
+	_, err := fields.DB.Exec(query, crewID, protestID, status)
+	if err != nil {
+		log.Error("Error while attach crew to protest with status in test repo", err)
+	}
+
 }
 
 func AttachJudgeToRating(fields *postgres.PostgresConnection, judgeID uuid.UUID, ratingID uuid.UUID) {
 	query := `INSERT INTO judge_rating(judge_id, rating_id) VALUES ($1, $2);`
 
-	fields.DB.Exec(query, judgeID, ratingID)
+	_, err := fields.DB.Exec(query, judgeID, ratingID)
+	if err != nil {
+		log.Error("Error while attach judge to rating in test repo", err)
+	}
 }
 
 func AttachParticipantToCrew(fields *postgres.PostgresConnection, participantID uuid.UUID, crewID uuid.UUID) {
 	query := `INSERT INTO participant_crew(participant_id, crew_id, helmsman, active) VALUES ($1, $2, $3, $4);`
 
-	fields.DB.Exec(query, participantID, crewID, false, true)
+	_, err := fields.DB.Exec(query, participantID, crewID, false, true)
+	if err != nil {
+		log.Error("Error while attach participant to crew in test repo", err)
+	}
 }

@@ -59,7 +59,7 @@ func SetupTestDatabase() (testcontainers.Container, *mongo.Database) {
 
 	// Send a ping to confirm a successful connection
 	var result bson.M
-	if err = client.Database(DBNAME).RunCommand(ctx, bson.D{{"ping", 1}}).Decode(&result); err != nil {
+	if err = client.Database(DBNAME).RunCommand(ctx, bson.D{{Key: "ping", Value: 1}}).Decode(&result); err != nil {
 		fmt.Println("Failed to ping MongoDB: ", err)
 		return dbContainer, nil
 	}

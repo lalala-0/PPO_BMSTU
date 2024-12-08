@@ -30,24 +30,25 @@ func (s *ServicesAPI) getAllJudges(c *gin.Context) {
 	// Получение моделей уровня сервиса
 	judgeModels, err := s.Services.JudgeService.GetAllJudges()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "Internal Server Error",
-			"message": "Could not retrieve judges.",
-		})
+		s.handleInternalError(c, "Не удалось получить судей.")
 		return
 	}
 
-	// Конвертация из модели уровня сервиса в модель апи
+	// Конвертация из модели уровня сервиса в модель API
 	judges, err := modelsViewApi.FromJudgeModelsToStringData(judgeModels)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "Internal Server Error",
-			"message": "Could not convert judge models.",
-		})
+		s.handleConversionError(c, err)
 		return
 	}
 
 	// Применение фильтров
+	filteredJudges := s.filterJudges(judges, fio, login, role, post)
+
+	c.JSON(http.StatusOK, filteredJudges)
+}
+
+// Функция для фильтрации судей
+func (s *ServicesAPI) filterJudges(judges []modelsViewApi.JudgeFormData, fio, login, role, post string) []modelsViewApi.JudgeFormData {
 	var filteredJudges []modelsViewApi.JudgeFormData
 	for _, judge := range judges {
 		if (fio == "" || judge.FIO == fio) &&
@@ -57,8 +58,7 @@ func (s *ServicesAPI) getAllJudges(c *gin.Context) {
 			filteredJudges = append(filteredJudges, judge)
 		}
 	}
-
-	c.JSON(http.StatusOK, filteredJudges)
+	return filteredJudges
 }
 
 // @Summary Создать нового судью

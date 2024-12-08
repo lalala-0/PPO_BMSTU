@@ -100,6 +100,4 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 
 	// Путь к Swagger UI
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	return
 }

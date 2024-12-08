@@ -43,5 +43,8 @@ func Participants(participants []models.Participant) error {
 	}
 
 	_, err = fmt.Fprintf(t, "\n")
+	if err != nil {
+		return err
+	}
 	return nil
 }

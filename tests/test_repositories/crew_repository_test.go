@@ -179,7 +179,7 @@ func TestCrewRepositoryGetCrewDataBySailNumAndRatingID(t *testing.T) {
 	fields := postgres.PostgresConnection{DB: db}
 	crewRepository := postgres.CreateCrewRepository(&fields)
 
-	for _, test := range testCrewRepositoryGetByIDSuccess {
+	for _, test := range testCrewRepositoryGetCrewDataBySailNumAndRatingIDSuccess {
 		rating := postgres_init.CreateRating(&fields)
 		crew := postgres_init.CreateCrew(&fields, rating.ID)
 
@@ -187,7 +187,7 @@ func TestCrewRepositoryGetCrewDataBySailNumAndRatingID(t *testing.T) {
 		test.CheckOutput(t, crew, receivedCrew, err)
 	}
 
-	for _, test := range testCrewRepositoryGetByIDFailed {
+	for _, test := range testCrewRepositoryGetCrewDataBySailNumAndRatingIDFailed {
 		rating := postgres_init.CreateRating(&fields)
 
 		_, err := crewRepository.GetCrewDataBySailNumAndRatingID(123, rating.ID)
@@ -221,7 +221,7 @@ func TestCrewRepositoryDelete(t *testing.T) {
 
 	for _, test := range testCrewRepositoryDeleteSuccess {
 		rating := postgres_init.CreateRating(&fields)
-		createdCrew, err := crewRepository.Create(
+		createdCrew, _ := crewRepository.Create(
 			&models.Crew{
 				RatingID: rating.ID,
 				SailNum:  123,
@@ -229,7 +229,7 @@ func TestCrewRepositoryDelete(t *testing.T) {
 			},
 		)
 
-		err = crewRepository.Delete(createdCrew.ID)
+		err := crewRepository.Delete(createdCrew.ID)
 		test.CheckOutput(t, err)
 
 		_, err = crewRepository.GetCrewDataByID(createdCrew.ID)
@@ -279,7 +279,7 @@ func TestCrewRepositoryUpdate(t *testing.T) {
 	for _, test := range testCrewRepositoryUpdateSuccess {
 		rating := postgres_init.CreateRating(&fields)
 		test.InputData.Crew.RatingID = rating.ID
-		createdCrew, err := crewRepository.Create(test.InputData.Crew)
+		createdCrew, _ := crewRepository.Create(test.InputData.Crew)
 
 		updatedCrew, err := crewRepository.Update(
 			&models.Crew{

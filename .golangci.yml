@@ -1,9 +1,10 @@
 linters:
   enable:
     - gocyclo          # Цикломатическая сложность
-    - unused          # Проверка на неиспользуемый код
+    - unused           # Проверка на неиспользуемый код
     - gocognit         # Когнитивная сложность
     - gosec            # Поиск уязвимостей
+
 
 linters-settings:
   gocyclo:

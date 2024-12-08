@@ -166,7 +166,7 @@ func TestParticipantRepositoryUpdate(t *testing.T) {
 	participantRepository := postgres.CreateParticipantRepository(&fields)
 
 	for _, test := range testParticipantRepositoryUpdateSuccess {
-		createdParticipant, err := participantRepository.Create(test.InputData)
+		createdParticipant, _ := participantRepository.Create(test.InputData)
 
 		updatedParticipant, err := participantRepository.Update(
 			postgres_init.CreateParticipant(&fields),

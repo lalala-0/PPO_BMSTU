@@ -29,31 +29,40 @@ func (s *ServicesAPI) getAllRatings(c *gin.Context) {
 	// Получение моделей уровня сервиса
 	ratingModels, err := s.Services.RatingService.GetAllRatings()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "Internal Server Error",
-			"message": "Не удалось получить рейтинги.",
-		})
+		s.handleInternalError(c, "Не удалось получить рейтинги.")
 		return
 	}
 
 	// Конвертация моделей уровня сервиса в модели API
 	ratings, err := modelsViewApi.FromRatingModelsToStringData(ratingModels)
 	if err != nil {
-		if err == repository_errors.DoesNotExist {
-			c.JSON(http.StatusNotFound, modelsViewApi.ErrorResponse{
-				Error:   "Rating not found",
-				Message: "The specified rating ID does not exist.",
-			})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
-			Error:   "Internal error",
-			Message: err.Error(),
-		})
+		s.handleConversionError(c, err)
 		return
 	}
 
 	// Применение фильтров
+	filteredRatings := s.filterRatings(ratings, name, class, blowoutCnt)
+
+	c.JSON(http.StatusOK, filteredRatings)
+}
+
+// Функция для обработки ошибок конвертации
+func (s *ServicesAPI) handleConversionError(c *gin.Context, err error) {
+	if err == repository_errors.DoesNotExist {
+		c.JSON(http.StatusNotFound, modelsViewApi.ErrorResponse{
+			Error:   "Rating not found",
+			Message: "The specified rating ID does not exist.",
+		})
+		return
+	}
+	c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
+		Error:   "Internal error",
+		Message: err.Error(),
+	})
+}
+
+// Функция для фильтрации рейтингов
+func (s *ServicesAPI) filterRatings(ratings []modelsViewApi.RatingFormData, name, class, blowoutCnt string) []modelsViewApi.RatingFormData {
 	var filteredRatings []modelsViewApi.RatingFormData
 	for _, rating := range ratings {
 		if (name == "" || rating.Name == name) &&
@@ -62,8 +71,15 @@ func (s *ServicesAPI) getAllRatings(c *gin.Context) {
 			filteredRatings = append(filteredRatings, rating)
 		}
 	}
+	return filteredRatings
+}
 
-	c.JSON(http.StatusOK, filteredRatings)
+// Функция для обработки внутренних ошибок
+func (s *ServicesAPI) handleInternalError(c *gin.Context, message string) {
+	c.JSON(http.StatusInternalServerError, gin.H{
+		"error":   "Internal Server Error",
+		"message": message,
+	})
 }
 
 // createRating godoc
@@ -309,7 +325,7 @@ func (s *ServicesAPI) getRankingTable(c *gin.Context) {
 
 	var resRaces []modelsViewApi.RaceInfo
 	for _, race := range races {
-		resRaces = append(resRaces, modelsViewApi.RaceInfo{race.Number, race.ID})
+		resRaces = append(resRaces, modelsViewApi.RaceInfo{RaceNum: race.Number, RaceID: race.ID})
 	}
 
 	response := modelsViewApi.RankingResponse{

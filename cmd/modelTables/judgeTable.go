@@ -39,5 +39,8 @@ func Judges(judges []models.Judge) error {
 	}
 
 	_, err = fmt.Fprintf(t, "\n")
+	if err != nil {
+		return err
+	}
 	return nil
 }

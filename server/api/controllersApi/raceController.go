@@ -1,6 +1,7 @@
 package controllersApi
 
 import (
+	"PPO_BMSTU/internal/models"
 	"PPO_BMSTU/internal/repository/repository_errors"
 	"PPO_BMSTU/server/api/apiUtils"
 	"PPO_BMSTU/server/api/modelsViewApi"
@@ -8,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
+	"strconv"
 )
 
 // getRacesByRatingID godoc
@@ -19,9 +21,8 @@ import (
 // @Failure 500 {object} modelsViewApi.ErrorResponse "Внутренняя ошибка сервера"
 // @Router /api/ratings/{ratingID}/races [get]
 func (s *ServicesAPI) getRacesByRatingID(c *gin.Context) {
-	ratingIDParam := c.Param("ratingID")
-
-	ratingID, err := uuid.Parse(ratingIDParam)
+	// Получаем ratingID из параметров запроса
+	ratingID, err := s.parseUUIDParam(c, "ratingID")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, modelsViewApi.BadRequestError{
 			Error:   "Invalid rating ID",
@@ -30,36 +31,20 @@ func (s *ServicesAPI) getRacesByRatingID(c *gin.Context) {
 		return
 	}
 
+	// Получаем данные о гонках
 	races, err := s.Services.RaceService.GetRacesDataByRatingID(ratingID)
 	if err != nil {
-		if err == repository_errors.DoesNotExist {
-			c.JSON(http.StatusNotFound, modelsViewApi.BadRequestError{
-				Error:   "Race or rating not found",
-				Message: err.Error(),
-			})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
-			Error:   "Internal server error",
-			Message: "Rating or races not found.",
-		})
+		s.handleRaceServiceError(c, err)
 		return
 	}
 
+	// Получаем фильтры из query параметров
 	date := c.Query("date")
 	class := c.Query("class")
 	number := c.Query("number")
 
-	var filteredRaces []*modelsViewApi.RaceFormData
-	for _, race := range races {
-		// Проверяем соответствие фильтрам
-		if (date == "" || race.Date.Format("2006-01-02") == date) &&
-			(class == "" || modelsViewApi.ClassMap[race.Class] == class) &&
-			(number == "" || string(race.Number) == number) {
-			raceStr, _ := modelsViewApi.FromRaceModelToStringData(&race)
-			filteredRaces = append(filteredRaces, &raceStr)
-		}
-	}
+	// Применяем фильтры
+	filteredRaces := s.filterRaces(races, date, class, number)
 
 	if len(filteredRaces) == 0 {
 		c.JSON(http.StatusNotFound, modelsViewApi.ErrorResponse{
@@ -70,6 +55,41 @@ func (s *ServicesAPI) getRacesByRatingID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, filteredRaces)
+}
+
+// Функция для парсинга UUID из параметра
+func (s *ServicesAPI) parseUUIDParam(c *gin.Context, paramName string) (uuid.UUID, error) {
+	param := c.Param(paramName)
+	return uuid.Parse(param)
+}
+
+// Функция для обработки ошибок от RaceService
+func (s *ServicesAPI) handleRaceServiceError(c *gin.Context, err error) {
+	if err == repository_errors.DoesNotExist {
+		c.JSON(http.StatusNotFound, modelsViewApi.BadRequestError{
+			Error:   "Race or rating not found",
+			Message: err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusInternalServerError, modelsViewApi.ErrorResponse{
+		Error:   "Internal server error",
+		Message: "Rating or races not found.",
+	})
+}
+
+// Функция для фильтрации гонок
+func (s *ServicesAPI) filterRaces(races []models.Race, date, class, number string) []*modelsViewApi.RaceFormData {
+	var filteredRaces []*modelsViewApi.RaceFormData
+	for _, race := range races {
+		if (date == "" || race.Date.Format("2006-01-02") == date) &&
+			(class == "" || modelsViewApi.ClassMap[race.Class] == class) &&
+			(number == "" || strconv.Itoa(race.Number) == number) {
+			raceStr, _ := modelsViewApi.FromRaceModelToStringData(&race)
+			filteredRaces = append(filteredRaces, &raceStr)
+		}
+	}
+	return filteredRaces
 }
 
 // createRace godoc

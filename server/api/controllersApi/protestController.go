@@ -85,20 +85,20 @@ func (s *ServicesAPI) createProtest(c *gin.Context) {
 	}
 
 	// Получение списка доступных участников из параметров запроса
-	var availableParticipants []int
-	if queryParticipants, exists := c.GetQueryArray("availableParticipants"); exists {
-		for _, participant := range queryParticipants {
-			num, err := strconv.Atoi(participant)
-			if err != nil {
-				c.JSON(http.StatusBadRequest, modelsViewApi.BadRequestError{
-					Error:   "Invalid participant number",
-					Message: "One or more participant numbers are not valid integers.",
-				})
-				return
-			}
-			availableParticipants = append(availableParticipants, num)
-		}
-	}
+	//var availableParticipants []int
+	//if queryParticipants, exists := c.GetQueryArray("availableParticipants"); exists {
+	//	for _, participant := range queryParticipants {
+	//		num, err := strconv.Atoi(participant)
+	//		if err != nil {
+	//			c.JSON(http.StatusBadRequest, modelsViewApi.BadRequestError{
+	//				Error:   "Invalid participant number",
+	//				Message: "One or more participant numbers are not valid integers.",
+	//			})
+	//			return
+	//		}
+	//		availableParticipants = append(availableParticipants, num)
+	//	}
+	//}
 
 	var input modelsViewApi.ProtestCreate
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -456,7 +456,7 @@ func (s *ServicesAPI) getProtestMembers(c *gin.Context) {
 		roles = append(roles, role)
 
 	}
-	protestMembers, err := modelsViewApi.FromProtestParticipantModelsToStringData(members, roles)
+	protestMembers, _ := modelsViewApi.FromProtestParticipantModelsToStringData(members, roles)
 	c.JSON(http.StatusOK, protestMembers)
 }
 

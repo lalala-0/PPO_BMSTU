@@ -11,6 +11,8 @@ const NameRequest = "Введите ФИО"
 const RatingNameRequest = "Введите название регаты"
 const RaceNumberRequest = "Введите номер гонки"
 const LoginRequest = "Введите логин"
+
+// #nosec G101: Это не жестко закодированный пароль, а просто текст подсказки для ввода
 const PasswordRequest = "Введите пароль (Более 8 символов; должен содержать как символы, так и цифры)"
 
 const DateRequest = "Введите дату и время (yyyy-mm-dd hh:mm)"

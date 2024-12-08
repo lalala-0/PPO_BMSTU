@@ -60,7 +60,7 @@ var ClassMap = map[int]string{
 }
 
 type RatingTableLine struct {
-	crewID                uuid.UUID   `json:"crewID"`
+	CrewID                uuid.UUID   `json:"crewID"`
 	SailNum               int         `json:"SailNum"`
 	ParticipantNames      []string    `json:"ParticipantNames"`
 	ParticipantBirthDates []string    `json:"ParticipantBirthDates"`

@@ -49,5 +49,8 @@ func Crews(service registry.Services, crews []models.Crew) error {
 	}
 
 	_, err = fmt.Fprintf(t, "\n")
+	if err != nil {
+		return err
+	}
 	return nil
 }

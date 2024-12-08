@@ -172,57 +172,30 @@ func (r *mongoRepository) AttachParticipantToCrew(participantID uuid.UUID, crewI
 	}
 	return nil
 }
-
 func (r *mongoRepository) ClearAll() error {
-	collection := r.mongoDB.Collection("crew_protest")
-	_, err := collection.DeleteMany(context.Background(), bson.M{})
-	if err != nil {
-		fmt.Println("Error clearing crew:", err)
+	// Список коллекций для очистки
+	collections := []string{
+		"crew_protest",
+		"crew_race",
+		"crews",
+		"judge_rating",
+		"judges",
+		"participant_crew",
+		"participants",
+		"protests",
+		"races",
+		"rating",
 	}
-	collection = r.mongoDB.Collection("crew_race")
-	_, err = collection.DeleteMany(context.Background(), bson.M{})
-	if err != nil {
-		fmt.Println("Error clearing crew_race:", err)
+
+	// Очистка каждой коллекции
+	for _, collectionName := range collections {
+		collection := r.mongoDB.Collection(collectionName)
+		_, err := collection.DeleteMany(context.Background(), bson.M{})
+		if err != nil {
+			fmt.Printf("Error clearing %s: %v\n", collectionName, err)
+			return err // Завершаем функцию при ошибке
+		}
 	}
-	collection = r.mongoDB.Collection("crews")
-	_, err = collection.DeleteMany(context.Background(), bson.M{})
-	if err != nil {
-		fmt.Println("Error clearing crews:", err)
-	}
-	collection = r.mongoDB.Collection("judge_rating")
-	_, err = collection.DeleteMany(context.Background(), bson.M{})
-	if err != nil {
-		fmt.Println("Error clearing judge_rating:", err)
-	}
-	collection = r.mongoDB.Collection("judges")
-	_, err = collection.DeleteMany(context.Background(), bson.M{})
-	if err != nil {
-		fmt.Println("Error clearing judge:", err)
-	}
-	collection = r.mongoDB.Collection("participant_crew")
-	_, err = collection.DeleteMany(context.Background(), bson.M{})
-	if err != nil {
-		fmt.Println("Error clearing participant_crew:", err)
-	}
-	collection = r.mongoDB.Collection("participants")
-	_, err = collection.DeleteMany(context.Background(), bson.M{})
-	if err != nil {
-		fmt.Println("Error clearing participant:", err)
-	}
-	collection = r.mongoDB.Collection("protests")
-	_, err = collection.DeleteMany(context.Background(), bson.M{})
-	if err != nil {
-		fmt.Println("Error clearing protest:", err)
-	}
-	collection = r.mongoDB.Collection("races")
-	_, err = collection.DeleteMany(context.Background(), bson.M{})
-	if err != nil {
-		fmt.Println("Error clearing race:", err)
-	}
-	collection = r.mongoDB.Collection("rating")
-	_, err = collection.DeleteMany(context.Background(), bson.M{})
-	if err != nil {
-		fmt.Println("Error clearing rating:", err)
-	}
-	return err
+
+	return nil // Все коллекции успешно очищены
 }

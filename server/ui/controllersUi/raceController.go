@@ -20,7 +20,7 @@ func (s *ServicesUI) getRaceMenu(c *gin.Context) {
 		return
 	}
 	rating, err := s.Services.RatingService.GetRatingDataByID(ratingID)
-	if rating == nil {
+	if rating == nil || err != nil {
 		c.String(http.StatusNotFound, "Rating not found")
 		return
 	}
@@ -32,7 +32,7 @@ func (s *ServicesUI) getRaceMenu(c *gin.Context) {
 		return
 	}
 	race, err := s.Services.RaceService.GetRaceDataByID(raceID)
-	if race == nil {
+	if race == nil || err != nil {
 		c.String(http.StatusNotFound, "Race not found")
 		return
 	}
@@ -106,7 +106,7 @@ func (s *ServicesUI) createRacePost(c *gin.Context) {
 		c.String(http.StatusBadRequest, "Неверный формат UUID")
 		return
 	}
-	rating, err := s.Services.RatingService.GetRatingDataByID(ratingID)
+	rating, _ := s.Services.RatingService.GetRatingDataByID(ratingID)
 	if rating == nil {
 		c.String(http.StatusNotFound, "Rating not found")
 		return

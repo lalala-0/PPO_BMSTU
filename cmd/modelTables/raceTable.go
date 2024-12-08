@@ -39,5 +39,8 @@ func Races(races []models.Race) error {
 	}
 
 	_, err = fmt.Fprintf(t, "\n")
+	if err != nil {
+		return err
+	}
 	return nil
 }

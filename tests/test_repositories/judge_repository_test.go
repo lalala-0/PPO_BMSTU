@@ -82,7 +82,7 @@ func TestJudgeRepositoryGetByID(t *testing.T) {
 	judgeRepository := postgres.CreateJudgeRepository(&fields)
 
 	for _, test := range testJudgeRepositoryGetByIDSuccess {
-		createdJudge, err := judgeRepository.CreateProfile(
+		createdJudge, _ := judgeRepository.CreateProfile(
 			&models.Judge{
 				ID:       uuid.New(),
 				FIO:      "Test",
@@ -196,7 +196,7 @@ func TestJudgeRepositoryDelete(t *testing.T) {
 	judgeRepository := postgres.CreateJudgeRepository(&fields)
 
 	for _, test := range testJudgeRepositoryDeleteSuccess {
-		createdJudge, err := judgeRepository.CreateProfile(
+		createdJudge, _ := judgeRepository.CreateProfile(
 			&models.Judge{
 				ID:       uuid.New(),
 				FIO:      "Test",
@@ -207,7 +207,7 @@ func TestJudgeRepositoryDelete(t *testing.T) {
 			},
 		)
 
-		err = judgeRepository.DeleteProfile(createdJudge.ID)
+		err := judgeRepository.DeleteProfile(createdJudge.ID)
 		test.CheckOutput(t, err)
 
 		_, err = judgeRepository.GetJudgeDataByID(createdJudge.ID)
@@ -263,7 +263,7 @@ func TestJudgeRepositoryUpdate(t *testing.T) {
 	judgeRepository := postgres.CreateJudgeRepository(&fields)
 
 	for _, test := range testJudgeRepositoryUpdateSuccess {
-		createdJudge, err := judgeRepository.CreateProfile(test.InputData.Judge)
+		createdJudge, _ := judgeRepository.CreateProfile(test.InputData.Judge)
 
 		updatedJudge, err := judgeRepository.UpdateProfile(
 			&models.Judge{

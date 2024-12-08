@@ -4,6 +4,7 @@ import (
 	"PPO_BMSTU/internal/models"
 	modelsUI2 "PPO_BMSTU/server/ui/modelsUI"
 	"PPO_BMSTU/server/ui/uiUtils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"log"
@@ -13,52 +14,64 @@ import (
 )
 
 func (s *ServicesUI) getParticipantMenu(c *gin.Context) {
-	idStr := c.Param("participantID")
-	participantID, err := uuid.Parse(idStr)
+	participant, err := s.getParticipantByID(c)
 	if err != nil {
-		c.String(http.StatusBadRequest, "Неверный формат UUID")
-		return
-	}
-	participant, err := s.Services.ParticipantService.GetParticipantDataByID(participantID)
-	if participant == nil {
-		c.String(http.StatusNotFound, "Crew not found")
+		c.String(http.StatusNotFound, err.Error())
 		return
 	}
 
 	judge := s.authenticatedJudge(c)
+	rating, crew, err := s.getRatingAndCrew(c)
+	if err != nil {
+		c.String(http.StatusNotFound, err.Error())
+		return
+	}
+
+	c.HTML(http.StatusOK, "participant", s.participantMenu(participant, crew, rating, judge))
+}
+
+// Вспомогательная функция для получения данных участника
+func (s *ServicesUI) getParticipantByID(c *gin.Context) (*models.Participant, error) {
+	idStr := c.Param("participantID")
+	participantID, err := uuid.Parse(idStr)
+	if err != nil {
+		return nil, fmt.Errorf("Неверный формат UUID")
+	}
+	participant, err := s.Services.ParticipantService.GetParticipantDataByID(participantID)
+	if participant == nil || err != nil {
+		return nil, fmt.Errorf("Crew not found")
+	}
+	return participant, nil
+}
+
+// Вспомогательная функция для получения данных рейтинга и экипажа
+func (s *ServicesUI) getRatingAndCrew(c *gin.Context) (*models.Rating, *models.Crew, error) {
 	if c.Param("ratingID") != "" {
-		ridStr := c.Param("ratingID")
-		ratingID, err := uuid.Parse(ridStr)
+		ratingID, err := uuid.Parse(c.Param("ratingID"))
 		if err != nil {
-			c.String(http.StatusBadRequest, "Неверный формат UUID")
-			return
+			return nil, nil, fmt.Errorf("Неверный формат UUID")
 		}
 		rating, err := s.Services.RatingService.GetRatingDataByID(ratingID)
-		if rating == nil {
-			c.String(http.StatusNotFound, "Rating not found")
-			return
+		if rating == nil || err != nil {
+			return nil, nil, fmt.Errorf("Rating not found")
 		}
 
-		idStr = c.Param("crewID")
-		crewID, err := uuid.Parse(idStr)
+		crewID, err := uuid.Parse(c.Param("crewID"))
 		if err != nil {
-			c.String(http.StatusBadRequest, "Неверный формат UUID")
-			return
+			return nil, nil, fmt.Errorf("Неверный формат UUID")
 		}
 		crew, err := s.Services.CrewService.GetCrewDataByID(crewID)
-		if crew == nil {
-			c.String(http.StatusNotFound, "Crew not found")
-			return
+		if crew == nil || err != nil {
+			return nil, nil, fmt.Errorf("Crew not found")
 		}
-		c.HTML(http.StatusOK, "participant", s.participantMenu(participant, crew, rating, judge))
-	} else {
-		c.HTML(http.StatusOK, "participant", s.participantMenu(participant, nil, nil, judge))
+		return rating, crew, nil
 	}
+	return nil, nil, nil
 }
 
 func (s *ServicesUI) participantMenu(participant *models.Participant, crew *models.Crew, rating *models.Rating, judge *models.Judge) gin.H {
 	participantView, _ := modelsUI2.FromParticipantModelToStringData(participant)
-	var result = gin.H{}
+	var result gin.H
 
 	if rating == nil {
 		result = gin.H{

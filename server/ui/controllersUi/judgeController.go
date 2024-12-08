@@ -20,7 +20,6 @@ func (s *ServicesUI) judgeProfile(c *gin.Context) {
 		"judgeView": judgeView,
 		"judge":     judge,
 	})
-	return
 }
 
 func (s *ServicesUI) judgeMainMenu(judge *models.Judge) gin.H {
@@ -30,7 +29,7 @@ func (s *ServicesUI) judgeMainMenu(judge *models.Judge) gin.H {
 		log.Printf("Error getting races: %v", err)
 		participants = []models.Participant{}
 	}
-	participantsView, err := modelsUI2.FromParticipantModelsToStringData(participants)
+	participantsView, _ := modelsUI2.FromParticipantModelsToStringData(participants)
 
 	judgeView, _ := modelsUI2.FromJudgeModelToStringData(judge)
 
@@ -42,7 +41,7 @@ func (s *ServicesUI) judgeMainMenu(judge *models.Judge) gin.H {
 			log.Printf("Error getting crews: %v", err)
 			judges = []models.Judge{}
 		}
-		judgesView, err := modelsUI2.FromJudgeModelsToStringData(judges)
+		judgesView, _ := modelsUI2.FromJudgeModelsToStringData(judges)
 
 		result = gin.H{
 			"title":            "Панель судьи",
@@ -244,7 +243,7 @@ func (s *ServicesUI) getJudgeMenu(c *gin.Context) {
 		return
 	}
 	judgeData, err := s.Services.JudgeService.GetJudgeDataByID(judgeID)
-	if judgeData == nil {
+	if judgeData == nil || err != nil {
 		c.String(http.StatusNotFound, "Crew not found")
 		return
 	}
@@ -256,9 +255,8 @@ func (s *ServicesUI) getJudgeMenu(c *gin.Context) {
 
 func (s *ServicesUI) judgeMenu(judgeData *models.Judge, judge *models.Judge) gin.H {
 	judgeView, _ := modelsUI2.FromJudgeModelToStringData(judgeData)
-	var result = gin.H{}
 
-	result = gin.H{
+	result := gin.H{
 		"title":     "",
 		"judge":     judge,
 		"judgeData": judgeData,

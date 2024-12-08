@@ -4,6 +4,7 @@ import (
 	"PPO_BMSTU/internal/models"
 	modelsUI2 "PPO_BMSTU/server/ui/modelsUI"
 	"PPO_BMSTU/server/ui/uiUtils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"log"
@@ -11,59 +12,85 @@ import (
 )
 
 func (s *ServicesUI) getProtestMenu(c *gin.Context) {
-	idStr := c.Param("protestID")
-	protestID, err := uuid.Parse(idStr)
+	protest, err := s.getProtestDataFromParam(c, "protestID")
 	if err != nil {
-		c.String(http.StatusBadRequest, "Неверный формат UUID")
-		return
-	}
-	protest, err := s.Services.ProtestService.GetProtestDataByID(protestID)
-	if protest == nil {
-		c.String(http.StatusNotFound, "Protest not found")
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	crewIDs, err := s.Services.ProtestService.GetProtestParticipantsIDByID(protest.ID)
+	protestCrews, err := s.getProtestParticipants(protest.ID)
 	if err != nil {
-		return
-	}
-	var protestCrews = []modelsUI2.ProtestCrewFormData{}
-	for crewID, role := range crewIDs {
-		crew, err := s.Services.CrewService.GetCrewDataByID(crewID)
-		if err != nil {
-			c.String(http.StatusBadRequest, "Команда-участник протеста не найдена")
-			return
-		}
-		protestCrewView, _ := modelsUI2.FromProtestParticipantModelToStringData(crew, role)
-		protestCrews = append(protestCrews, protestCrewView)
-	}
-
-	ridStr := c.Param("ratingID")
-	ratingID, err := uuid.Parse(ridStr)
-	if err != nil {
-		c.String(http.StatusBadRequest, "Неверный формат UUID")
-		return
-	}
-	rating, err := s.Services.RatingService.GetRatingDataByID(ratingID)
-	if rating == nil {
-		c.String(http.StatusNotFound, "Rating not found")
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	raceIDStr := c.Param("raceID")
-	raceID, err := uuid.Parse(raceIDStr)
+	rating, err := s.getRatingByID(c)
 	if err != nil {
-		c.String(http.StatusBadRequest, "Неверный формат UUID")
+		c.String(http.StatusNotFound, err.Error())
 		return
 	}
-	race, err := s.Services.RaceService.GetRaceDataByID(raceID)
-	if race == nil {
-		c.String(http.StatusNotFound, "Race not found")
+
+	race, err := s.getRaceByID(c)
+	if err != nil {
+		c.String(http.StatusNotFound, err.Error())
 		return
 	}
 
 	judge := s.authenticatedJudge(c)
+
 	c.HTML(http.StatusOK, "protest", s.protestMenu(protest, protestCrews, race, rating, judge))
+}
+
+// Вспомогательная функция для парсинга UUID из параметра
+func (s *ServicesUI) parseUUIDParam(c *gin.Context, paramName string) (uuid.UUID, error) {
+	idStr := c.Param(paramName)
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		return uuid.UUID{}, fmt.Errorf("Неверный формат UUID для %s", paramName)
+	}
+	return id, nil
+}
+
+// Вспомогательная функция для получения данных о протесте с параметром protestID
+func (s *ServicesUI) getProtestDataFromParam(c *gin.Context, paramName string) (*models.Protest, error) {
+	protestID, err := s.parseUUIDParam(c, paramName)
+	if err != nil {
+		return nil, err
+	}
+
+	protest, err := s.getProtestByID(protestID)
+	if err != nil {
+		return nil, err
+	}
+
+	return protest, nil
+}
+
+// Вспомогательная функция для получения данных о протесте
+func (s *ServicesUI) getProtestByID(protestID uuid.UUID) (*models.Protest, error) {
+	protest, err := s.Services.ProtestService.GetProtestDataByID(protestID)
+	if protest == nil || err != nil {
+		return nil, fmt.Errorf("Protest not found")
+	}
+	return protest, nil
+}
+
+// Вспомогательная функция для получения участников протеста
+func (s *ServicesUI) getProtestParticipants(protestID uuid.UUID) ([]modelsUI2.ProtestCrewFormData, error) {
+	crewIDs, err := s.Services.ProtestService.GetProtestParticipantsIDByID(protestID)
+	if err != nil {
+		return nil, fmt.Errorf("Ошибка при получении участников протеста")
+	}
+	var protestCrews []modelsUI2.ProtestCrewFormData
+	for crewID, role := range crewIDs {
+		crew, err := s.Services.CrewService.GetCrewDataByID(crewID)
+		if err != nil {
+			return nil, fmt.Errorf("Команда-участник протеста не найдена")
+		}
+		protestCrewView, _ := modelsUI2.FromProtestParticipantModelToStringData(crew, role)
+		protestCrews = append(protestCrews, protestCrewView)
+	}
+	return protestCrews, nil
 }
 
 func (s *ServicesUI) protestMenu(protest *models.Protest, protestCrews []modelsUI2.ProtestCrewFormData, race *models.Race, rating *models.Rating, judge *models.Judge) gin.H {
@@ -112,53 +139,31 @@ func (s *ServicesUI) createProtestPost(c *gin.Context) {
 	var input modelsUI2.ProtestCreate
 	err := c.ShouldBind(&input)
 	if err != nil {
-		log.Printf("Error binding data: %v", err)
-		c.HTML(400, "createProtest", gin.H{
-			"title":    "Создать протест",
-			"error":    err.Error(),
-			"formData": input,
-		})
+		s.renderProtestFormWithError(c, err.Error(), input)
 		return
 	}
 
 	witnesses, err := uiUtils.ParseString(c.PostForm("witnesses"))
 	if err != nil || len(witnesses) < 1 || len(witnesses) > 5 {
-		c.HTML(http.StatusBadRequest, "createProtest.html", gin.H{
-			"error":    "Вы должны выбрать от одного до пяти яхт-свидетелей.",
-			"formData": input,
-		})
+		s.renderProtestFormWithError(c, "Вы должны выбрать от одного до пяти яхт-свидетелей.", input)
 		return
 	}
 
 	reviewDate, err := uiUtils.ParseDateTime(input.ReviewDate)
 	if err != nil {
-		c.HTML(http.StatusBadRequest, "createProtest", gin.H{
-			"error":    err.Error(),
-			"formData": input,
-		})
+		s.renderProtestFormWithError(c, err.Error(), input)
 		return
 	}
 
-	ridStr := c.Param("ratingID")
-	ratingID, err := uuid.Parse(ridStr)
+	rating, err := s.getRatingByID(c)
 	if err != nil {
-		c.String(http.StatusBadRequest, "Неверный формат UUID")
+		c.String(http.StatusNotFound, err.Error())
 		return
 	}
-	rating, err := s.Services.RatingService.GetRatingDataByID(ratingID)
-	if rating == nil {
-		c.String(http.StatusNotFound, "Rating not found")
-		return
-	}
-	ridStr = c.Param("raceID")
-	raceID, err := uuid.Parse(ridStr)
+
+	race, err := s.getRaceByID(c)
 	if err != nil {
-		c.String(http.StatusBadRequest, "Неверный формат UUID")
-		return
-	}
-	race, err := s.Services.RaceService.GetRaceDataByID(raceID)
-	if race == nil {
-		c.String(http.StatusNotFound, "Race not found")
+		c.String(http.StatusNotFound, err.Error())
 		return
 	}
 
@@ -167,15 +172,48 @@ func (s *ServicesUI) createProtestPost(c *gin.Context) {
 	_, err = s.Services.ProtestService.AddNewProtest(race.ID, rating.ID, judge.ID, input.RuleNum, reviewDate, input.Comment, input.ProtesteeSailNum, input.ProtestorSailNum, witnesses)
 	if err != nil {
 		log.Printf("Error creating protest: %v", err)
-		c.HTML(400, "createProtest", gin.H{
-			"title":    "Создать протест",
-			"error":    err.Error(),
-			"formData": input,
-		})
+		s.renderProtestFormWithError(c, err.Error(), input)
 		return
 	}
 
-	c.Redirect(302, "/ratings/"+ratingID.String()+"/races/"+raceID.String())
+	c.Redirect(302, "/ratings/"+rating.ID.String()+"/races/"+race.ID.String())
+}
+
+// Вспомогательная функция для рендеринга формы с ошибкой
+func (s *ServicesUI) renderProtestFormWithError(c *gin.Context, errorMessage string, input modelsUI2.ProtestCreate) {
+	c.HTML(400, "createProtest", gin.H{
+		"title":    "Создать протест",
+		"error":    errorMessage,
+		"formData": input,
+	})
+}
+
+// Вспомогательная функция для получения данных рейтинга
+func (s *ServicesUI) getRatingByID(c *gin.Context) (*models.Rating, error) {
+	ridStr := c.Param("ratingID")
+	ratingID, err := uuid.Parse(ridStr)
+	if err != nil {
+		return nil, fmt.Errorf("Неверный формат UUID для рейтинга")
+	}
+	rating, _ := s.Services.RatingService.GetRatingDataByID(ratingID)
+	if rating == nil {
+		return nil, fmt.Errorf("Rating not found")
+	}
+	return rating, nil
+}
+
+// Вспомогательная функция для получения данных гонки
+func (s *ServicesUI) getRaceByID(c *gin.Context) (*models.Race, error) {
+	ridStr := c.Param("raceID")
+	raceID, err := uuid.Parse(ridStr)
+	if err != nil {
+		return nil, fmt.Errorf("Неверный формат UUID для гонки")
+	}
+	race, _ := s.Services.RaceService.GetRaceDataByID(raceID)
+	if race == nil {
+		return nil, fmt.Errorf("Race not found")
+	}
+	return race, nil
 }
 
 // UPDATE

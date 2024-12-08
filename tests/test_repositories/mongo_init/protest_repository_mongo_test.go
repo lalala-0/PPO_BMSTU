@@ -190,7 +190,7 @@ func TestProtestRepositoryUpdate(t *testing.T) {
 		test.InputData.JudgeID = judge.ID
 		test.InputData.RatingID = rating.ID
 
-		createdProtest, err := protestRepository.Create(test.InputData)
+		createdProtest, _ := protestRepository.Create(test.InputData)
 
 		updatedProtest, err := protestRepository.Update(
 			&models.Protest{

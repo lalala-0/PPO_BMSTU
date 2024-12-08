@@ -212,13 +212,13 @@ func (p ProtestService) CompleteReview(protestID uuid.UUID, protesteePoints int,
 	}
 	crewResInRaceCopy := crewResInRace
 	crewResInRace.Points = protesteePoints
-	crewResInRace, err = p.CrewResInRaceRepository.Update(crewResInRace)
+	_, err = p.CrewResInRaceRepository.Update(crewResInRace)
 	if err != nil {
 		p.logger.Error("SERVICE: CompleteReview method failed", "error", err)
 		return err
 	}
 
-	protest, err = p.ProtestRepository.Update(protest)
+	_, err = p.ProtestRepository.Update(protest)
 	if err != nil {
 		_, rc := p.CrewResInRaceRepository.Update(crewResInRaceCopy)
 		if rc != nil {

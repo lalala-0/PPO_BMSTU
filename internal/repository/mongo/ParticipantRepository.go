@@ -171,26 +171,26 @@ func (p *ParticipantRepository) GetParticipantsDataByProtestID(id uuid.UUID) ([]
 	// Агрегационный pipeline
 	pipeline := mongo.Pipeline{
 		// Ищем записи в коллекции crew_protest по protest_id
-		{{"$lookup", bson.D{
-			{"from", "crew_protest"},
-			{"localField", "crew_id"},
-			{"foreignField", "crew_id"},
-			{"as", "crew_protests"},
+		{{Key: "$lookup", Value: bson.D{
+			{Key: "from", Value: "crew_protest"},
+			{Key: "localField", Value: "crew_id"},
+			{Key: "foreignField", Value: "crew_id"},
+			{Key: "as", Value: "crew_protests"},
 		}}},
-		{{"$unwind", "$crew_protests"}},                                 // Разворачиваем массив
-		{{"$match", bson.D{{"crew_protests.protest_id", id.String()}}}}, // Фильтрация по protest_id
+		{{Key: "$unwind", Value: "$crew_protests"}},                                             // Разворачиваем массив
+		{{Key: "$match", Value: bson.D{{Key: "crew_protests.protest_id", Value: id.String()}}}}, // Фильтрация по protest_id
 
 		// Подключаем участников через participant_crew
-		{{"$lookup", bson.D{
-			{"from", "participants"},
-			{"localField", "participant_id"},
-			{"foreignField", "_id"},
-			{"as", "participant_info"},
+		{{Key: "$lookup", Value: bson.D{
+			{Key: "from", Value: "participants"},
+			{Key: "localField", Value: "participant_id"},
+			{Key: "foreignField", Value: "_id"},
+			{Key: "as", Value: "participant_info"},
 		}}},
-		{{"$unwind", "$participant_info"}}, // Разворачиваем массив с участниками
+		{{Key: "$unwind", Value: "$participant_info"}}, // Разворачиваем массив с участниками
 
 		// Оставляем только нужную информацию о участниках
-		{{"$replaceRoot", bson.D{{"newRoot", "$participant_info"}}}},
+		{{Key: "$replaceRoot", Value: bson.D{{Key: "newRoot", Value: "$participant_info"}}}},
 	}
 
 	cursor, err := participantCrewCollection.Aggregate(context.TODO(), pipeline)

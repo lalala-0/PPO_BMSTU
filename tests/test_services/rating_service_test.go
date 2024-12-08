@@ -297,10 +297,10 @@ var testRatingServiceUpdateRatingByID = []struct {
 				BlowoutCnt: 1,
 			}, nil)
 			fields.ratingRepoMock.EXPECT().Update(gomock.Any()).Return(&models.Rating{
-				uuid.New(),
-				"test",
-				models.Laser,
-				0,
+				ID:         uuid.New(),
+				Name:       "test",
+				Class:      models.Laser,
+				BlowoutCnt: 0,
 			}, nil)
 		},
 		checkOutput: func(t *testing.T, rating *models.Rating, err error) {

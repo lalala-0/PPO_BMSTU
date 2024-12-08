@@ -121,7 +121,6 @@ func (r *PostgresRepository) AttachParticipantToCrew(participantID uuid.UUID, cr
 	_, err := r.DB.Exec(query, participantID, crewID)
 	return err
 }
-
 func (r *PostgresRepository) ClearAll() error {
 	// Начинаем транзакцию
 	tx, err := r.DB.Beginx()
@@ -130,61 +129,31 @@ func (r *PostgresRepository) ClearAll() error {
 	}
 	defer func() {
 		if err != nil {
-			tx.Rollback()
-			return
+			_ = tx.Rollback()
+		} else {
+			_ = tx.Commit()
 		}
-		tx.Commit()
 	}()
 
-	// Удаляем данные из всех связанных таблиц
-	_, err = tx.Exec(`DELETE FROM participant_crew;`)
-	if err != nil {
-		return err
+	// Список таблиц для очистки
+	tables := []string{
+		"participant_crew",
+		"crew_protest",
+		"judge_rating",
+		"crew_race",
+		"protests",
+		"judges",
+		"crews",
+		"ratings",
+		"participants",
+		"races",
 	}
 
-	_, err = tx.Exec(`DELETE FROM crew_protest;`)
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(`DELETE FROM judge_rating;`)
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(`DELETE FROM crew_race;`)
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(`DELETE FROM protests;`)
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(`DELETE FROM judges;`)
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(`DELETE FROM crews;`)
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(`DELETE FROM ratings;`)
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(`DELETE FROM participants;`)
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(`DELETE FROM races;`)
-	if err != nil {
-		return err
+	// Удаление данных из каждой таблицы
+	for _, table := range tables {
+		if _, err = tx.Exec("DELETE FROM " + table + ";"); err != nil {
+			return err
+		}
 	}
 
 	return nil

@@ -18,7 +18,7 @@ func DeleteRating(service registry.Services, rating *models.Rating) error {
 		return err
 	}
 
-	fmt.Printf("%s %s %s Рейтинг успешно удалён\n\n\n", rating.Name, rating.Class, rating.BlowoutCnt)
+	fmt.Printf("%s %d %d Рейтинг успешно удалён\n\n\n", rating.Name, rating.Class, rating.BlowoutCnt)
 
 	return nil
 }
@@ -34,7 +34,7 @@ func UpdateRating(service registry.Services, rating *models.Rating) error {
 		return err
 	}
 
-	fmt.Printf("%s %s %s Рейтинг успешно обновлён\n\n\n", updatedRating.Name, updatedRating.Class, updatedRating.BlowoutCnt)
+	fmt.Printf("%s %d %d Рейтинг успешно обновлён\n\n\n", updatedRating.Name, updatedRating.Class, updatedRating.BlowoutCnt)
 
 	return nil
 }
@@ -58,7 +58,7 @@ func CreateRating(service registry.Services) error {
 		return err
 	}
 
-	fmt.Printf("%s %s %s Рейтинг успешно создан\n\n\n", rating.Name, rating.Class, rating.BlowoutCnt)
+	fmt.Printf("%s %d %d Рейтинг успешно создан\n\n\n", rating.Name, rating.Class, rating.BlowoutCnt)
 
 	return nil
 }
@@ -66,7 +66,9 @@ func CreateRating(service registry.Services) error {
 func GetRatingJudgeMenu(service registry.Services, judge *models.Judge) error {
 	rating := models.Rating{}
 	err := views.GetRating(service, &rating)
-
+	if err != nil {
+		return err
+	}
 	err = ratingJudgeMenu(service, &rating, judge)
 	if err != nil {
 		fmt.Println(err)
@@ -77,7 +79,9 @@ func GetRatingJudgeMenu(service registry.Services, judge *models.Judge) error {
 func GetRatingViewerMenu(service registry.Services) error {
 	rating := models.Rating{}
 	err := views.GetRating(service, &rating)
-
+	if err != nil {
+		return err
+	}
 	err = ratingViewerMenu(service, &rating)
 	if err != nil {
 		fmt.Println(err)

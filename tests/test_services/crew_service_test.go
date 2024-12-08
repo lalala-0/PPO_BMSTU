@@ -229,16 +229,16 @@ var testCrewServiceUpdateCrewByID = []struct {
 		},
 		prepare: func(fields *crewServiceFields) {
 			fields.crewRepoMock.EXPECT().GetCrewDataByID(gomock.Any()).Return(&models.Crew{
-				uuid.New(),
-				uuid.New(),
-				189,
-				models.LaserRadial,
+				ID:       uuid.New(),
+				RatingID: uuid.New(),
+				SailNum:  189,
+				Class:    models.LaserRadial,
 			}, nil)
 			fields.crewRepoMock.EXPECT().Update(gomock.Any()).Return(&models.Crew{
-				uuid.New(),
-				uuid.New(),
-				89,
-				models.Laser,
+				ID:       uuid.New(),
+				RatingID: uuid.New(),
+				SailNum:  89,
+				Class:    models.Laser,
 			}, nil)
 		},
 		checkOutput: func(t *testing.T, crew *models.Crew, err error) {
@@ -281,10 +281,10 @@ var testCrewServiceUpdateCrewByID = []struct {
 		},
 		prepare: func(fields *crewServiceFields) {
 			fields.crewRepoMock.EXPECT().GetCrewDataByID(gomock.Any()).Return(&models.Crew{
-				uuid.New(),
-				uuid.New(),
-				189,
-				models.Laser,
+				ID:       uuid.New(),
+				RatingID: uuid.New(),
+				SailNum:  189,
+				Class:    models.Laser,
 			}, nil)
 
 		},

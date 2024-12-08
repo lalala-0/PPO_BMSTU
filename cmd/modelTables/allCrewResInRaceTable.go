@@ -24,7 +24,7 @@ func AllCrewResInRace(allCrewResInRace []models.CrewResInRace, crews []models.Cr
 
 	t.Init(os.Stdout, 2, 4, 4, ' ', 0)
 
-	_, err = fmt.Fprintf(t, "\n %s\t%s\t%s\t%s\t%s",
+	_, err = fmt.Fprintf(t, "\n %s\t%s\t%s\t%s",
 		"№", "№ паруса", "Очки", "Спец. обстоятельства")
 	if err != nil {
 		fmt.Println(err)
@@ -54,5 +54,8 @@ func AllCrewResInRace(allCrewResInRace []models.CrewResInRace, crews []models.Cr
 	}
 
 	_, err = fmt.Fprintf(t, "\n")
+	if err != nil {
+		return err
+	}
 	return nil
 }
