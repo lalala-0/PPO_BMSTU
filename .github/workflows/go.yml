@@ -36,6 +36,9 @@ jobs:
         with:
           go-version: '1.22.4'  # Укажите версию Go, которую вы хотите использовать
 
+      - name: Установка зависимостей
+        run: go mod tidy
+
       - name: Установка golangci-lint
         run: |
           curl -sSfL https://github.com/golangci/golangci-lint/releases/download/v1.51.1/golangci-lint-1.51.1-linux-amd64.tar.gz | tar -xzv -C /tmp
@@ -46,9 +49,6 @@ jobs:
 
       - name: Установка gotestsum
         run: go install gotest.tools/gotestsum@latest
-
-      - name: Установка зависимостей
-        run: go mod tidy
 
       - name: Создание директории для Allure результатов
         run: mkdir -p ./tests/allure-results
