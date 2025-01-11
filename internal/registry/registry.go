@@ -2,7 +2,10 @@ package registry
 
 import (
 	"PPO_BMSTU/config"
-	"PPO_BMSTU/internal/repository/mongo"
+	"PPO_BMSTU/logger"
+	"github.com/prometheus/client_golang/prometheus"
+
+	// "PPO_BMSTU/internal/repository/mongo"
 	"PPO_BMSTU/internal/repository/postgres"
 	"PPO_BMSTU/internal/repository/repository_interfaces"
 	services "PPO_BMSTU/internal/services"
@@ -35,7 +38,7 @@ type App struct {
 	Config       config.Config
 	Repositories *Repositories
 	Services     *Services
-	Logger       *log.Logger
+	Logger       *logger.CustomLogger
 }
 
 func (a *App) postgresRepositoriesInitialization(fields *postgres.PostgresConnection) *Repositories {
@@ -52,19 +55,19 @@ func (a *App) postgresRepositoriesInitialization(fields *postgres.PostgresConnec
 	return r
 }
 
-func (a *App) mongoRepositoriesInitialization(fields *mongo.MongoConnection) *Repositories {
-	r := &Repositories{
-		CrewRepository:          mongo.CreateCrewRepository(fields),
-		CrewResInRaceRepository: mongo.CreateCrewResInRaceRepository(fields),
-		JudgeRepository:         mongo.CreateJudgeRepository(fields),
-		ParticipantRepository:   mongo.CreateParticipantRepository(fields),
-		ProtestRepository:       mongo.CreateProtestRepository(fields),
-		RaceRepository:          mongo.CreateRaceRepository(fields),
-		RatingRepository:        mongo.CreateRatingRepository(fields),
-	}
-	a.Logger.Info("Success initialization of repositories")
-	return r
-}
+//func (a *App) mongoRepositoriesInitialization(fields *mongo.MongoConnection) *Repositories {
+//	r := &Repositories{
+//		CrewRepository:          mongo.CreateCrewRepository(fields),
+//		CrewResInRaceRepository: mongo.CreateCrewResInRaceRepository(fields),
+//		JudgeRepository:         mongo.CreateJudgeRepository(fields),
+//		ParticipantRepository:   mongo.CreateParticipantRepository(fields),
+//		ProtestRepository:       mongo.CreateProtestRepository(fields),
+//		RaceRepository:          mongo.CreateRaceRepository(fields),
+//		RatingRepository:        mongo.CreateRatingRepository(fields),
+//	}
+//	a.Logger.Info("Success initialization of repositories")
+//	return r
+//}
 
 func (a *App) servicesInitialization(r *Repositories) *Services {
 	passwordHash := password_hash.NewPasswordHash()
@@ -83,28 +86,51 @@ func (a *App) servicesInitialization(r *Repositories) *Services {
 }
 
 func (a *App) initLogger() {
+	// Открытие файла для записи логов
 	f, err := os.OpenFile(a.Config.LogFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	Logger := log.New(f)
+	// Инициализация метрик для логирования
+	logCount := prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "log_count_total",
+		Help: "Total number of logs recorded by log level",
+	}, []string{"level"})
 
-	log.SetFormatter(log.LogfmtFormatter)
-	Logger.SetReportTimestamp(true)
-	Logger.SetReportCaller(true)
+	logDuration := prometheus.NewHistogramVec(prometheus.HistogramOpts{
+		Name:    "log_duration_seconds",
+		Help:    "Duration of log writing in seconds",
+		Buckets: prometheus.DefBuckets,
+	}, []string{"level"})
 
+	// Регистрация метрик
+	prometheus.MustRegister(logCount)
+	prometheus.MustRegister(logDuration)
+
+	// Инициализация логгера
+	baseLogger := log.New(f)
+
+	baseLogger.SetReportTimestamp(true)
+	baseLogger.SetReportCaller(true)
+
+	// Установка уровня логирования
 	if a.Config.LogLevel == "debug" {
-		Logger.SetLevel(log.DebugLevel)
+		baseLogger.SetLevel(log.DebugLevel)
 	} else if a.Config.LogLevel == "info" {
-		Logger.SetLevel(log.InfoLevel)
+		baseLogger.SetLevel(log.InfoLevel)
 	} else {
 		log.Fatal("Error log level")
 	}
 
-	Logger.Info("Success initialization of new Logger!")
+	// Оборачивание логгера в кастомный логгер с метриками
+	a.Logger = &logger.CustomLogger{
+		Logger:      baseLogger,
+		LogCount:    logCount,
+		LogDuration: logDuration,
+	}
 
-	a.Logger = Logger
+	a.Logger.Info("Success initialization of new Logger!")
 }
 
 func (a *App) Init() error {
@@ -119,16 +145,17 @@ func (a *App) Init() error {
 
 		a.Repositories = a.postgresRepositoriesInitialization(fields)
 		a.Services = a.servicesInitialization(a.Repositories)
-	} else if a.Config.DBType == "mongo" {
-		fields, err := mongo.NewMongoConnection(a.Config.DBFlags, a.Logger)
-		if err != nil {
-			a.Logger.Fatal("Error create mongodb repository fields", "err", err)
-			return err
-		}
-		a.Repositories = a.mongoRepositoriesInitialization(fields)
-		a.Services = a.servicesInitialization(a.Repositories)
-
 	}
+	//} else if a.Config.DBType == "mongo" {
+	//	fields, err := mongo.NewMongoConnection(a.Config.DBFlags, a.Logger)
+	//	if err != nil {
+	//		a.Logger.Fatal("Error create mongodb repository fields", "err", err)
+	//		return err
+	//	}
+	//	a.Repositories = a.mongoRepositoriesInitialization(fields)
+	//	a.Services = a.servicesInitialization(a.Repositories)
+	//
+	//}
 	return nil
 }
 

@@ -60,7 +60,7 @@ var ClassMap = map[int]string{
 }
 
 type RatingTableLine struct {
-	CrewID                uuid.UUID   `json:"crewID"`
+	CrewID                string      `json:"CrewID"`
 	SailNum               int         `json:"SailNum"`
 	ParticipantNames      []string    `json:"ParticipantNames"`
 	ParticipantBirthDates []string    `json:"ParticipantBirthDates"`
@@ -89,6 +89,7 @@ func FromRatingTableLineModelTiStringData(original models.RatingTableLine) Ratin
 	}
 
 	return RatingTableLine{
+		CrewID:                original.CrewID,
 		SailNum:               original.SailNum,
 		ParticipantNames:      original.ParticipantNames,
 		ParticipantBirthDates: birthDates,

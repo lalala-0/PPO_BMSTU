@@ -46,8 +46,9 @@ func (s *ServicesAPI) getProtests(c *gin.Context) {
 		})
 		return
 	}
+	protestsFormData, _ := modelsViewApi.FromProtestModelsToStringData(protests)
 
-	c.JSON(http.StatusOK, protests)
+	c.JSON(http.StatusOK, protestsFormData)
 }
 
 // @Summary Создать новый протест

@@ -8,11 +8,11 @@ import (
 
 type ParticipantFormData struct {
 	ID       uuid.UUID `json:"id"`
-	FIO      string    `form:"fio"`
-	Category string    `form:"category"`
-	Gender   string    `form:"gender"`
-	Birthday string    `form:"birthday"`
-	Coach    string    `form:"coach"`
+	FIO      string    `json:"fio"`
+	Category string    `json:"category"`
+	Gender   string    `json:"gender"`
+	Birthday string    `json:"birthday"`
+	Coach    string    `json:"coach"`
 }
 
 func FromParticipantModelToStringData(participant *models.Participant) (ParticipantFormData, error) {
@@ -41,12 +41,12 @@ func FromParticipantModelsToStringData(participants []models.Participant) ([]Par
 }
 
 type ParticipantInput struct {
-	ID       string `form:"id" binding:""`
-	FIO      string `form:"fio" binding:"required"`
-	Category int    `form:"category" binding:"required"`
-	Gender   int    `form:"gender" binding:""`
-	Birthday string `form:"birthday" binding:"required"`
-	Coach    string `form:"coach" binding:"required"`
+	ID       string `json:"id" binding:""`
+	FIO      string `json:"fio" binding:"required"`
+	Category int    `json:"category" binding:"required"`
+	Gender   int    `json:"gender" binding:""`
+	Birthday string `json:"birthday" binding:"required"`
+	Coach    string `json:"coach" binding:"required"`
 }
 
 func FromParticipantModelToInputData(participant *models.Participant) (ParticipantInput, error) {

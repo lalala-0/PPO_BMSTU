@@ -13,6 +13,7 @@ type Rating struct {
 }
 
 type RatingTableLine struct {
+	CrewID                string
 	SailNum               int
 	ParticipantNames      []string
 	ParticipantBirthDates []time.Time

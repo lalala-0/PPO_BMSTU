@@ -4,18 +4,20 @@ import (
 	"PPO_BMSTU/internal/models"
 	"PPO_BMSTU/internal/repository/repository_interfaces"
 	"PPO_BMSTU/internal/services/service_interfaces"
+	"PPO_BMSTU/logger"
+	"context"
 	"fmt"
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
+	"go.opentelemetry.io/otel"
 )
 
 type RatingService struct {
 	RatingRepository repository_interfaces.IRatingRepository
 	JudgeRepository  repository_interfaces.IJudgeRepository
-	logger           *log.Logger
+	logger           *logger.CustomLogger
 }
 
-func NewRatingService(RatingRepository repository_interfaces.IRatingRepository, JudgeRepository repository_interfaces.IJudgeRepository, logger *log.Logger) service_interfaces.IRatingService {
+func NewRatingService(RatingRepository repository_interfaces.IRatingRepository, JudgeRepository repository_interfaces.IJudgeRepository, logger *logger.CustomLogger) service_interfaces.IRatingService {
 	return &RatingService{
 		RatingRepository: RatingRepository,
 		JudgeRepository:  JudgeRepository,
@@ -24,6 +26,12 @@ func NewRatingService(RatingRepository repository_interfaces.IRatingRepository, 
 }
 
 func (r RatingService) AddNewRating(ratingID uuid.UUID, name string, class int, blowoutCnt int) (*models.Rating, error) {
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "AddNewRating")
+	defer span.End()
+
 	if !validClass(class) || !validBlowoutCnt(blowoutCnt) {
 		r.logger.Error("SERVICE: Invalid input data", "class", class, "BlowoutCnt", blowoutCnt)
 		return nil, fmt.Errorf("SERVICE: Invalid input data")
@@ -35,7 +43,7 @@ func (r RatingService) AddNewRating(ratingID uuid.UUID, name string, class int, 
 		BlowoutCnt: blowoutCnt,
 	}
 
-	rating, err := r.RatingRepository.Create(rating)
+	rating, err := r.RatingRepository.Create(ctx, rating)
 	if err != nil {
 		r.logger.Error("SERVICE: CreateNewRating method failed", "error", err)
 		return nil, err
@@ -46,30 +54,36 @@ func (r RatingService) AddNewRating(ratingID uuid.UUID, name string, class int, 
 }
 
 func (r RatingService) DeleteRatingByID(id uuid.UUID) error {
-	_, err := r.RatingRepository.GetRatingDataByID(id)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "DeleteRatingByID")
+	defer span.End()
+
+	_, err := r.RatingRepository.GetRatingDataByID(ctx, id)
 	if err != nil {
 		r.logger.Error("SERVICE: GetRatingDataByID method failed", "id", id, "error", err)
 		return err
 	}
 
-	judges, err := r.JudgeRepository.GetJudgesDataByRatingID(id)
+	judges, err := r.JudgeRepository.GetJudgesDataByRatingID(ctx, id)
 	if err != nil {
 		r.logger.Error("SERVICE: GetJudgesDataByRatingID method failed", "id", id, "error", err)
 		return err
 	}
 
 	for _, judge := range judges {
-		err := r.RatingRepository.DetachJudgeFromRating(id, judge.ID)
+		err := r.RatingRepository.DetachJudgeFromRating(ctx, id, judge.ID)
 		if err != nil {
 			r.logger.Error("SERVICE: DetachJudgeFromRating method failed", "id", id, "error", err)
 			return err
 		}
 	}
 
-	err = r.RatingRepository.Delete(id)
+	err = r.RatingRepository.Delete(ctx, id)
 	if err != nil {
 		for _, judge := range judges {
-			err := r.RatingRepository.AttachJudgeToRating(id, judge.ID)
+			err := r.RatingRepository.AttachJudgeToRating(ctx, id, judge.ID)
 			if err != nil {
 				r.logger.Error("SERVICE: AttachJudgeToRating method failed", "id", id, "error", err)
 				return err
@@ -84,7 +98,13 @@ func (r RatingService) DeleteRatingByID(id uuid.UUID) error {
 }
 
 func (r RatingService) UpdateRatingByID(ratingID uuid.UUID, name string, class int, blowoutCnt int) (*models.Rating, error) {
-	rating, err := r.RatingRepository.GetRatingDataByID(ratingID)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "UpdateRatingByID")
+	defer span.End()
+
+	rating, err := r.RatingRepository.GetRatingDataByID(ctx, ratingID)
 	ratingCopy := rating
 
 	if err != nil {
@@ -101,7 +121,7 @@ func (r RatingService) UpdateRatingByID(ratingID uuid.UUID, name string, class i
 	rating.Class = class
 	rating.BlowoutCnt = blowoutCnt
 
-	rating, err = r.RatingRepository.Update(rating)
+	rating, err = r.RatingRepository.Update(ctx, rating)
 	if err != nil {
 		rating = ratingCopy
 		r.logger.Error("SERVICE: UpdateRating method failed", "error", err)
@@ -113,7 +133,13 @@ func (r RatingService) UpdateRatingByID(ratingID uuid.UUID, name string, class i
 }
 
 func (r RatingService) GetRatingDataByID(id uuid.UUID) (*models.Rating, error) {
-	rating, err := r.RatingRepository.GetRatingDataByID(id)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "GetRatingDataByID")
+	defer span.End()
+
+	rating, err := r.RatingRepository.GetRatingDataByID(ctx, id)
 
 	if err != nil {
 		r.logger.Error("SERVICE: GetRatingByID method failed", "id", id, "error", err)
@@ -125,7 +151,13 @@ func (r RatingService) GetRatingDataByID(id uuid.UUID) (*models.Rating, error) {
 }
 
 func (r RatingService) AttachJudgeToRating(ratingID uuid.UUID, judgeID uuid.UUID) error {
-	err := r.RatingRepository.AttachJudgeToRating(ratingID, judgeID)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "GetAllCrewResInRace")
+	defer span.End()
+
+	err := r.RatingRepository.AttachJudgeToRating(ctx, ratingID, judgeID)
 
 	if err != nil {
 		r.logger.Error("SERVICE: AttachJudgeToRating method failed", "rid", ratingID, "jid", judgeID, "error", err)
@@ -137,7 +169,13 @@ func (r RatingService) AttachJudgeToRating(ratingID uuid.UUID, judgeID uuid.UUID
 }
 
 func (r RatingService) DetachJudgeFromRating(ratingID uuid.UUID, judgeID uuid.UUID) error {
-	err := r.RatingRepository.DetachJudgeFromRating(ratingID, judgeID)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "DetachJudgeFromRating")
+	defer span.End()
+
+	err := r.RatingRepository.DetachJudgeFromRating(ctx, ratingID, judgeID)
 
 	if err != nil {
 		r.logger.Error("SERVICE: DetachJudgeFromRating method failed", "jid", judgeID, "rid", ratingID, "error", err)
@@ -149,7 +187,13 @@ func (r RatingService) DetachJudgeFromRating(ratingID uuid.UUID, judgeID uuid.UU
 }
 
 func (r RatingService) GetAllRatings() ([]models.Rating, error) {
-	rating, err := r.RatingRepository.GetAllRatings()
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "GetAllRatings")
+	defer span.End()
+
+	rating, err := r.RatingRepository.GetAllRatings(ctx)
 
 	if err != nil {
 		r.logger.Error("SERVICE: GetAllRatings method failed", "error", err)
@@ -161,7 +205,13 @@ func (r RatingService) GetAllRatings() ([]models.Rating, error) {
 }
 
 func (r RatingService) GetRatingTable(id uuid.UUID) ([]models.RatingTableLine, error) {
-	ratingTable, err := r.RatingRepository.GetRatingTable(id)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "GetRatingTable")
+	defer span.End()
+
+	ratingTable, err := r.RatingRepository.GetRatingTable(ctx, id)
 
 	if err != nil {
 		r.logger.Error("SERVICE: GetRatingTable method failed", "error", err)

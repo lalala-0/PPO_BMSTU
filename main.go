@@ -1,14 +1,52 @@
 package main
 
 import (
-	"PPO_BMSTU/cmd/views/mainMenus"
-	_ "PPO_BMSTU/docs"
 	"PPO_BMSTU/internal/registry"
 	"PPO_BMSTU/server"
-	"fmt"
-	"github.com/charmbracelet/log"
+	"PPO_BMSTU/trace"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"log"
+	"net/http"
 	"os"
 )
+
+// Создание метрик для мониторинга
+var (
+	cpuUsage = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "go_cpu_usage_seconds_total",
+			Help: "CPU usage in seconds",
+		},
+		[]string{"operation"},
+	)
+	memoryUsage = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "go_memory_usage_bytes",
+			Help: "Memory usage in bytes",
+		},
+		[]string{"operation"},
+	)
+)
+
+func init() {
+	// Регистрируем метрики в Prometheus
+	prometheus.MustRegister(cpuUsage)
+	prometheus.MustRegister(memoryUsage)
+}
+
+func monitorResourceUsage() {
+	// Здесь можно настроить мониторинг ресурсов (CPU, память)
+	// Для примера просто записываем фиктивные данные
+	cpuUsage.WithLabelValues("operation_name").Set(0.2)
+	memoryUsage.WithLabelValues("operation_name").Set(1024)
+}
+
+func startMetricsServer() {
+	// Экспонирование метрик через HTTP
+	http.Handle("/metrics", promhttp.Handler())
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
 
 func main() {
 	app := registry.App{}
@@ -18,34 +56,66 @@ func main() {
 	if len(os.Args) > 1 { // Если переданы аргументы командной строки
 		configFile = os.Args[1] // Использовать файл конфигурации, переданный в качестве аргумента
 	}
+
 	err := app.Config.ParseConfig(configFile, "config")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to parse config: %v", err) // Более подробная ошибка
 	}
 
 	err = app.Run()
 	if err != nil {
-		fmt.Println("Error")
-		log.Fatal(err)
+		log.Fatalf("Application failed to run: %v", err) // Более подробная ошибка
 	}
+
+	// Запуск сервера для сбора метрик
+	go startMetricsServer()
 
 	// Определяем режим работы приложения
 	switch app.Config.Mode {
-	case "cmd":
-		log.Info("Start with command mode!")
-		cmdErr := mainMenus.RunMenu(app.Services)
-		if cmdErr != nil {
-			log.Fatal(cmdErr)
+	case "server":
+		log.Println("Start with server!")
+
+		// Инициализация трассировки
+		_, err := trace.InitTracer("http://localhost:14268/api/traces", "PPO")
+		if err != nil {
+			log.Fatal("init tracer", err)
 		}
 
-	case "server":
-		log.Info("Start with server!")
-		_, err = server.RunServer(&app)
-		if err != nil {
-			log.Fatal(err)
-		}
+		// Запуск сервера с трассировкой
+		server.RunServer(&app)
 
 	default:
-		log.Error("Wrong app mode", "mode", app.Config.Mode)
+		log.Printf("Wrong app mode: %s", app.Config.Mode)
 	}
+
+	// Мониторинг ресурсов (CPU, память)
+	monitorResourceUsage()
+
+	// Формирование отчета (по желанию)
+	log.Printf("CPU Usage (operation_name): %f", getMetricValue(cpuUsage, "operation_name"))
+	log.Printf("Memory Usage (operation_name): %f", getMetricValue(memoryUsage, "operation_name"))
+}
+
+// Функция для получения значения метрики
+func getMetricValue(gauge *prometheus.GaugeVec, label string) float64 {
+	// Создаем срез метрик для сбора
+	var value float64
+	metricFamilies, err := prometheus.DefaultGatherer.Gather()
+	if err != nil {
+		log.Printf("Error gathering metrics: %v", err)
+		return 0
+	}
+
+	// Поиск нужной метрики в собранных данных
+	for _, mf := range metricFamilies {
+		for _, metric := range mf.GetMetric() {
+			// Проверка, что метка совпадает
+			if metric.GetLabel()[0].GetValue() == label {
+				value = metric.GetGauge().GetValue()
+				return value
+			}
+		}
+	}
+
+	return value
 }

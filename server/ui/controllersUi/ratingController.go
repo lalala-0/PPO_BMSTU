@@ -102,6 +102,7 @@ func (s *ServicesUI) getRatingTable(c *gin.Context) {
 		}
 
 		lineData := gin.H{
+			"CrewID":           line.CrewID,
 			"SailNum":          line.SailNum,
 			"ParticipantNames": line.ParticipantNames[0],
 			"ResInRace":        resInRace,

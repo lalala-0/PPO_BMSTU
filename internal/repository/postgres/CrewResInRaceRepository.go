@@ -4,10 +4,10 @@ import (
 	"PPO_BMSTU/internal/models"
 	"PPO_BMSTU/internal/repository/repository_errors"
 	"PPO_BMSTU/internal/repository/repository_interfaces"
+	"context"
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 )
 
 type CrewResInRaceDB struct {
@@ -19,10 +19,10 @@ type CrewResInRaceDB struct {
 }
 
 type CrewResInRaceRepository struct {
-	db *sqlx.DB
+	db *TracedDB
 }
 
-func NewCrewResInRaceRepository(db *sqlx.DB) repository_interfaces.ICrewResInRaceRepository {
+func NewCrewResInRaceRepository(db *TracedDB) repository_interfaces.ICrewResInRaceRepository {
 	return &CrewResInRaceRepository{db: db}
 }
 
@@ -35,10 +35,10 @@ func copyCrewResInRaceResultToModel(crewResInRaceDB *CrewResInRaceDB) *models.Cr
 	}
 }
 
-func (w CrewResInRaceRepository) Create(crewResInRace *models.CrewResInRace) (*models.CrewResInRace, error) {
+func (w CrewResInRaceRepository) Create(ctx context.Context, crewResInRace *models.CrewResInRace) (*models.CrewResInRace, error) {
 	query := `INSERT INTO crew_race(crew_id, race_id, points, spec_circumstance) VALUES ($1, $2, $3, $4);`
 
-	_, err := w.db.Exec(query, crewResInRace.CrewID, crewResInRace.RaceID, crewResInRace.Points, crewResInRace.SpecCircumstance)
+	_, err := w.db.ExecContext(ctx, query, crewResInRace.CrewID, crewResInRace.RaceID, crewResInRace.Points, crewResInRace.SpecCircumstance)
 
 	if err != nil {
 		return nil, repository_errors.InsertError
@@ -52,9 +52,9 @@ func (w CrewResInRaceRepository) Create(crewResInRace *models.CrewResInRace) (*m
 	}, nil
 }
 
-func (w CrewResInRaceRepository) Delete(raceID uuid.UUID, crewID uuid.UUID) error {
+func (w CrewResInRaceRepository) Delete(ctx context.Context, raceID uuid.UUID, crewID uuid.UUID) error {
 	query := `DELETE FROM crew_race WHERE race_id = $1 and crew_id = $2;`
-	res, err := w.db.Exec(query, raceID, crewID)
+	res, err := w.db.ExecContext(ctx, query, raceID, crewID)
 
 	if err != nil {
 		return repository_errors.DeleteError
@@ -72,21 +72,21 @@ func (w CrewResInRaceRepository) Delete(raceID uuid.UUID, crewID uuid.UUID) erro
 	return nil
 }
 
-func (w CrewResInRaceRepository) Update(crewResInRace *models.CrewResInRace) (*models.CrewResInRace, error) {
+func (w CrewResInRaceRepository) Update(ctx context.Context, crewResInRace *models.CrewResInRace) (*models.CrewResInRace, error) {
 	query := `UPDATE crew_race SET points = $3, spec_circumstance = $4 WHERE race_id = $1 and crew_id = $2 RETURNING race_id, crew_id, points, spec_circumstance;`
 
 	var updatedCrewResInRace models.CrewResInRace
-	err := w.db.QueryRow(query, crewResInRace.RaceID, crewResInRace.CrewID, crewResInRace.Points, crewResInRace.SpecCircumstance).Scan(&updatedCrewResInRace.RaceID, &updatedCrewResInRace.CrewID, &updatedCrewResInRace.Points, &updatedCrewResInRace.SpecCircumstance)
+	err := w.db.QueryRowContext(ctx, query, crewResInRace.RaceID, crewResInRace.CrewID, crewResInRace.Points, crewResInRace.SpecCircumstance).Scan(&updatedCrewResInRace.RaceID, &updatedCrewResInRace.CrewID, &updatedCrewResInRace.Points, &updatedCrewResInRace.SpecCircumstance)
 	if err != nil {
 		return nil, repository_errors.UpdateError
 	}
 	return &updatedCrewResInRace, nil
 }
 
-func (w CrewResInRaceRepository) GetCrewResByRaceIDAndCrewID(raceID uuid.UUID, crewID uuid.UUID) (*models.CrewResInRace, error) {
+func (w CrewResInRaceRepository) GetCrewResByRaceIDAndCrewID(ctx context.Context, raceID uuid.UUID, crewID uuid.UUID) (*models.CrewResInRace, error) {
 	query := `SELECT * FROM crew_race WHERE race_id = $1 and crew_id = $2;`
 	crewResInRaceDB := &CrewResInRaceDB{}
-	err := w.db.Get(crewResInRaceDB, query, raceID, crewID)
+	err := w.db.GetContext(ctx, crewResInRaceDB, query, raceID, crewID)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository_errors.DoesNotExist
@@ -99,10 +99,10 @@ func (w CrewResInRaceRepository) GetCrewResByRaceIDAndCrewID(raceID uuid.UUID, c
 	return crewResInRaceModels, nil
 }
 
-func (c CrewResInRaceRepository) GetAllCrewResInRace(raceID uuid.UUID) ([]models.CrewResInRace, error) {
+func (c CrewResInRaceRepository) GetAllCrewResInRace(ctx context.Context, raceID uuid.UUID) ([]models.CrewResInRace, error) {
 	query := `SELECT * FROM crew_race WHERE race_id = $1;`
 	var crewResInRaceDB []CrewResInRaceDB
-	err := c.db.Select(&crewResInRaceDB, query, raceID)
+	err := c.db.SelectContext(ctx, &crewResInRaceDB, query, raceID)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository_errors.DoesNotExist

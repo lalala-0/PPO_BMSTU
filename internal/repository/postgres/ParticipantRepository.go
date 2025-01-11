@@ -4,10 +4,10 @@ import (
 	"PPO_BMSTU/internal/models"
 	"PPO_BMSTU/internal/repository/repository_errors"
 	"PPO_BMSTU/internal/repository/repository_interfaces"
+	"context"
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 	"time"
 )
 
@@ -21,10 +21,10 @@ type ParticipantDB struct {
 }
 
 type ParticipantRepository struct {
-	db *sqlx.DB
+	db *TracedDB
 }
 
-func NewParticipantRepository(db *sqlx.DB) repository_interfaces.IParticipantRepository {
+func NewParticipantRepository(db *TracedDB) repository_interfaces.IParticipantRepository {
 	return &ParticipantRepository{db: db}
 }
 
@@ -35,7 +35,6 @@ func copyParticipantResultToModel(participantDB *ParticipantDB) *models.Particip
 	}
 
 	return &models.Participant{
-
 		ID:       participantDB.ID,
 		FIO:      participantDB.FIO,
 		Category: participantDB.Category,
@@ -45,12 +44,12 @@ func copyParticipantResultToModel(participantDB *ParticipantDB) *models.Particip
 	}
 }
 
-func (w ParticipantRepository) Create(participant *models.Participant) (*models.Participant, error) {
+func (w ParticipantRepository) Create(ctx context.Context, participant *models.Participant) (*models.Participant, error) {
 	query := `INSERT INTO participants(name, category, gender, birthdate, coach_name) VALUES ($1, $2, $3, $4, $5) RETURNING id;`
 
 	var participantID uuid.UUID
 	gender := participant.Gender != 0
-	err := w.db.QueryRow(query, participant.FIO, participant.Category, gender, participant.Birthday, participant.Coach).Scan(&participantID)
+	err := w.db.QueryRowContext(ctx, query, participant.FIO, participant.Category, gender, participant.Birthday, participant.Coach).Scan(&participantID)
 
 	if err != nil {
 		return nil, repository_errors.InsertError
@@ -66,12 +65,12 @@ func (w ParticipantRepository) Create(participant *models.Participant) (*models.
 	}, nil
 }
 
-func (w ParticipantRepository) Update(participant *models.Participant) (*models.Participant, error) {
+func (w ParticipantRepository) Update(ctx context.Context, participant *models.Participant) (*models.Participant, error) {
 	query := `UPDATE participants SET name = $2, category = $3, gender = $4, birthdate = $5, coach_name = $6 WHERE id = $1 RETURNING id, name, category, gender, birthdate, coach_name;`
 	gender := participant.Gender != 0
 
 	participantDB := &ParticipantDB{}
-	err := w.db.QueryRow(query, participant.ID, participant.FIO, participant.Category, gender, participant.Birthday, participant.Coach).Scan(&participantDB.ID, &participantDB.FIO, &participantDB.Category, &participantDB.Gender, &participantDB.Birthday, &participantDB.Coach)
+	err := w.db.QueryRowContext(ctx, query, participant.ID, participant.FIO, participant.Category, gender, participant.Birthday, participant.Coach).Scan(&participantDB.ID, &participantDB.FIO, &participantDB.Category, &participantDB.Gender, &participantDB.Birthday, &participantDB.Coach)
 	if err != nil {
 		return nil, repository_errors.UpdateError
 	}
@@ -80,9 +79,9 @@ func (w ParticipantRepository) Update(participant *models.Participant) (*models.
 	return participantModels, nil
 }
 
-func (w ParticipantRepository) Delete(id uuid.UUID) error {
+func (w ParticipantRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	query := `DELETE FROM participants WHERE id = $1;`
-	res, err := w.db.Exec(query, id)
+	res, err := w.db.ExecContext(ctx, query, id)
 
 	if err != nil {
 		return repository_errors.DeleteError
@@ -98,10 +97,10 @@ func (w ParticipantRepository) Delete(id uuid.UUID) error {
 	return nil
 }
 
-func (w ParticipantRepository) GetParticipantDataByID(id uuid.UUID) (*models.Participant, error) {
+func (w ParticipantRepository) GetParticipantDataByID(ctx context.Context, id uuid.UUID) (*models.Participant, error) {
 	query := `SELECT * FROM participants WHERE id = $1;`
 	participantDB := &ParticipantDB{}
-	err := w.db.Get(participantDB, query, id)
+	err := w.db.GetContext(ctx, participantDB, query, id)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository_errors.DoesNotExist
@@ -114,10 +113,10 @@ func (w ParticipantRepository) GetParticipantDataByID(id uuid.UUID) (*models.Par
 	return participantModels, nil
 }
 
-func (w ParticipantRepository) GetParticipantsDataByCrewID(id uuid.UUID) ([]models.Participant, error) {
+func (w ParticipantRepository) GetParticipantsDataByCrewID(ctx context.Context, id uuid.UUID) ([]models.Participant, error) {
 	query := `SELECT * FROM participants WHERE id IN (SELECT participant_id FROM participant_crew WHERE crew_id = $1);`
 	var participantDB []ParticipantDB
-	err := w.db.Select(&participantDB, query, id)
+	err := w.db.SelectContext(ctx, &participantDB, query, id)
 
 	if err != nil {
 		return nil, repository_errors.SelectError
@@ -132,10 +131,10 @@ func (w ParticipantRepository) GetParticipantsDataByCrewID(id uuid.UUID) ([]mode
 	return participantModels, nil
 }
 
-func (w ParticipantRepository) GetParticipantsDataByProtestID(id uuid.UUID) ([]models.Participant, error) {
+func (w ParticipantRepository) GetParticipantsDataByProtestID(ctx context.Context, id uuid.UUID) ([]models.Participant, error) {
 	query := `SELECT * FROM participants WHERE id in (SELECT participant_id FROM participant_crew WHERE crew_id IN (SELECT crew_id from crew_protest where protest_id = $1));`
 	var participantDB []ParticipantDB
-	err := w.db.Select(&participantDB, query, id)
+	err := w.db.SelectContext(ctx, &participantDB, query, id)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository_errors.DoesNotExist
@@ -151,10 +150,10 @@ func (w ParticipantRepository) GetParticipantsDataByProtestID(id uuid.UUID) ([]m
 	return participantModels, nil
 }
 
-func (w ParticipantRepository) GetAllParticipants() ([]models.Participant, error) {
+func (w ParticipantRepository) GetAllParticipants(ctx context.Context) ([]models.Participant, error) {
 	query := `SELECT * FROM participants;`
 	var participantDB []ParticipantDB
-	err := w.db.Select(&participantDB, query)
+	err := w.db.SelectContext(ctx, &participantDB, query)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository_errors.DoesNotExist

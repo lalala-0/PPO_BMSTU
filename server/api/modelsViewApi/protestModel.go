@@ -8,13 +8,13 @@ import (
 
 type ProtestFormData struct {
 	ID         uuid.UUID `json:"id"`
-	JudgeID    uuid.UUID `json:"judge-id"`
-	RatingID   uuid.UUID `json:"rating-id"`
-	RaceID     uuid.UUID `json:"race-id"`
-	RuleNum    int       `form:"rule-num"`
-	ReviewDate string    `form:"review-date"`
-	Status     string    `form:"status"`
-	Comment    string    `form:"comment"`
+	JudgeID    uuid.UUID `json:"judgeId"`
+	RatingID   uuid.UUID `json:"ratingId"`
+	RaceID     uuid.UUID `json:"raceId"`
+	RuleNum    int       `json:"ruleNum"`
+	ReviewDate string    `json:"reviewDate"`
+	Status     string    `json:"status"`
+	Comment    string    `json:"comment"`
 }
 
 func FromProtestModelToStringData(protest *models.Protest) (ProtestFormData, error) {

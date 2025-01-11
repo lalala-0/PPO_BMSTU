@@ -8,7 +8,7 @@ import (
 
 type CrewFormData struct {
 	ID       uuid.UUID `json:"id"`
-	RatingID uuid.UUID `json:"rating-id"`
+	RatingID uuid.UUID `json:"ratingId"`
 	SailNum  int       `form:"name"`
 	Class    string    `form:"class"`
 }
@@ -39,7 +39,7 @@ func FromCrewModelsToStringData(crews []models.Crew) ([]CrewFormData, error) {
 
 type ProtestCrewFormData struct {
 	ID       uuid.UUID `json:"id"`
-	RatingID uuid.UUID `json:"rating-id"`
+	RatingID uuid.UUID `json:"ratingId"`
 	SailNum  int       `form:"name"`
 	Class    string    `form:"class"`
 	Role     string    `form:"role"`
@@ -73,7 +73,7 @@ func FromProtestParticipantModelsToStringData(crews []models.Crew, roles []int) 
 ///////////////////////
 
 type CrewInput struct {
-	SailNum int `form:"sailNum" binding:"required"`
+	SailNum int `json:"sailNum" binding:"required"`
 }
 
 func FromCrewModelToInputData(crew *models.Crew) (CrewInput, error) {

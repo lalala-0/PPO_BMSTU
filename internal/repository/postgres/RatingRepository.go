@@ -4,10 +4,10 @@ import (
 	"PPO_BMSTU/internal/models"
 	"PPO_BMSTU/internal/repository/repository_errors"
 	"PPO_BMSTU/internal/repository/repository_interfaces"
+	"context"
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 	"time"
 )
 
@@ -19,7 +19,7 @@ type RatingDB struct {
 }
 
 type RatingTableDB struct {
-	CrewID               uuid.UUID `db:"id"`
+	CrewID               string    `db:"crew_id"`
 	SailNum              int       `db:"sail_num"`
 	ParticipantName      string    `db:"name"`
 	ParticipantBirthDate time.Time `db:"birthdate"`
@@ -32,10 +32,10 @@ type RatingTableDB struct {
 }
 
 type RatingRepository struct {
-	db *sqlx.DB
+	db *TracedDB
 }
 
-func NewRatingRepository(db *sqlx.DB) repository_interfaces.IRatingRepository {
+func NewRatingRepository(db *TracedDB) repository_interfaces.IRatingRepository {
 	return &RatingRepository{db: db}
 }
 
@@ -51,86 +51,108 @@ func copyRatingResultToModel(ratingDB *RatingDB) *models.Rating {
 func copyRatingTableResultToModel(ratingTableDB []RatingTableDB) []models.RatingTableLine {
 	var ratingLines []models.RatingTableLine
 
+	if len(ratingTableDB) == 0 {
+		return ratingLines
+	}
+
+	// Переменные для текущего `SailNum`
 	var participantNames []string
 	var participantBirthDates []time.Time
 	var participantCategories []int
 	var coachNames []string
 	resInRace := make(map[int]int)
-	for i, line := range ratingTableDB[0 : len(ratingTableDB)-1] {
+
+	// Текущий `SailNum`
+	currentSailNum := ratingTableDB[0].SailNum
+	currentCrewID := ratingTableDB[0].CrewID
+	pointsSum := ratingTableDB[0].PointsSum
+	rank := ratingTableDB[0].Rank
+
+	for _, line := range ratingTableDB {
+		// Если `SailNum` изменился, добавляем текущую строку в результат
+		if line.SailNum != currentSailNum {
+			ratingLines = append(ratingLines, models.RatingTableLine{
+				CrewID:                currentCrewID,
+				SailNum:               currentSailNum,
+				ParticipantNames:      participantNames,
+				ParticipantBirthDates: participantBirthDates,
+				ParticipantCategories: participantCategories,
+				ResInRace:             resInRace,
+				PointsSum:             pointsSum,
+				Rank:                  rank,
+				CoachNames:            coachNames,
+			})
+
+			// Очищаем переменные для нового `SailNum`
+			participantNames = []string{}
+			participantBirthDates = []time.Time{}
+			participantCategories = []int{}
+			coachNames = []string{}
+			resInRace = make(map[int]int)
+
+			// Обновляем текущий `SailNum` и связанные данные
+			currentSailNum = line.SailNum
+			currentCrewID = line.CrewID
+			pointsSum = line.PointsSum
+			rank = line.Rank
+		}
+
+		// Добавляем данные текущей строки
 		participantNames = append(participantNames, line.ParticipantName)
 		participantBirthDates = append(participantBirthDates, line.ParticipantBirthDate)
 		participantCategories = append(participantCategories, line.ParticipantCategory)
 		coachNames = append(coachNames, line.CoachName)
 		resInRace[line.RaceNumber] = line.Points
-		if line.SailNum != ratingTableDB[i+1].SailNum {
-			ratingLines = append(ratingLines, models.RatingTableLine{
-				SailNum:               line.SailNum,
-				ParticipantNames:      participantNames,
-				ParticipantBirthDates: participantBirthDates,
-				ParticipantCategories: participantCategories,
-				ResInRace:             resInRace,
-				PointsSum:             line.PointsSum,
-				Rank:                  line.Rank,
-				CoachNames:            coachNames,
-			})
-			participantNames = make([]string, 0)
-			participantBirthDates = make([]time.Time, 0)
-			participantCategories = make([]int, 0)
-			coachNames = make([]string, 0)
-			resInRace = make(map[int]int, 0)
-		}
 	}
-	line := ratingTableDB[len(ratingTableDB)-1]
-	participantNames = append(participantNames, line.ParticipantName)
-	participantBirthDates = append(participantBirthDates, line.ParticipantBirthDate)
-	participantCategories = append(participantCategories, line.ParticipantCategory)
-	coachNames = append(coachNames, line.CoachName)
-	resInRace[line.RaceNumber] = line.RaceNumber
+
+	// Добавляем последнюю группу данных
 	ratingLines = append(ratingLines, models.RatingTableLine{
-		SailNum:               line.SailNum,
+		CrewID:                currentCrewID,
+		SailNum:               currentSailNum,
 		ParticipantNames:      participantNames,
 		ParticipantBirthDates: participantBirthDates,
 		ParticipantCategories: participantCategories,
 		ResInRace:             resInRace,
-		PointsSum:             line.PointsSum,
-		Rank:                  line.Rank,
+		PointsSum:             pointsSum,
+		Rank:                  rank,
 		CoachNames:            coachNames,
 	})
+
 	return ratingLines
 }
 
-func (w RatingRepository) Create(rating *models.Rating) (*models.Rating, error) {
+func (w RatingRepository) Create(ctx context.Context, rating *models.Rating) (*models.Rating, error) {
 	query := `INSERT INTO ratings(name, class, blowout_cnt) VALUES ($1, $2, $3) RETURNING id;`
 
 	var ratingID uuid.UUID
-	err := w.db.QueryRow(query, rating.Name, rating.Class, rating.BlowoutCnt).Scan(&ratingID)
+	err := w.db.QueryRowContext(ctx, query, rating.Name, rating.Class, rating.BlowoutCnt).Scan(&ratingID)
 
 	if err != nil {
 		return nil, repository_errors.InsertError
 	}
 
 	return &models.Rating{
-		ID:         rating.ID,
+		ID:         ratingID,
 		Name:       rating.Name,
 		Class:      rating.Class,
 		BlowoutCnt: rating.BlowoutCnt,
 	}, nil
 }
 
-func (w RatingRepository) Update(rating *models.Rating) (*models.Rating, error) {
+func (w RatingRepository) Update(ctx context.Context, rating *models.Rating) (*models.Rating, error) {
 	query := `UPDATE ratings SET name = $1, class = $2, blowout_cnt = $3 WHERE ratings.id = $4 RETURNING id, name, class, blowout_cnt;`
 
 	var updatedRating models.Rating
-	err := w.db.QueryRow(query, rating.Name, rating.Class, rating.BlowoutCnt, rating.ID).Scan(&updatedRating.ID, &updatedRating.Name, &updatedRating.Class, &updatedRating.BlowoutCnt)
+	err := w.db.QueryRowContext(ctx, query, rating.Name, rating.Class, rating.BlowoutCnt, rating.ID).Scan(&updatedRating.ID, &updatedRating.Name, &updatedRating.Class, &updatedRating.BlowoutCnt)
 	if err != nil {
 		return nil, repository_errors.UpdateError
 	}
 	return &updatedRating, nil
 }
 
-func (w RatingRepository) Delete(id uuid.UUID) error {
+func (w RatingRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	query := `DELETE FROM ratings WHERE id = $1;`
-	res, err := w.db.Exec(query, id)
+	res, err := w.db.ExecContext(ctx, query, id)
 
 	if err != nil {
 		return repository_errors.DeleteError
@@ -147,10 +169,12 @@ func (w RatingRepository) Delete(id uuid.UUID) error {
 	return nil
 }
 
-func (w RatingRepository) GetRatingDataByID(id uuid.UUID) (*models.Rating, error) {
+func (w RatingRepository) GetRatingDataByID(ctx context.Context, id uuid.UUID) (*models.Rating, error) {
 	query := `SELECT * FROM ratings WHERE id = $1;`
 	ratingDB := &RatingDB{}
-	err := w.db.Get(ratingDB, query, id)
+
+	// Используем GetContext для выполнения запроса с учетом контекста
+	err := w.db.GetContext(ctx, ratingDB, query, id)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository_errors.DoesNotExist
@@ -158,16 +182,15 @@ func (w RatingRepository) GetRatingDataByID(id uuid.UUID) (*models.Rating, error
 		return nil, repository_errors.SelectError
 	}
 
-	ratingModels := copyRatingResultToModel(ratingDB)
+	ratingModel := copyRatingResultToModel(ratingDB)
 
-	return ratingModels, nil
+	return ratingModel, nil
 }
 
-func (w RatingRepository) AttachJudgeToRating(ratingID uuid.UUID, judgeID uuid.UUID) error {
+func (w RatingRepository) AttachJudgeToRating(ctx context.Context, ratingID uuid.UUID, judgeID uuid.UUID) error {
 	query := `INSERT INTO judge_rating(judge_id, rating_id) VALUES ($1, $2);`
 
-	_, err := w.db.Exec(query, judgeID, ratingID)
-
+	_, err := w.db.ExecContext(ctx, query, judgeID, ratingID)
 	if err != nil {
 		return repository_errors.InsertError
 	}
@@ -175,22 +198,32 @@ func (w RatingRepository) AttachJudgeToRating(ratingID uuid.UUID, judgeID uuid.U
 	return nil
 }
 
-func (w RatingRepository) DetachJudgeFromRating(ratingID uuid.UUID, judgeID uuid.UUID) error {
-	query := `DELETE FROM judge_rating WHERE judge_id = $1 and rating_id = $2;`
-	_, err := w.db.Exec(query, judgeID, ratingID)
+func (w RatingRepository) DetachJudgeFromRating(ctx context.Context, ratingID uuid.UUID, judgeID uuid.UUID) error {
+	query := `DELETE FROM judge_rating WHERE judge_id = $1 AND rating_id = $2;`
+	res, err := w.db.ExecContext(ctx, query, judgeID, ratingID)
 
-	if errors.Is(err, sql.ErrNoRows) {
-		return repository_errors.DoesNotExist
-	} else if err != nil {
+	if err != nil {
 		return repository_errors.DeleteError
 	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return repository_errors.DoesNotExist
+	}
+
 	return nil
 }
 
-func (w RatingRepository) GetAllRatings() ([]models.Rating, error) {
+func (w RatingRepository) GetAllRatings(ctx context.Context) ([]models.Rating, error) {
 	query := `SELECT * FROM ratings ORDER BY name;`
 	ratingDB := []RatingDB{}
-	err := w.db.Select(&ratingDB, query)
+
+	// Используем контекст в запросе
+	err := w.db.SelectContext(ctx, &ratingDB, query)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository_errors.DoesNotExist
@@ -206,36 +239,41 @@ func (w RatingRepository) GetAllRatings() ([]models.Rating, error) {
 	return ratingModels, nil
 }
 
-func (r RatingRepository) GetRatingTable(id uuid.UUID) ([]models.RatingTableLine, error) {
+func (r RatingRepository) GetRatingTable(ctx context.Context, id uuid.UUID) ([]models.RatingTableLine, error) {
 	query :=
-		`select c.id, c.sail_num, cp.name, cp.birthdate, category, points, number, points_summ, dense_rank() OVER (order BY points_summ, id) as rang, coach_name
-		from crews as c
-		join(
-		select crew_id, pc.name, pc.birthdate, pc.category, pc.gender, pc.coach_name
-			from participant_crew
-			join(select id, name, birthdate, category, gender, coach_name
-				from participants
-				)as pc on pc.id = participant_crew.participant_id and participant_crew.helmsman
-				) as cp on c.id = cp.crew_id
-				join(
-				select points, crew_id, race_id, rc.number
-					from crew_race
-					join (select id, number
-						from races as r
-						group by r.id
-						)as rc on crew_race.race_id = rc.id
-						GROUP BY crew_id, points, crew_id, race_id, rc.number
-						order by rc.number 
-						)as cr on c.id = cr.crew_id
-						join( select sum(points) as points_summ , crew_id
-							from crew_race
-							GROUP BY crew_id
-							)as ps on c.id = ps.crew_id		
-		where rating_id = $1
-		order by rang, sail_num, number;
+		`SELECT c.id AS crew_id, c.sail_num, cp.name, cp.birthdate, category, points, number, points_summ, 
+			DENSE_RANK() OVER (ORDER BY points_summ, id) AS rang, coach_name
+		FROM crews AS c
+		JOIN (
+			SELECT crew_id, pc.name, pc.birthdate, pc.category, pc.gender, pc.coach_name
+			FROM participant_crew
+			JOIN (
+				SELECT id, name, birthdate, category, gender, coach_name
+				FROM participants
+			) AS pc ON pc.id = participant_crew.participant_id AND participant_crew.helmsman
+		) AS cp ON c.id = cp.crew_id
+		JOIN (
+			SELECT points, crew_id, race_id, rc.number
+			FROM crew_race
+			JOIN (
+				SELECT id, number
+				FROM races AS r
+				GROUP BY r.id
+			) AS rc ON crew_race.race_id = rc.id
+			GROUP BY crew_id, points, crew_id, race_id, rc.number
+			ORDER BY rc.number
+		) AS cr ON c.id = cr.crew_id
+		JOIN (
+			SELECT SUM(points) AS points_summ, crew_id
+			FROM crew_race
+			GROUP BY crew_id
+		) AS ps ON c.id = ps.crew_id
+		WHERE rating_id = $1
+		ORDER BY rang, sail_num, number;
 	`
+
 	ratingTableDB := []RatingTableDB{}
-	err := r.db.Select(&ratingTableDB, query, id)
+	err := r.db.SelectContext(ctx, &ratingTableDB, query, id)
 	if err != nil {
 		return nil, repository_errors.SelectError
 	} else if len(ratingTableDB) == 0 {

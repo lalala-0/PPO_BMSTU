@@ -4,10 +4,10 @@ import (
 	"PPO_BMSTU/internal/models"
 	"PPO_BMSTU/internal/repository/repository_errors"
 	"PPO_BMSTU/internal/repository/repository_interfaces"
+	"context"
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 	"time"
 )
 
@@ -20,10 +20,10 @@ type RaceDB struct {
 }
 
 type RaceRepository struct {
-	db *sqlx.DB
+	db *TracedDB
 }
 
-func NewRaceRepository(db *sqlx.DB) repository_interfaces.IRaceRepository {
+func NewRaceRepository(db *TracedDB) repository_interfaces.IRaceRepository {
 	return &RaceRepository{db: db}
 }
 
@@ -37,11 +37,11 @@ func copyRaceResultToModel(raceDB *RaceDB) *models.Race {
 	}
 }
 
-func (w RaceRepository) Create(race *models.Race) (*models.Race, error) {
+func (r RaceRepository) Create(ctx context.Context, race *models.Race) (*models.Race, error) {
 	query := `INSERT INTO races(rating_id, date, number, class) VALUES ($1, $2, $3, $4) RETURNING id;`
 
 	var raceID uuid.UUID
-	err := w.db.QueryRow(query, race.RatingID, race.Date, race.Number, race.Class).Scan(&raceID)
+	err := r.db.QueryRowContext(ctx, query, race.RatingID, race.Date, race.Number, race.Class).Scan(&raceID)
 
 	if err != nil {
 		return nil, repository_errors.InsertError
@@ -56,11 +56,11 @@ func (w RaceRepository) Create(race *models.Race) (*models.Race, error) {
 	}, nil
 }
 
-func (w RaceRepository) Update(race *models.Race) (*models.Race, error) {
+func (r RaceRepository) Update(ctx context.Context, race *models.Race) (*models.Race, error) {
 	query := `UPDATE races SET rating_id = $1, date = $2, number = $3, class = $4 WHERE id = $5 RETURNING id, rating_id, date, number, class;`
 
 	var updatedRace models.Race
-	err := w.db.QueryRow(query, race.RatingID, race.Date, race.Number, race.Class, race.ID).Scan(&updatedRace.ID, &updatedRace.RatingID, &updatedRace.Date, &updatedRace.Number, &updatedRace.Class)
+	err := r.db.QueryRowContext(ctx, query, race.RatingID, race.Date, race.Number, race.Class, race.ID).Scan(&updatedRace.ID, &updatedRace.RatingID, &updatedRace.Date, &updatedRace.Number, &updatedRace.Class)
 
 	if err != nil {
 		return nil, repository_errors.UpdateError
@@ -68,9 +68,9 @@ func (w RaceRepository) Update(race *models.Race) (*models.Race, error) {
 	return &updatedRace, nil
 }
 
-func (w RaceRepository) Delete(id uuid.UUID) error {
+func (r RaceRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	query := `DELETE FROM races WHERE id = $1;`
-	res, err := w.db.Exec(query, id)
+	res, err := r.db.ExecContext(ctx, query, id)
 
 	if err != nil {
 		return repository_errors.DeleteError
@@ -87,10 +87,10 @@ func (w RaceRepository) Delete(id uuid.UUID) error {
 	return nil
 }
 
-func (w RaceRepository) GetRaceDataByID(id uuid.UUID) (*models.Race, error) {
+func (r RaceRepository) GetRaceDataByID(ctx context.Context, id uuid.UUID) (*models.Race, error) {
 	query := `SELECT * FROM races WHERE id = $1;`
 	raceDB := &RaceDB{}
-	err := w.db.Get(raceDB, query, id)
+	err := r.db.GetContext(ctx, raceDB, query, id)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository_errors.DoesNotExist
@@ -103,10 +103,10 @@ func (w RaceRepository) GetRaceDataByID(id uuid.UUID) (*models.Race, error) {
 	return raceModels, nil
 }
 
-func (w RaceRepository) GetRacesDataByRatingID(id uuid.UUID) ([]models.Race, error) {
+func (r RaceRepository) GetRacesDataByRatingID(ctx context.Context, id uuid.UUID) ([]models.Race, error) {
 	query := `SELECT * FROM races WHERE rating_id = $1;`
 	var raceDB []RaceDB
-	err := w.db.Select(&raceDB, query, id)
+	err := r.db.SelectContext(ctx, &raceDB, query, id)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository_errors.DoesNotExist

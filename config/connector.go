@@ -1,6 +1,7 @@
 package config
 
 import (
+	"PPO_BMSTU/logger"
 	"database/sql"
 	"fmt"
 	"time"
@@ -20,7 +21,7 @@ type DbConnectionFlags struct {
 	DBName   string `mapstructure:"dbname"`
 }
 
-func (p *DbConnectionFlags) InitPostgresDB(logger *log.Logger) (*sql.DB, error) {
+func (p *DbConnectionFlags) InitPostgresDB(logger *logger.CustomLogger) (*sql.DB, error) {
 	logger.Debug("POSTGRES! Start init postgreSQL", "user", p.User, "DBName", p.DBName,
 		"host", p.Host, "port", p.Port)
 

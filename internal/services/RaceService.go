@@ -4,9 +4,11 @@ import (
 	"PPO_BMSTU/internal/models"
 	"PPO_BMSTU/internal/repository/repository_interfaces"
 	"PPO_BMSTU/internal/services/service_interfaces"
+	"PPO_BMSTU/logger"
+	"context"
 	"fmt"
-	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
+	"go.opentelemetry.io/otel"
 	"time"
 )
 
@@ -14,10 +16,10 @@ type RaceService struct {
 	RaceRepository          repository_interfaces.IRaceRepository
 	CrewRepository          repository_interfaces.ICrewRepository
 	CrewResInRaceRepository repository_interfaces.ICrewResInRaceRepository
-	logger                  *log.Logger
+	logger                  *logger.CustomLogger
 }
 
-func NewRaceService(RaceRepository repository_interfaces.IRaceRepository, CrewRepository repository_interfaces.ICrewRepository, CrewResInRaceRepository repository_interfaces.ICrewResInRaceRepository, logger *log.Logger) service_interfaces.IRaceService {
+func NewRaceService(RaceRepository repository_interfaces.IRaceRepository, CrewRepository repository_interfaces.ICrewRepository, CrewResInRaceRepository repository_interfaces.ICrewResInRaceRepository, logger *logger.CustomLogger) service_interfaces.IRaceService {
 	return &RaceService{
 		RaceRepository:          RaceRepository,
 		CrewRepository:          CrewRepository,
@@ -27,6 +29,12 @@ func NewRaceService(RaceRepository repository_interfaces.IRaceRepository, CrewRe
 }
 
 func (r RaceService) AddNewRace(raceID uuid.UUID, ratingID uuid.UUID, number int, date time.Time, class int) (*models.Race, error) {
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "AddNewRace")
+	defer span.End()
+
 	if !validNumber(number) || !validClass(class) {
 		r.logger.Error("SERVICE: Invalid input data", "number", number, "class", class)
 		return nil, fmt.Errorf("SERVICE: Invalid input data")
@@ -40,7 +48,7 @@ func (r RaceService) AddNewRace(raceID uuid.UUID, ratingID uuid.UUID, number int
 		Class:    class,
 	}
 
-	race, err := r.RaceRepository.Create(race)
+	race, err := r.RaceRepository.Create(ctx, race)
 	if err != nil {
 		r.logger.Error("SERVICE: CreateNewRace method failed", "error", err)
 		return nil, err
@@ -51,7 +59,13 @@ func (r RaceService) AddNewRace(raceID uuid.UUID, ratingID uuid.UUID, number int
 }
 
 func (r RaceService) DeleteRaceByID(id uuid.UUID) error {
-	err := r.RaceRepository.Delete(id)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "DeleteRaceByID")
+	defer span.End()
+
+	err := r.RaceRepository.Delete(ctx, id)
 	if err != nil {
 		r.logger.Error("SERVICE: DeleteRaceByID method failed", "error", err)
 		return err
@@ -62,7 +76,13 @@ func (r RaceService) DeleteRaceByID(id uuid.UUID) error {
 }
 
 func (r RaceService) UpdateRaceByID(raceID uuid.UUID, ratingID uuid.UUID, number int, date time.Time, class int) (*models.Race, error) {
-	race, err := r.RaceRepository.GetRaceDataByID(raceID)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "UpdateRaceByID")
+	defer span.End()
+
+	race, err := r.RaceRepository.GetRaceDataByID(ctx, raceID)
 	raceCopy := race
 
 	if err != nil {
@@ -80,7 +100,7 @@ func (r RaceService) UpdateRaceByID(raceID uuid.UUID, ratingID uuid.UUID, number
 	race.Number = number
 	race.Class = class
 
-	race, err = r.RaceRepository.Update(race)
+	race, err = r.RaceRepository.Update(ctx, race)
 	if err != nil {
 		race = raceCopy
 		r.logger.Error("SERVICE: UpdateRace method failed", "error", err)
@@ -92,7 +112,13 @@ func (r RaceService) UpdateRaceByID(raceID uuid.UUID, ratingID uuid.UUID, number
 }
 
 func (r RaceService) GetRaceDataByID(id uuid.UUID) (*models.Race, error) {
-	race, err := r.RaceRepository.GetRaceDataByID(id)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "GetRaceDataByID")
+	defer span.End()
+
+	race, err := r.RaceRepository.GetRaceDataByID(ctx, id)
 
 	if err != nil {
 		r.logger.Error("SERVICE: GetRaceByID method failed", "id", id, "error", err)
@@ -104,7 +130,13 @@ func (r RaceService) GetRaceDataByID(id uuid.UUID) (*models.Race, error) {
 }
 
 func (r RaceService) GetRacesDataByRatingID(ratingID uuid.UUID) ([]models.Race, error) {
-	races, err := r.RaceRepository.GetRacesDataByRatingID(ratingID)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "GetRacesDataByRatingID")
+	defer span.End()
+
+	races, err := r.RaceRepository.GetRacesDataByRatingID(ctx, ratingID)
 	if err != nil {
 		r.logger.Error("SERVICE: GetRacesDataByRatingID method failed", "error", err)
 		return nil, err
@@ -115,13 +147,19 @@ func (r RaceService) GetRacesDataByRatingID(ratingID uuid.UUID) ([]models.Race, 
 }
 
 func (r RaceService) MakeStartProcedure(raceID uuid.UUID, falseStartYachtList map[int]int) error {
-	race, rc := r.RaceRepository.GetRaceDataByID(raceID)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "DetachCrewFromProtest")
+	defer span.End()
+
+	race, rc := r.RaceRepository.GetRaceDataByID(ctx, raceID)
 	if rc != nil {
 		r.logError("SERVICE: MakeStartProcedure method failed", "id", raceID, rc)
 		return rc
 	}
 
-	crews, rc := r.CrewRepository.GetCrewsDataByRatingID(race.RatingID)
+	crews, rc := r.CrewRepository.GetCrewsDataByRatingID(ctx, race.RatingID)
 	if rc != nil {
 		r.logError("SERVICE: GetCrewsDataByRatingID method failed", "id", raceID, rc)
 		return rc
@@ -140,12 +178,18 @@ func (r RaceService) MakeStartProcedure(raceID uuid.UUID, falseStartYachtList ma
 
 // createRaceSailings создает записи о старте для всех экипажей.
 func (r RaceService) createRaceSailings(crews []models.Crew, raceID uuid.UUID) error {
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "createRaceSailings")
+	defer span.End()
+
 	for _, crew := range crews {
 		crewResInRace := &models.CrewResInRace{
 			CrewID: crew.ID,
 			RaceID: raceID,
 		}
-		if _, err := r.CrewResInRaceRepository.Create(crewResInRace); err != nil {
+		if _, err := r.CrewResInRaceRepository.Create(ctx, crewResInRace); err != nil {
 			r.logError("SERVICE: CreateNewRaceSailing method failed", err)
 			return err
 		}
@@ -156,6 +200,12 @@ func (r RaceService) createRaceSailings(crews []models.Crew, raceID uuid.UUID) e
 
 // processFalseStartYachts обрабатывает яхты с ложным стартом.
 func (r RaceService) processFalseStartYachts(falseStartYachtList map[int]int, race *models.Race, crews []models.Crew) error {
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "processFalseStartYachts")
+	defer span.End()
+
 	var rc error
 	rc = nil
 	for sailNum, specCircumstance := range falseStartYachtList {
@@ -164,13 +214,13 @@ func (r RaceService) processFalseStartYachts(falseStartYachtList map[int]int, ra
 			return fmt.Errorf("SERVICE: invalid input data")
 		}
 
-		crew, err := r.CrewRepository.GetCrewDataBySailNumAndRatingID(sailNum, race.RatingID)
+		crew, err := r.CrewRepository.GetCrewDataBySailNumAndRatingID(ctx, sailNum, race.RatingID)
 		if err != nil {
 			r.logError("SERVICE: GetCrewDataBySailNumAndRatingID method failed", err)
 			rc = err
 		} else {
 
-			res, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(race.ID, crew.ID)
+			res, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(ctx, race.ID, crew.ID)
 			if err != nil {
 				r.logError("SERVICE: GetCrewResByRaceIDAndCrewID method failed", err)
 				return err
@@ -187,10 +237,16 @@ func (r RaceService) processFalseStartYachts(falseStartYachtList map[int]int, ra
 }
 
 func (r RaceService) MakeFinishProcedure(raceID uuid.UUID, finishersList map[int]int, nonFinishersList map[int]int) error {
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "DetachCrewFromProtest")
+	defer span.End()
+
 	var err error
 	err = nil
 
-	race, rc := r.RaceRepository.GetRaceDataByID(raceID)
+	race, rc := r.RaceRepository.GetRaceDataByID(ctx, raceID)
 	if rc != nil {
 		r.logError("SERVICE: MakeStartProcedure method failed", raceID, rc)
 		return rc
@@ -217,17 +273,23 @@ func (r RaceService) MakeFinishProcedure(raceID uuid.UUID, finishersList map[int
 
 // processFinishers обрабатывает список финишировавших участников.
 func (r RaceService) processFinishers(finishersList map[int]int, race *models.Race) error {
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "processFinishers")
+	defer span.End()
+
 	var rc error
 	rc = nil
 	for sailNum, points := range finishersList {
-		crew, err := r.CrewRepository.GetCrewDataBySailNumAndRatingID(sailNum, race.RatingID)
+		crew, err := r.CrewRepository.GetCrewDataBySailNumAndRatingID(ctx, sailNum, race.RatingID)
 		if err != nil {
 			r.logError("SERVICE: MakeStartProcedure method failed", race.ID, err)
 			rc = err
 			continue
 		}
 
-		res, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(race.ID, crew.ID)
+		res, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(ctx, race.ID, crew.ID)
 		if err != nil {
 			r.logError("SERVICE: GetCrewResByRaceIDAndCrewID method failed", err)
 			rc = err
@@ -244,6 +306,12 @@ func (r RaceService) processFinishers(finishersList map[int]int, race *models.Ra
 
 // processNonFinishers обрабатывает список не финишировавших участников.
 func (r RaceService) processNonFinishers(nonFinishersList map[int]int, race *models.Race) error {
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "processNonFinishers")
+	defer span.End()
+
 	var rc error
 	rc = nil
 	for sailNum, specCircumstance := range nonFinishersList {
@@ -252,14 +320,14 @@ func (r RaceService) processNonFinishers(nonFinishersList map[int]int, race *mod
 			return fmt.Errorf("SERVICE: invalid input data")
 		}
 
-		crew, err := r.CrewRepository.GetCrewDataBySailNumAndRatingID(sailNum, race.RatingID)
+		crew, err := r.CrewRepository.GetCrewDataBySailNumAndRatingID(ctx, sailNum, race.RatingID)
 		if err != nil {
 			r.logError("SERVICE: MakeStartProcedure method failed", race.ID, err)
 			rc = err
 			continue
 		}
 
-		res, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(race.ID, crew.ID)
+		res, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(ctx, race.ID, crew.ID)
 		if err != nil {
 			r.logError("SERVICE: CreateNewRaceSailing method failed", err)
 			rc = err
@@ -280,7 +348,13 @@ func (r RaceService) processNonFinishers(nonFinishersList map[int]int, race *mod
 
 // finalizeRaceResults завершает обработку всех результатов.
 func (r RaceService) finalizeRaceResults(raceID uuid.UUID) error {
-	allCrewResInRace, err := r.CrewResInRaceRepository.GetAllCrewResInRace(raceID)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "finalizeRaceResults")
+	defer span.End()
+
+	allCrewResInRace, err := r.CrewResInRaceRepository.GetAllCrewResInRace(ctx, raceID)
 	if err != nil {
 		return err
 	}
@@ -302,7 +376,13 @@ func (r RaceService) finalizeRaceResults(raceID uuid.UUID) error {
 
 // updateCrewRes обновляет информацию о результатах экипажа в гонке.
 func (r RaceService) updateCrewRes(res *models.CrewResInRace) error {
-	_, err := r.CrewResInRaceRepository.Update(res)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "updateCrewRes")
+	defer span.End()
+
+	_, err := r.CrewResInRaceRepository.Update(ctx, res)
 	if err != nil {
 		r.logError("SERVICE: UpdateRaceSailing method failed", err)
 	}
@@ -310,7 +390,13 @@ func (r RaceService) updateCrewRes(res *models.CrewResInRace) error {
 }
 
 func (r RaceService) GetAllCrewResInRace(race *models.Race) ([]models.CrewResInRace, error) {
-	crews, err := r.CrewRepository.GetCrewsDataByRatingID(race.RatingID)
+	ctx := context.Background()
+
+	tracer := otel.Tracer("service")
+	_, span := tracer.Start(ctx, "GetAllCrewResInRace")
+	defer span.End()
+
+	crews, err := r.CrewRepository.GetCrewsDataByRatingID(ctx, race.RatingID)
 	if err != nil {
 		r.logger.Error("SERVICE: GetAllJudges method failed", "error", err)
 		return nil, err
@@ -318,7 +404,7 @@ func (r RaceService) GetAllCrewResInRace(race *models.Race) ([]models.CrewResInR
 
 	var allResInRaces []models.CrewResInRace
 	for _, crew := range crews {
-		resInRace, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(race.ID, crew.ID)
+		resInRace, err := r.CrewResInRaceRepository.GetCrewResByRaceIDAndCrewID(ctx, race.ID, crew.ID)
 		if err != nil {
 			r.logger.Error("SERVICE: GetAllJudges method failed", "error", err)
 			return nil, err

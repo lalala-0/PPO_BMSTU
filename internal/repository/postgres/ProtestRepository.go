@@ -4,10 +4,10 @@ import (
 	"PPO_BMSTU/internal/models"
 	"PPO_BMSTU/internal/repository/repository_errors"
 	"PPO_BMSTU/internal/repository/repository_interfaces"
+	"context"
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 	"time"
 )
 
@@ -23,10 +23,10 @@ type ProtestDB struct {
 }
 
 type ProtestRepository struct {
-	db *sqlx.DB
+	db *TracedDB
 }
 
-func NewProtestRepository(db *sqlx.DB) repository_interfaces.IProtestRepository {
+func NewProtestRepository(db *TracedDB) repository_interfaces.IProtestRepository {
 	return &ProtestRepository{db: db}
 }
 
@@ -43,11 +43,11 @@ func copyProtestResultToModel(protestDB *ProtestDB) *models.Protest {
 	}
 }
 
-func (w ProtestRepository) Create(protest *models.Protest) (*models.Protest, error) {
+func (w ProtestRepository) Create(ctx context.Context, protest *models.Protest) (*models.Protest, error) {
 	query := `INSERT INTO protests(race_id, rating_id, judge_id, rule_num, review_date, status, comment) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;`
 
 	var protestID uuid.UUID
-	err := w.db.QueryRow(query, protest.RaceID, protest.RatingID, protest.JudgeID, protest.RuleNum, protest.ReviewDate, protest.Status, protest.Comment).Scan(&protestID)
+	err := w.db.QueryRowContext(ctx, query, protest.RaceID, protest.RatingID, protest.JudgeID, protest.RuleNum, protest.ReviewDate, protest.Status, protest.Comment).Scan(&protestID)
 
 	if err != nil {
 		return nil, repository_errors.InsertError
@@ -65,20 +65,20 @@ func (w ProtestRepository) Create(protest *models.Protest) (*models.Protest, err
 	}, nil
 }
 
-func (w ProtestRepository) Update(protest *models.Protest) (*models.Protest, error) {
+func (w ProtestRepository) Update(ctx context.Context, protest *models.Protest) (*models.Protest, error) {
 	query := `UPDATE protests SET race_id = $1, rating_id = $2, judge_id = $3, rule_num = $4, review_date = $5, status = $6, comment = $7 WHERE id = $8 RETURNING id, race_id, rating_id, judge_id, rule_num, review_date, status, comment;`
 
 	var updatedProtest models.Protest
-	err := w.db.QueryRow(query, protest.RaceID, protest.RatingID, protest.JudgeID, protest.RuleNum, protest.ReviewDate, protest.Status, protest.Comment, protest.ID).Scan(&updatedProtest.ID, &updatedProtest.RaceID, &updatedProtest.RatingID, &updatedProtest.JudgeID, &updatedProtest.RuleNum, &updatedProtest.ReviewDate, &updatedProtest.Status, &updatedProtest.Comment)
+	err := w.db.QueryRowContext(ctx, query, protest.RaceID, protest.RatingID, protest.JudgeID, protest.RuleNum, protest.ReviewDate, protest.Status, protest.Comment, protest.ID).Scan(&updatedProtest.ID, &updatedProtest.RaceID, &updatedProtest.RatingID, &updatedProtest.JudgeID, &updatedProtest.RuleNum, &updatedProtest.ReviewDate, &updatedProtest.Status, &updatedProtest.Comment)
 	if err != nil {
 		return nil, repository_errors.UpdateError
 	}
 	return &updatedProtest, nil
 }
 
-func (w ProtestRepository) Delete(id uuid.UUID) error {
+func (w ProtestRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	query := `DELETE FROM protests WHERE id = $1;`
-	res, err := w.db.Exec(query, id)
+	res, err := w.db.ExecContext(ctx, query, id)
 
 	if err != nil {
 		return repository_errors.DeleteError
@@ -96,10 +96,10 @@ func (w ProtestRepository) Delete(id uuid.UUID) error {
 	return nil
 }
 
-func (w ProtestRepository) GetProtestDataByID(id uuid.UUID) (*models.Protest, error) {
+func (w ProtestRepository) GetProtestDataByID(ctx context.Context, id uuid.UUID) (*models.Protest, error) {
 	query := `SELECT * FROM protests WHERE id = $1;`
 	protestDB := &ProtestDB{}
-	err := w.db.Get(protestDB, query, id)
+	err := w.db.GetContext(ctx, protestDB, query, id)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository_errors.DoesNotExist
@@ -112,10 +112,10 @@ func (w ProtestRepository) GetProtestDataByID(id uuid.UUID) (*models.Protest, er
 	return protestModels, nil
 }
 
-func (w ProtestRepository) AttachCrewToProtest(crewID uuid.UUID, protestID uuid.UUID, crewStatus int) error {
+func (w ProtestRepository) AttachCrewToProtest(ctx context.Context, crewID uuid.UUID, protestID uuid.UUID, crewStatus int) error {
 	query := `INSERT INTO crew_protest(crew_id, protest_id, crew_status) VALUES ($1, $2, $3);`
 
-	_, err := w.db.Exec(query, crewID, protestID, crewStatus)
+	_, err := w.db.ExecContext(ctx, query, crewID, protestID, crewStatus)
 
 	if err != nil {
 		return repository_errors.InsertError
@@ -124,9 +124,9 @@ func (w ProtestRepository) AttachCrewToProtest(crewID uuid.UUID, protestID uuid.
 	return nil
 }
 
-func (w ProtestRepository) DetachCrewFromProtest(protestID uuid.UUID, crewID uuid.UUID) error {
+func (w ProtestRepository) DetachCrewFromProtest(ctx context.Context, protestID uuid.UUID, crewID uuid.UUID) error {
 	query := `DELETE FROM crew_protest WHERE crew_id = $1 and protest_id = $2;`
-	res, err := w.db.Exec(query, crewID, protestID)
+	res, err := w.db.ExecContext(ctx, query, crewID, protestID)
 
 	if err != nil {
 		return repository_errors.DeleteError
@@ -143,10 +143,10 @@ func (w ProtestRepository) DetachCrewFromProtest(protestID uuid.UUID, crewID uui
 	return nil
 }
 
-func (w ProtestRepository) GetProtestsDataByRaceID(id uuid.UUID) ([]models.Protest, error) {
+func (w ProtestRepository) GetProtestsDataByRaceID(ctx context.Context, id uuid.UUID) ([]models.Protest, error) {
 	query := `SELECT * FROM protests WHERE race_id = $1;`
 	var protestDB []ProtestDB
-	err := w.db.Select(&protestDB, query, id)
+	err := w.db.SelectContext(ctx, &protestDB, query, id)
 
 	if err != nil {
 		return nil, repository_errors.SelectError
@@ -161,10 +161,10 @@ func (w ProtestRepository) GetProtestsDataByRaceID(id uuid.UUID) ([]models.Prote
 	return protestModels, nil
 }
 
-func (w ProtestRepository) GetProtestParticipantsIDByID(id uuid.UUID) (map[uuid.UUID]int, error) {
+func (w ProtestRepository) GetProtestParticipantsIDByID(ctx context.Context, id uuid.UUID) (map[uuid.UUID]int, error) {
 	query := `SELECT crew_id, crew_status FROM crew_protest WHERE protest_id = $1;`
 	var ids = make(map[uuid.UUID]int)
-	rows, err := w.db.Query(query, id)
+	rows, err := w.db.QueryContext(ctx, query, id)
 
 	if err != nil {
 		return nil, repository_errors.SelectError

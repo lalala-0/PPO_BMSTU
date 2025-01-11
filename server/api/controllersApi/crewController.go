@@ -34,18 +34,18 @@ func (s *ServicesAPI) getCrewsByRatingID(c *gin.Context) {
 		})
 		return
 	}
-
 	crews, err := s.Services.CrewService.GetCrewsDataByRatingID(ratingID)
 	if err != nil {
 		if err == repository_errors.DoesNotExist {
 			c.JSON(http.StatusNotFound, modelsViewApi.BadRequestError{
 				Error: "Internal error",
 			})
+		} else {
+			c.JSON(http.StatusInternalServerError, modelsViewApi.BadRequestError{
+				Error:   "Internal error",
+				Message: err.Error(),
+			})
 		}
-		c.JSON(http.StatusInternalServerError, modelsViewApi.BadRequestError{
-			Error:   "Internal error",
-			Message: err.Error(),
-		})
 		return
 	}
 	res, err := modelsViewApi.FromCrewModelsToStringData(crews)
@@ -54,6 +54,7 @@ func (s *ServicesAPI) getCrewsByRatingID(c *gin.Context) {
 			Error:   "Internal error",
 			Message: err.Error(),
 		})
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
