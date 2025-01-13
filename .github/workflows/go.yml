@@ -53,9 +53,9 @@ jobs:
       - name: Создание директории для Allure результатов
         run: mkdir -p ./tests/allure-results
 
-      - name: Создание Docker сети Go CI
-        run: |
-          docker network create go_ci_network
+      # Создание сети Go CI
+      - name: Создание сети Go CI
+        run: docker network create go_ci_network
 
       - name: Запуск Vault
         run: |
@@ -65,7 +65,7 @@ jobs:
           curl http://localhost:8200/v1/sys/health || (echo "Vault is not responding" && exit 1)
 
       - name: Запуск Docker Compose для инициализации базы данных
-        run: docker-compose -f docker-compose2.yml --network go_ci_network up -d
+        run: docker-compose -f docker-compose2.yml up -d
 
       - name: Запуск unit тестов (репозитории и сервисы)
         run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests.xml" -- -parallel 5 ./tests/unit_tests/test_repository/... ./tests/unit_tests/test_service/...
