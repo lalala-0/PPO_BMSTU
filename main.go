@@ -45,7 +45,7 @@ func monitorResourceUsage() {
 func startMetricsServer() {
 	// Экспонирование метрик через HTTP
 	http.Handle("/metrics", promhttp.Handler())
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8081", nil))
 }
 
 func main() {

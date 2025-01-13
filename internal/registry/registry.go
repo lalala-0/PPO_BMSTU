@@ -125,9 +125,7 @@ func (a *App) initLogger() {
 
 	// Оборачивание логгера в кастомный логгер с метриками
 	a.Logger = &logger.CustomLogger{
-		Logger:      baseLogger,
-		LogCount:    logCount,
-		LogDuration: logDuration,
+		Logger: baseLogger,
 	}
 
 	a.Logger.Info("Success initialization of new Logger!")

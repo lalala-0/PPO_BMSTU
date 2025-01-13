@@ -1,13 +1,11 @@
 package logger
 
 import (
+	"PPO_BMSTU/metrics"
 	"fmt"
 	"github.com/charmbracelet/log"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/shirou/gopsutil/cpu"
 	"os"
-	"runtime"
-	"time"
 )
 
 type CustomLogger struct {
@@ -19,19 +17,16 @@ type CustomLogger struct {
 // NewCustomLogger создает новый CustomLogger с метриками
 func NewCustomLogger(serviceName string) *CustomLogger {
 
+	// Добавление метрик CPU и памяти
+	go metrics.TrackLogResources("logger", "./metrics.log")
 	// Создание и возврат логгера
 	return &CustomLogger{
-		Logger:         log.New(os.Stdout),
-		LogCount:       logCount,
-		LogDuration:    logDuration,
-		CPUUsageMetric: cpuUsage,
-		MemoryUsage:    memoryUsage,
+		Logger: log.New(os.Stdout),
 	}
 }
 
 // Log метод для записи логов с метриками
 func (cl *CustomLogger) Log(level string, message string, fields ...interface{}) {
-	start := time.Now()
 
 	// Форматируем сообщение с полями
 	formattedMessage := message
@@ -47,14 +42,6 @@ func (cl *CustomLogger) Log(level string, message string, fields ...interface{})
 
 	// Записываем лог через базовый логгер
 	cl.Logger.Printf("[%s] %s", level, formattedMessage)
-
-	// Обновляем метрики логирования
-	cl.LogCount.WithLabelValues(level).Inc()
-	duration := time.Since(start).Seconds()
-	cl.LogDuration.WithLabelValues(level).Observe(duration)
-
-	// Обновляем метрики ресурсов
-	cl.trackResourceUsage()
 
 	// Если уровень "Fatal", вызываем os.Exit
 	if level == "FATAL" {
