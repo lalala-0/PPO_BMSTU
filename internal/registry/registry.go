@@ -69,6 +69,10 @@ func (a *App) mongoRepositoriesInitialization(fields *mongo.MongoConnection) *Re
 
 func (a *App) servicesInitialization(r *Repositories) *Services {
 	passwordHash := password_hash.NewPasswordHash()
+	vaultToken := os.Getenv("VAULT_TOKEN")
+	if vaultToken == "" {
+		log.Fatal("VAULT_TOKEN is not set in the environment")
+	}
 
 	s := &Services{
 		CrewService:        services.NewCrewService(r.CrewRepository, a.Logger),
@@ -77,7 +81,7 @@ func (a *App) servicesInitialization(r *Repositories) *Services {
 		ProtestService:     services.NewProtestService(r.ProtestRepository, r.CrewResInRaceRepository, r.CrewRepository, a.Logger),
 		RaceService:        services.NewRaceService(r.RaceRepository, r.CrewRepository, r.CrewResInRaceRepository, a.Logger),
 		RatingService:      services.NewRatingService(r.RatingRepository, r.JudgeRepository, a.Logger),
-		TwoFA:              services.NewTwoFAService("http://localhost:8200", "root"),
+		TwoFA:              services.NewTwoFAService("http://localhost:8200", vaultToken),
 	}
 	a.Logger.Info("Success initialization of services")
 
