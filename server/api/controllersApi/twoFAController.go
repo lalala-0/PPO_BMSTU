@@ -1,6 +1,7 @@
 package controllersApi
 
 import (
+	"github.com/google/uuid"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,19 @@ import (
 func (c *ServicesAPI) GenerateCodeHandler(ctx *gin.Context) {
 	judgeID := ctx.Param("judgeID")
 
-	code, err := c.Services.TwoFA.GenerateAndStoreCode(judgeID)
+	judgeUUID, err := uuid.Parse(judgeID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	judge, err := c.Services.JudgeService.GetJudgeDataByID(judgeUUID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	code, err := c.Services.TwoFA.GenerateAndStoreCode(judgeID, judge.Login)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

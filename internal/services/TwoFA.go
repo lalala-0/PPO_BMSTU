@@ -3,14 +3,11 @@ package services
 import (
 	"PPO_BMSTU/internal/services/service_interfaces"
 	"fmt"
+	"net/smtp"
 	"time"
 
 	"github.com/hashicorp/vault/api"
 )
-
-type TwoFAService struct {
-	client *api.Client
-}
 
 // UserCode представляет структуру для хранения кода 2FA.
 type UserCode struct {
@@ -18,8 +15,29 @@ type UserCode struct {
 	Expiration time.Time `json:"expiration"`
 }
 
-// NewTwoFAService создает новый сервис для работы с Vault.
+type TwoFAService struct {
+	client      *api.Client
+	emailConfig EmailConfig // Конфигурация для отправки email
+}
+
+type EmailConfig struct {
+	SMTPHost    string
+	SMTPPort    int
+	Username    string
+	Password    string
+	FromAddress string
+}
+
+// NewTwoFAService создает новый сервис для работы с Vault и отправкой email.
 func NewTwoFAService(vaultAddr, token string) service_interfaces.ITwoFA {
+	var emailConfig = EmailConfig{
+		SMTPHost:    "smtp.example.com",
+		SMTPPort:    587,
+		Username:    "your-email@example.com",
+		Password:    "your-password",
+		FromAddress: "no-reply@example.com",
+	}
+
 	config := api.DefaultConfig()
 	config.Address = vaultAddr
 
@@ -29,13 +47,14 @@ func NewTwoFAService(vaultAddr, token string) service_interfaces.ITwoFA {
 	}
 
 	client.SetToken(token)
-	return &TwoFAService{client: client}
+	return &TwoFAService{client: client, emailConfig: emailConfig}
 }
 
-// GenerateAndStoreCode генерирует 2FA-код и сохраняет его в Vault.
-func (s *TwoFAService) GenerateAndStoreCode(userID string) (string, error) {
-	code := fmt.Sprintf("%06d", time.Now().UnixNano()%1000000) // Генерация 6-значного кода
-	expiration := time.Now().Add(5 * time.Minute)              // Код действует 5 минут
+// GenerateAndStoreCode генерирует 2FA-код, сохраняет его в Vault и отправляет на email.
+func (s *TwoFAService) GenerateAndStoreCode(userID, email string) (string, error) {
+	// Генерация 6-значного кода
+	code := fmt.Sprintf("%06d", time.Now().UnixNano()%1000000)
+	expiration := time.Now().Add(5 * time.Minute) // Код действует 5 минут
 
 	secretData := map[string]interface{}{
 		"code":       code,
@@ -50,7 +69,26 @@ func (s *TwoFAService) GenerateAndStoreCode(userID string) (string, error) {
 		return "", err
 	}
 
+	// Отправка кода на email
+	//err = s.sendEmail(email, code)
+	//if err != nil {
+	//	return "", fmt.Errorf("failed to send email: %w", err)
+	//}
+
 	return code, nil
+}
+
+// sendEmail отправляет 2FA-код на указанный email.
+func (s *TwoFAService) sendEmail(email, code string) error {
+	auth := smtp.PlainAuth("", s.emailConfig.Username, s.emailConfig.Password, s.emailConfig.SMTPHost)
+	to := []string{email}
+	subject := "Your 2FA Code"
+	body := fmt.Sprintf("Your 2FA code is: %s. It will expire in 5 minutes.", code)
+
+	message := []byte(fmt.Sprintf("To: %s\r\nSubject: %s\r\n\r\n%s", email, subject, body))
+
+	address := fmt.Sprintf("%s:%d", s.emailConfig.SMTPHost, s.emailConfig.SMTPPort)
+	return smtp.SendMail(address, auth, s.emailConfig.FromAddress, to, message)
 }
 
 // GetCode получает код 2FA для указанного пользователя из Vault.
@@ -85,31 +123,3 @@ func (s *TwoFAService) VerifyCode(userID, code string) (bool, error) {
 
 	return false, nil
 }
-
-//
-//func main() {
-//	// Настройки Vault
-//	vaultAddr := "http://localhost:8200"
-//	token := "root"
-//
-//	// Создаем сервис 2FA
-//	service, err := NewTwoFAService(vaultAddr, token)
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	// Пример работы
-//	userID := "user123"
-//	code, err := service.GenerateAndStoreCode(userID)
-//	if err != nil {
-//		panic(err)
-//	}
-//	fmt.Printf("Generated 2FA code for user %s: %s\n", userID, code)
-//
-//	// Проверяем код
-//	isValid, err := service.VerifyCode(userID, code)
-//	if err != nil {
-//		panic(err)
-//	}
-//	fmt.Printf("Is code valid? %v\n", isValid)
-//}

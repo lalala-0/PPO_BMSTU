@@ -27,7 +27,7 @@ jobs:
             software-properties-common
           
           echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - 
           sudo apt-get update
           sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose
 
@@ -53,15 +53,19 @@ jobs:
       - name: Создание директории для Allure результатов
         run: mkdir -p ./tests/allure-results
 
+      - name: Создание Docker сети Go CI
+        run: |
+          docker network create go_ci_network
+
       - name: Запуск Vault
         run: |
-          docker run -d --name vault -p 8200:8200 hashicorp/vault:1.13.2
+          docker run -d --name vault --network go_ci_network -p 8200:8200 hashicorp/vault:1.13.2
           echo "Waiting for Vault to be ready..."
           sleep 10
           curl http://localhost:8200/v1/sys/health || (echo "Vault is not responding" && exit 1)
 
       - name: Запуск Docker Compose для инициализации базы данных
-        run: docker-compose -f docker-compose2.yml up -d
+        run: docker-compose -f docker-compose2.yml --network go_ci_network up -d
 
       - name: Запуск unit тестов (репозитории и сервисы)
         run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests.xml" -- -parallel 5 ./tests/unit_tests/test_repository/... ./tests/unit_tests/test_service/...
