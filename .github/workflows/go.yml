@@ -55,7 +55,7 @@ jobs:
 
       - name: Запуск Vault
         run: |
-          docker run -d --name vault -p 8200:8200 vault:latest
+          docker run -d --name vault -p 8200:8200 hashicorp/vault:1.13.2
           echo "Waiting for Vault to be ready..."
           sleep 10
           curl http://localhost:8200/v1/sys/health || (echo "Vault is not responding" && exit 1)
