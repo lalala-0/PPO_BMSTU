@@ -3,7 +3,6 @@ package services
 import (
 	"PPO_BMSTU/internal/services/service_interfaces"
 	"fmt"
-	"net/smtp"
 	"time"
 
 	"github.com/hashicorp/vault/api"
@@ -79,17 +78,17 @@ func (s *TwoFAService) GenerateAndStoreCode(userID, email string) (string, error
 }
 
 // sendEmail отправляет 2FA-код на указанный email.
-func (s *TwoFAService) sendEmail(email, code string) error {
-	auth := smtp.PlainAuth("", s.emailConfig.Username, s.emailConfig.Password, s.emailConfig.SMTPHost)
-	to := []string{email}
-	subject := "Your 2FA Code"
-	body := fmt.Sprintf("Your 2FA code is: %s. It will expire in 5 minutes.", code)
-
-	message := []byte(fmt.Sprintf("To: %s\r\nSubject: %s\r\n\r\n%s", email, subject, body))
-
-	address := fmt.Sprintf("%s:%d", s.emailConfig.SMTPHost, s.emailConfig.SMTPPort)
-	return smtp.SendMail(address, auth, s.emailConfig.FromAddress, to, message)
-}
+//func (s *TwoFAService) sendEmail(email, code string) error {
+//	auth := smtp.PlainAuth("", s.emailConfig.Username, s.emailConfig.Password, s.emailConfig.SMTPHost)
+//	to := []string{email}
+//	subject := "Your 2FA Code"
+//	body := fmt.Sprintf("Your 2FA code is: %s. It will expire in 5 minutes.", code)
+//
+//	message := []byte(fmt.Sprintf("To: %s\r\nSubject: %s\r\n\r\n%s", email, subject, body))
+//
+//	address := fmt.Sprintf("%s:%d", s.emailConfig.SMTPHost, s.emailConfig.SMTPPort)
+//	return smtp.SendMail(address, auth, s.emailConfig.FromAddress, to, message)
+//}
 
 // GetCode получает код 2FA для указанного пользователя из Vault.
 func (s *TwoFAService) GetCode(userID string) (*UserCode, error) {
