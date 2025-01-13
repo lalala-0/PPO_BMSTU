@@ -15,6 +15,11 @@ type ServicesAPI struct {
 func SetupRouter(services *registry.Services, router *gin.Engine) {
 	s := ServicesAPI{Services: services}
 
+	router.POST("api/2fa/:judgeID/generate", s.GenerateCodeHandler)
+	router.POST("api/2fa/:judgeID/verify", s.VerifyCodeHandler)
+	router.POST("api/signin", s.signin)
+	router.PUT("api/judges/:judgeID/password", s.updatePassword)
+
 	// judge routs
 	judgeGroup := router.Group("/api/judges")
 

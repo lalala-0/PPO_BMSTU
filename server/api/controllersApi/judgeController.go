@@ -3,6 +3,7 @@ package controllersApi
 import (
 	"PPO_BMSTU/internal/repository/repository_errors"
 	"PPO_BMSTU/server/api/modelsViewApi"
+	modelsUI2 "PPO_BMSTU/server/ui/modelsUI"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
@@ -228,4 +229,64 @@ func (s *ServicesAPI) updateJudge(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, judgeFormData)
+}
+
+func (s *ServicesAPI) updatePassword(c *gin.Context) {
+	var input modelsUI2.PasswordInput
+	if err := c.BindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid input data",
+		})
+		return
+	}
+
+	judgeID, err := uuid.Parse(c.Param("judgeID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid judge ID",
+		})
+		return
+	}
+
+	judge, err := s.Services.JudgeService.GetJudgeDataByID(judgeID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Judge not found",
+		})
+		return
+	}
+
+	_, err = s.Services.JudgeService.UpdateProfile(judgeID, judge.FIO, judge.Login, input.Password, judge.Role)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to update password",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Password updated successfully",
+	})
+}
+
+func (s *ServicesAPI) signin(c *gin.Context) {
+	var data modelsViewApi.LoginFormData
+	if err := c.BindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid input data",
+		})
+		return
+	}
+
+	_, err := s.Services.JudgeService.Login(data.Login, data.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Authentication failed",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Authentication successful",
+	})
 }

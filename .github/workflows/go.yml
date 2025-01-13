@@ -3,10 +3,10 @@ name: Go CI
 on:
   push:
     branches:
-      - main  # или другая ветка, которую вы используете
+      - main
   pull_request:
     branches:
-      - main  # или другая ветка, которую вы используете
+      - main
 
 jobs:
   build:
@@ -34,7 +34,7 @@ jobs:
       - name: Установка Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.22.4'  # Укажите версию Go, которую вы хотите использовать
+          go-version: '1.22.4'
 
       - name: Установка зависимостей
         run: go mod tidy
@@ -53,6 +53,13 @@ jobs:
       - name: Создание директории для Allure результатов
         run: mkdir -p ./tests/allure-results
 
+      - name: Запуск Vault
+        run: |
+          docker run -d --name vault -p 8200:8200 vault:latest
+          echo "Waiting for Vault to be ready..."
+          sleep 10
+          curl http://localhost:8200/v1/sys/health || (echo "Vault is not responding" && exit 1)
+
       - name: Запуск Docker Compose для инициализации базы данных
         run: docker-compose -f docker-compose2.yml up -d
 
@@ -67,16 +74,12 @@ jobs:
 
       - name: Запуск e2e теста + захват трафика
         run: |
-          # Установка директории для артефактов
           mkdir -p artifacts
-          # Запуск tcpdump с таймаутом
           echo "Starting tcpdump..."
           sudo timeout 10s tcpdump -i any -w artifacts/traffic.pcap &
-          # Запуск тестов
+          echo "Running e2e tests..."
           gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_e2e.xml" -- -parallel 6 -count 19 ./tests/integration_tests/test_e2e/...
-          # Ожидание завершения tcpdump
           wait
-          # Вывод информации о захваченном трафике
           echo "TCPDUMP LOG:"
           tcpdump -r artifacts/traffic.pcap -n -A
 
@@ -92,7 +95,6 @@ jobs:
           name: test-reports
           path: ./tests/allure-results/*
 
-      # Установка Allure для генерации отчетов
       - name: Установка Allure
         uses: actions/setup-node@v2
         with:
@@ -102,7 +104,6 @@ jobs:
       - name: Генерация Allure отчета
         run: allure generate ./tests/allure-results --clean -o ./allure-report
 
-      # Публикация отчета в GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:

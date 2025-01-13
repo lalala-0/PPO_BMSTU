@@ -19,6 +19,7 @@ type Services struct {
 	ProtestService     service_interfaces.IProtestService
 	RaceService        service_interfaces.IRaceService
 	RatingService      service_interfaces.IRatingService
+	TwoFA              service_interfaces.ITwoFA
 }
 
 type Repositories struct {
@@ -76,6 +77,7 @@ func (a *App) servicesInitialization(r *Repositories) *Services {
 		ProtestService:     services.NewProtestService(r.ProtestRepository, r.CrewResInRaceRepository, r.CrewRepository, a.Logger),
 		RaceService:        services.NewRaceService(r.RaceRepository, r.CrewRepository, r.CrewResInRaceRepository, a.Logger),
 		RatingService:      services.NewRatingService(r.RatingRepository, r.JudgeRepository, a.Logger),
+		TwoFA:              services.NewTwoFAService("http://localhost:8200", "root"),
 	}
 	a.Logger.Info("Success initialization of services")
 

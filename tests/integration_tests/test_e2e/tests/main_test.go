@@ -20,6 +20,7 @@ type e2eTestSuite struct {
 	suite.Suite
 	router      *gin.Engine
 	initializer db_init.TestRepositoryInitializer
+	judgeID     string
 }
 
 // TestIe2e запускает тесты в наборе

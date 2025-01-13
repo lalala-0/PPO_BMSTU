@@ -72,15 +72,15 @@ func (j JudgeService) CreateProfile(judgeID uuid.UUID, fio string, login string,
 		return nil, fmt.Errorf("SERVICE: Invalid input data")
 	}
 
-	j.logger.Infof("SERVICE: Checking if judgeView with login %s exists", login)
-	tempJudge, err := j.checkIfJudgeWithLoginExists(login)
-	if err != nil {
-		j.logger.Error("SERVICE: Error occurred during checking if judgeView with login exists")
-		return nil, err
-	} else if tempJudge != nil {
-		j.logger.Info("SERVICE: Judge with login exists", "login", login)
-		return nil, service_errors.NotUnique
-	}
+	//j.logger.Infof("SERVICE: Checking if judgeView with login %s exists", login)
+	//tempJudge, err := j.checkIfJudgeWithLoginExists(login)
+	//if err != nil {
+	//	j.logger.Error("SERVICE: Error occurred during checking if judgeView with login exists")
+	//	return nil, err
+	//} else if tempJudge != nil {
+	//	j.logger.Info("SERVICE: Judge with login exists", "login", login)
+	//	return nil, service_errors.NotUnique
+	//}
 
 	j.logger.Infof("SERVICE: Creating new judgeView: %s", fio)
 	hashedPassword, err := j.hash.GetHash(password)

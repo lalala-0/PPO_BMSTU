@@ -69,3 +69,8 @@ var JudgeRoleMap = map[int]string{
 	1: "Главный судья",
 	2: "Судья",
 }
+
+type LoginFormData struct {
+	Login    string `json:"InputLogin"`
+	Password string `json:"InputPassword"`
+}
