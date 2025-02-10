@@ -3,6 +3,7 @@ import axios from "axios";
 import { API_URL } from "../../config";
 import { ProtestParticipantAttachInput } from "../../models/protestModel";
 import { handleError } from "../errorHandler";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useAttachProtestMember = (
   ratingID: string,
@@ -21,8 +22,8 @@ export const useAttachProtestMember = (
     setSuccessMessage(null);
 
     try {
-      const response = await axios.post<{ [key: string]: string }>(
-        `${API_URL}/ratings/${ratingID}/races/${raceID}/protests/${protestID}/members`,
+      const response = await api.post<{ [key: string]: string }>(
+        `/ratings/${ratingID}/races/${raceID}/protests/${protestID}/members`,
         protestParticipantInput,
       );
       setSuccessMessage(

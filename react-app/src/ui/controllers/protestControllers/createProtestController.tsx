@@ -4,8 +4,14 @@ import { API_URL } from "../../config";
 import { ProtestCreate } from "../../models/protestModel";
 import { ProtestFormData } from "../../models/protestModel";
 import { handleError } from "../errorHandler";
+import { useParams } from "react-router-dom";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
-export const useCreateProtest = (ratingID: string, raceID: string) => {
+export const useCreateProtest = () => {
+  const { ratingID, raceID } = useParams<{
+    ratingID: string;
+    raceID: string;
+  }>();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [newProtest, setNewProtest] = useState<ProtestFormData | null>(null);
@@ -16,8 +22,8 @@ export const useCreateProtest = (ratingID: string, raceID: string) => {
     setNewProtest(null);
 
     try {
-      const response = await axios.post<ProtestFormData>(
-        `${API_URL}/ratings/${ratingID}/races/${raceID}/protests`,
+      const response = await api.post<ProtestFormData>(
+        `/ratings/${ratingID}/races/${raceID}/protests`,
         protestCreate,
       );
       setNewProtest(response.data);

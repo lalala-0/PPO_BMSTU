@@ -3,6 +3,7 @@ import axios from "axios";
 import { API_URL } from "../../config"; // Импортируем базовый URL API
 import { FinishInput } from "../../models/raceModel";
 import { handleError } from "../errorHandler";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useFinishProcedure = (ratingID: string, raceID: string) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -15,8 +16,8 @@ export const useFinishProcedure = (ratingID: string, raceID: string) => {
     setSuccess(null);
 
     try {
-      const response = await axios.post(
-        `${API_URL}/ratings/${ratingID}/races/${raceID}/finish`,
+      const response = await api.post(
+        `/ratings/${ratingID}/races/${raceID}/finish`,
         input,
       );
       setSuccess(response.data || "Процедура финиша успешно выполнена");

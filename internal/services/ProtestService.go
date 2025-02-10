@@ -130,9 +130,7 @@ func (p ProtestService) UpdateProtestByID(protestID uuid.UUID, raceID uuid.UUID,
 	}
 
 	protest.RaceID = raceID
-	protest.JudgeID = judgeID
 	protest.RuleNum = ruleNum
-	protest.Status = status
 	protest.ReviewDate = reviewDate
 	protest.Comment = comment
 

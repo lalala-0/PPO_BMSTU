@@ -1,0 +1,60 @@
+name: Go CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Проверка репозитория
+        uses: actions/checkout@v2
+
+      # Установка зависимостей для Docker
+      - name: Установка Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose
+
+      # Сборка Docker образа
+      - name: Сборка Docker образа
+        run: docker build -t my-go-app .
+
+      # Установка Go
+      - name: Установка Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.22.4'
+
+      # Установка зависимостей Go
+      - name: Установка зависимостей
+        run: go mod tidy
+
+      # Линтинг и тесты
+      - name: Запуск линтинга
+        run: golangci-lint run ./...
+
+      - name: Запуск тестов
+        run: go test ./...
+
+      # Развертывание на хостинге или в облаке
+      - name: Развертывание в облаке (например, AWS)
+        run: |
+          aws ecs update-service --cluster my-cluster --service my-service --force-new-deployment
+
+      # Генерация отчета
+      - name: Генерация Allure отчета
+        run: allure generate ./tests/allure-results --clean -o ./allure-report
+
+      # Публикация отчета
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report

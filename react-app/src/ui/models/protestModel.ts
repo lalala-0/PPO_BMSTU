@@ -1,34 +1,14 @@
 // protestModel.ts
 
 export interface ProtestFormData {
-  id: string;
-  judgeId: string;
-  ratingId: string;
-  raceId: string;
-  ruleNum: number;
-  reviewDate: string;
-  status: string;
-  comment: string;
-}
-
-export function fromProtestModelToStringData(protest: any): ProtestFormData {
-  const status = protestStatusToString(protest.status);
-  return {
-    id: protest.id,
-    judgeId: protest.judgeId,
-    ratingId: protest.ratingId,
-    raceId: protest.raceId,
-    ruleNum: protest.ruleNum,
-    reviewDate: new Date(protest.reviewDate).toISOString(),
-    status,
-    comment: protest.comment,
-  };
-}
-
-export function fromProtestModelsToStringData(
-  protests: any[],
-): ProtestFormData[] {
-  return protests.map((protest) => fromProtestModelToStringData(protest));
+  ID: string;
+  JudgeID: string;
+  RatingID: string;
+  RaceID: string;
+  RuleNum: number;
+  ReviewDate: string;
+  Status: string;
+  Comment: string;
 }
 
 export interface ProtestInput {
@@ -37,16 +17,6 @@ export interface ProtestInput {
   reviewDate: string;
   status: number;
   comment: string;
-}
-
-export function fromProtestModelToInputData(protest: any): ProtestInput {
-  return {
-    judgeId: protest.judgeId,
-    ruleNum: protest.ruleNum,
-    reviewDate: new Date(protest.reviewDate).toISOString(),
-    status: protest.status,
-    comment: protest.comment,
-  };
 }
 
 export interface ProtestCreate {
@@ -79,15 +49,10 @@ export interface ProtestComplete {
   comment: string;
 }
 
-// Helper function to map protest status to string
-function protestStatusToString(status: number): string {
-  const statusMap: Record<number, string> = {
-    0: "Pending",
-    1: "Approved",
-    2: "Rejected",
-  };
-  return statusMap[status] || "Unknown";
-}
+export const StatusMap: Record<number, string> = {
+  1: "Ожидает рассмотрения",
+  2: "Рассмотрен",
+};
 
 export interface ProtestCrewFormData {
   sailNum: number;

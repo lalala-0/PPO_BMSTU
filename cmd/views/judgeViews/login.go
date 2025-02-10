@@ -11,7 +11,7 @@ func Login(services registry.Services) (*models.Judge, error) {
 	var login = utils.EndlessReadWord(stringConst.LoginRequest)
 	var password = utils.EndlessReadWord(stringConst.PasswordRequest)
 
-	judge, err := services.JudgeService.Login(login, password)
+	judge, _, err := services.JudgeService.Login(login, password)
 	if err != nil {
 		return nil, err
 	}

@@ -5,6 +5,8 @@ import {
   CategoryMap,
   GenderMap,
 } from "../../models/participantModel";
+import { useCreateParticipant } from "../../controllers/participantControllers/createParticipantController";
+import { useUpdateParticipant } from "../../controllers/participantControllers/updateParticipantController";
 
 interface ParticipantModalProps {
   participant: ParticipantFormData;
@@ -18,12 +20,16 @@ const ParticipantModal: React.FC<ParticipantModalProps> = ({
   onClose,
 }) => {
   const [formData, setFormData] = useState<ParticipantInput>({
-    fio: participant.fio,
-    category: participant.category ? parseInt(participant.category) : 0,
-    gender: participant.gender ? parseInt(participant.gender) : 0,
-    birthday: participant.birthday,
-    coach: participant.coach,
+    fio: participant.FIO,
+    category: participant.Category ? parseInt(participant.Category) : 1,
+    gender: participant.Gender ? parseInt(participant.Gender) : 1,
+    birthday: participant.Birthday,
+    coach: participant.Coach,
   });
+  const { createParticipant, loading: creating } = useCreateParticipant();
+  const { updateParticipant, loading: updating } = useUpdateParticipant(
+    participant.id,
+  );
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -36,9 +42,13 @@ const ParticipantModal: React.FC<ParticipantModalProps> = ({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData); // Отправка данных на сервер
+    if (type === "create") {
+      await createParticipant(formData);
+    } else {
+      await updateParticipant(formData);
+    }
     onClose();
   };
 

@@ -79,7 +79,7 @@ func FromStartInputViewToStartInput(FalseStartList []int, SpecCircumstance int) 
 }
 
 type FinishInput struct {
-	FinisherList []int `json:"falseStartList"` // Массив номеров команд в порядке финиша
+	FinisherList []int `json:"finisherList"` // Массив номеров команд в порядке финиша
 }
 
 // FromFinishInputViewToFinishInput преобразует списки (FinisherList []int, AllCrewsList []int в два map[int]int, где

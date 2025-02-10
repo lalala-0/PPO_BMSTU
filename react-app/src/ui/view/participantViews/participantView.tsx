@@ -42,28 +42,28 @@ const ParticipantView: React.FC = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h3>{`Участник: ${participant.fio}`}</h3>
+      <h3>{`Участник: ${participant.FIO}`}</h3>
 
       <div>
         <p>
-          <strong>ФИО:</strong> {participant.fio}
+          <strong>ФИО:</strong> {participant.FIO}
         </p>
         <p>
-          <strong>Категория:</strong> {participant.category}
+          <strong>Категория:</strong> {participant.Category}
         </p>
         <p>
-          <strong>Пол:</strong> {participant.gender}
+          <strong>Пол:</strong> {participant.Gender}
         </p>
         <p>
-          <strong>Дата рождения:</strong> {participant.birthday}
+          <strong>Дата рождения:</strong> {participant.Birthday}
         </p>
         <p>
-          <strong>Тренер:</strong> {participant.coach}
+          <strong>Тренер:</strong> {participant.Coach}
         </p>
       </div>
 
       <div className="buttons-container">
-        <button onClick={handleParticipantModalOpen}>
+        <button className="auth-required" onClick={handleParticipantModalOpen}>
           Изменить информацию об участнике
         </button>
       </div>

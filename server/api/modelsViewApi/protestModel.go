@@ -11,10 +11,10 @@ type ProtestFormData struct {
 	JudgeID    uuid.UUID `json:"judge-id"`
 	RatingID   uuid.UUID `json:"rating-id"`
 	RaceID     uuid.UUID `json:"race-id"`
-	RuleNum    int       `form:"rule-num"`
-	ReviewDate string    `form:"review-date"`
-	Status     string    `form:"status"`
-	Comment    string    `form:"comment"`
+	RuleNum    int       `json:"rule-num"`
+	ReviewDate string    `json:"review-date"`
+	Status     string    `json:"status"`
+	Comment    string    `json:"comment"`
 }
 
 func FromProtestModelToStringData(protest *models.Protest) (ProtestFormData, error) {
@@ -40,10 +40,10 @@ func FromProtestModelsToStringData(protests []models.Protest) ([]ProtestFormData
 
 type ProtestInput struct {
 	JudgeID    uuid.UUID `json:"judge-id"`
-	RuleNum    int       `form:"ruleNum" binding:"required"`
-	ReviewDate string    `form:"reviewDate" binding:"required"`
-	Status     int       `form:"status" binding:""`
-	Comment    string    `form:"comment" binding:""`
+	RuleNum    int       `json:"ruleNum" binding:"required"`
+	ReviewDate string    `json:"reviewDate" binding:"required"`
+	Status     int       `json:"status" binding:""`
+	Comment    string    `json:"comment" binding:""`
 }
 
 func FromProtestModelToInputData(protest *models.Protest) (ProtestInput, error) {

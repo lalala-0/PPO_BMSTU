@@ -3,6 +3,7 @@ import axios from "axios";
 import { API_URL } from "../../config";
 import { ProtestCrewFormData } from "../../models/protestModel";
 import { handleError } from "../errorHandler";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useGetProtestMembers = (
   ratingID: string,
@@ -21,8 +22,8 @@ export const useGetProtestMembers = (
       setError(null);
 
       try {
-        const response = await axios.get<ProtestCrewFormData[]>(
-          `${API_URL}/ratings/${ratingID}/races/${raceID}/protests/${protestID}/members`,
+        const response = await api.get<ProtestCrewFormData[]>(
+          `/ratings/${ratingID}/races/${raceID}/protests/${protestID}/members`,
         );
         setProtestMembers(response.data);
       } catch (err: any) {

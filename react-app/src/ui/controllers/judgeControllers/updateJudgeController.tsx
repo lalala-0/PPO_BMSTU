@@ -3,6 +3,7 @@ import axios from "axios";
 import { API_URL } from "../../config";
 import { JudgeInput, JudgeFormData } from "../../models/judgeModel"; // Импортируйте типы
 import { handleError } from "../errorHandler"; // Импортируем централизованную обработку ошибок
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useUpdateJudge = (judgeID: string) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -14,10 +15,7 @@ export const useUpdateJudge = (judgeID: string) => {
     setError(null);
 
     try {
-      const { data } = await axios.put(
-        `${API_URL}/judges/${judgeID}`,
-        judgeData,
-      );
+      const { data } = await api.put(`/judges/${judgeID}`, judgeData);
       setUpdatedJudge(data); // Сохраняем обновленного судью
       return data;
     } catch (err: any) {

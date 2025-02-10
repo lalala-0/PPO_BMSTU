@@ -14,11 +14,12 @@ const RatingTable: React.FC<RatingTableProps> = ({ rankingTable, races }) => {
   const [filters, setFilters] = useState({
     sailNum: "",
     participantName: "",
+    pointsSum: "",
     rank: "",
     coachName: "",
   });
-  const navigate = useNavigate(); // Хук для программного редиректа
-  const { ratingID } = useParams<{ ratingID: string }>(); // Получаем ratingID из текущего пути
+  const navigate = useNavigate();
+  const { ratingID } = useParams<{ ratingID: string }>();
 
   const deleteCrewController = useDeleteCrew();
   const onDelete = async (sailNum: number) => {
@@ -29,13 +30,12 @@ const RatingTable: React.FC<RatingTableProps> = ({ rankingTable, races }) => {
       return;
     }
 
-    const { CrewID } = crewToDelete;
+    const CrewID = crewToDelete.crewID;
 
     try {
-      await deleteCrewController.deleteCrewByID(CrewID); // Передаем ratingID и crewID
-      // Если удаление прошло успешно, обновляем таблицу
+      await deleteCrewController.deleteCrewByID(CrewID);
       const updatedTable = tableData.filter((line) => line.SailNum !== sailNum);
-      setTableData(updatedTable); // Удаляем строку из таблицы
+      setTableData(updatedTable);
     } catch (err) {
       console.error("Ошибка при удалении записи:", err);
       alert("Не удалось удалить запись. Попробуйте снова.");
@@ -44,10 +44,8 @@ const RatingTable: React.FC<RatingTableProps> = ({ rankingTable, races }) => {
 
   const handleCrewNavigation = (sailNum: number) => {
     const crew = rankingTable.find((line) => line.SailNum === sailNum);
-
     if (crew) {
-      const CrewID = crew.CrewID; // Предположим, что ID команды хранится в поле TeamID
-
+      const CrewID = crew.crewID;
       if (ratingID) {
         navigate(`/ratings/${ratingID}/crews/${CrewID}`);
       } else {
@@ -78,6 +76,8 @@ const RatingTable: React.FC<RatingTableProps> = ({ rankingTable, races }) => {
         line.ParticipantNames[0]
           .toLowerCase()
           .includes(filters.participantName.toLowerCase())) &&
+      (filters.pointsSum === "" ||
+        line.PointsSum.toString().includes(filters.pointsSum)) &&
       (filters.rank === "" || line.Rank.toString().includes(filters.rank)) &&
       (filters.coachName === "" ||
         line.CoachNames[0]
@@ -103,7 +103,14 @@ const RatingTable: React.FC<RatingTableProps> = ({ rankingTable, races }) => {
               borderCollapse: "collapse",
             }}
           >
-            <thead>
+            <thead
+              style={{
+                position: "sticky",
+                top: 0,
+                backgroundColor: "#fff",
+                zIndex: 1,
+              }}
+            >
               <tr>
                 <th>
                   <input
@@ -169,7 +176,7 @@ const RatingTable: React.FC<RatingTableProps> = ({ rankingTable, races }) => {
                   />
                   Имя тренера
                 </th>
-                <th>Действия</th>
+                <th className="auth-required">Действия</th>
               </tr>
             </thead>
             <tbody>
@@ -190,8 +197,11 @@ const RatingTable: React.FC<RatingTableProps> = ({ rankingTable, races }) => {
                   <td>{line.PointsSum}</td>
                   <td>{line.Rank}</td>
                   <td>{line.CoachNames[0]}</td>
-                  <td>
-                    <button onClick={() => onDelete(line.SailNum)}>
+                  <td className="auth-required">
+                    <button
+                      className="auth-required"
+                      onClick={() => onDelete(line.SailNum)}
+                    >
                       Удалить
                     </button>
                   </td>

@@ -3,6 +3,7 @@ import axios from "axios";
 import { API_URL } from "../../config";
 import { JudgeFormData } from "../../models/judgeModel";
 import { handleError } from "../errorHandler"; // Импортируем функцию для обработки ошибок
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useGetJudge = (judgeID: string) => {
   const [judge, setJudge] = useState<JudgeFormData | null>(null);
@@ -14,7 +15,7 @@ export const useGetJudge = (judgeID: string) => {
     setError(null);
 
     try {
-      const { data } = await axios.get(`${API_URL}/judges/${judgeID}`);
+      const { data } = await api.get(`/judges/${judgeID}`);
       setJudge(data); // Сохраняем данные судьи в состоянии
     } catch (err: any) {
       handleError(err, setError); // Обработка ошибок через централизованную функцию

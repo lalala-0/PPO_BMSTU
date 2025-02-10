@@ -2,7 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { RaceFormData } from "../../models/raceModel"; // Импортируем модель для гонок
-import { API_URL } from "../../config"; // Импортируем API_URL
+import api from "../api"; // Импортируем функцию для обработки ошибок
 import { handleError } from "../errorHandler"; // Импортируем функцию для обработки ошибок
 
 export const useGetRacesByRatingID = () => {
@@ -16,7 +16,7 @@ export const useGetRacesByRatingID = () => {
     setRaces(null); // Сбрасываем список гонок перед новым запросом
 
     try {
-      const response = await axios.get(`${API_URL}/ratings/${ratingID}/races`);
+      const response = await api.get(`/ratings/${ratingID}/races`);
       setRaces(response.data); // Устанавливаем полученные данные
     } catch (err: any) {
       handleError(err, setError); // Используем обработчик ошибок

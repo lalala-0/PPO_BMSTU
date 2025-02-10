@@ -6,6 +6,7 @@ import {
   ParticipantFormData,
 } from "../../models/participantModel";
 import { handleError } from "../errorHandler"; // Импортируем необходимые типы
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useUpdateParticipant = (participantID: string) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -19,8 +20,8 @@ export const useUpdateParticipant = (participantID: string) => {
     setUpdatedParticipant(null);
 
     try {
-      const response = await axios.put<ParticipantFormData>(
-        `${API_URL}/participants/${participantID}`,
+      const response = await api.put<ParticipantFormData>(
+        `/participants/${participantID}`,
         data,
       );
       setUpdatedParticipant(response.data); // Сохраняем обновленную информацию об участнике

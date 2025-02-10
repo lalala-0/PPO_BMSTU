@@ -64,9 +64,6 @@ const RatingsContainer = () => {
 
   return (
     <div>
-      {/* Фильтры */}
-      <Filters filters={filters} onFilterChange={handleFilterChange} />
-
       {/* Таблица */}
       <RatingsTable
         ratings={filteredRatings}
@@ -79,6 +76,7 @@ const RatingsContainer = () => {
 
       {/* Кнопка для создания нового рейтинга */}
       <button
+        className="auth-required"
         onClick={() => {
           setSelectedRating({ id: "", Name: "", Class: "", BlowoutCnt: 0 });
           setIsModalOpen(true);

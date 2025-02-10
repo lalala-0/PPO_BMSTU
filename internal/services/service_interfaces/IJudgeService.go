@@ -6,7 +6,7 @@ import (
 )
 
 type IJudgeService interface {
-	Login(login, password string) (*models.Judge, error)
+	Login(login, password string) (*models.Judge, string, error)
 	CreateProfile(judgeID uuid.UUID, fio string, login string, password string, role int, post string) (*models.Judge, error)
 	DeleteProfile(id uuid.UUID) error
 	UpdateProfile(judgeID uuid.UUID, fio string, login string, password string, role int) (*models.Judge, error)

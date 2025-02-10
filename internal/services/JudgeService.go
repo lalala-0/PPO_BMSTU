@@ -17,13 +17,17 @@ type JudgeService struct {
 	JudgeRepository repository_interfaces.IJudgeRepository
 	hash            password_hash.PasswordHash
 	logger          *log.Logger
+	JWTService      service_interfaces.IJWTService // Новый сервис для работы с JWT
+
 }
 
-func NewJudgeService(JudgeRepository repository_interfaces.IJudgeRepository, hash password_hash.PasswordHash, logger *log.Logger) service_interfaces.IJudgeService {
+func NewJudgeService(JudgeRepository repository_interfaces.IJudgeRepository, hash password_hash.PasswordHash, logger *log.Logger, jwtService service_interfaces.IJWTService) service_interfaces.IJudgeService {
 	return &JudgeService{
 		JudgeRepository: JudgeRepository,
 		hash:            hash,
 		logger:          logger,
+		JWTService:      jwtService, // Инициализируем новый JWTService
+
 	}
 }
 
@@ -43,26 +47,37 @@ func (j JudgeService) checkIfJudgeWithLoginExists(login string) (*models.Judge, 
 	}
 }
 
-func (j JudgeService) Login(login, password string) (*models.Judge, error) {
+func (j JudgeService) Login(login, password string) (*models.Judge, string, error) {
 	j.logger.Infof("SERVICE: Checking if Judge with login %s exists", login)
+	// Проверяем, существует ли судья с таким логином
 	tempJudge, err := j.checkIfJudgeWithLoginExists(login)
 	if err != nil {
 		j.logger.Error("SERVICE: Error occurred during checking if Judge with login exists")
-		return nil, err
+		return nil, "", err
 	} else if tempJudge == nil {
 		j.logger.Info("SERVICE: Judge with login does not exist", "login", login)
-		return nil, repository_errors.DoesNotExist
+		return nil, "", repository_errors.DoesNotExist
 	}
 
 	j.logger.Infof("SERVICE: Checking if password is correct for Judge with login %s", login)
+	// Проверяем пароль
 	isPasswordCorrect := j.hash.CompareHashAndPassword(tempJudge.Password, password)
 	if !isPasswordCorrect {
 		j.logger.Info("SERVICE: Password is incorrect for Judge with login", "login", login)
-		return nil, service_errors.MismatchedPassword
+		return nil, "", service_errors.MismatchedPassword
 	}
 
 	j.logger.Info("SERVICE: Successfully logged in Judge with login", "login", login)
-	return tempJudge, nil
+
+	// Генерация JWT токена после успешного логина
+	token, err := j.JWTService.GenerateToken(tempJudge.ID)
+	if err != nil {
+		j.logger.Error("SERVICE: Failed to generate JWT token", "error", err)
+		return nil, "", err
+	}
+
+	// Возвращаем пользователя и сгенерированный JWT токен
+	return tempJudge, token, nil
 }
 
 func (j JudgeService) CreateProfile(judgeID uuid.UUID, fio string, login string, password string, role int, post string) (*models.Judge, error) {

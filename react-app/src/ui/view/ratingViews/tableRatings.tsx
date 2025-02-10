@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Rating } from "../../models/ratingModel";
 
@@ -15,9 +15,23 @@ const RatingsTable: React.FC<RatingsTableProps> = ({
 }) => {
   const navigate = useNavigate();
 
+  // Состояния для фильтров
+  const [nameFilter, setNameFilter] = useState("");
+  const [classFilter, setClassFilter] = useState("");
+  const [blowoutFilter, setBlowoutFilter] = useState("");
+
   const handleNavigate = (id: string) => {
     navigate(`/ratings/${id}`);
   };
+
+  // Фильтрация данных
+  const filteredRatings = ratings.filter(
+    (rating) =>
+      rating.Name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+      rating.Class.toLowerCase().includes(classFilter.toLowerCase()) &&
+      (blowoutFilter === "" ||
+        rating.BlowoutCnt.toString().includes(blowoutFilter)),
+  );
 
   return (
     <div style={{ maxWidth: "100%" }}>
@@ -28,28 +42,56 @@ const RatingsTable: React.FC<RatingsTableProps> = ({
         <table style={{ tableLayout: "auto", width: "100%" }}>
           <thead>
             <tr>
-              <th>Имя</th>
-              <th>Класс</th>
-              <th>Кол-во выбрасываемых результатов</th>
-              <th>Действия</th>
+              <th>
+                Имя
+                <input
+                  type="text"
+                  placeholder="Поиск по имени"
+                  value={nameFilter}
+                  onChange={(e) => setNameFilter(e.target.value)}
+                  style={{ width: "100%", marginTop: "5px" }}
+                />
+              </th>
+              <th>
+                Класс
+                <input
+                  type="text"
+                  placeholder="Поиск по классу"
+                  value={classFilter}
+                  onChange={(e) => setClassFilter(e.target.value)}
+                  style={{ width: "100%", marginTop: "5px" }}
+                />
+              </th>
+              <th>
+                Кол-во выбрасываемых результатов
+                <input
+                  type="number"
+                  placeholder="Поиск по кол-ву выбрасываемых результатов"
+                  value={blowoutFilter}
+                  onChange={(e) => setBlowoutFilter(e.target.value)}
+                  style={{ width: "100%", marginTop: "5px" }}
+                />
+              </th>
+              <th className="auth-required">Действия</th>
             </tr>
           </thead>
           <tbody>
-            {ratings.map((rating) => (
+            {filteredRatings.map((rating) => (
               <tr key={rating.id}>
                 <td>
                   <button
                     onClick={() => handleNavigate(rating.id)}
-                    className="add-rating-button" // Добавляем класс для стилизации
+                    className="add-rating-button"
                   >
                     {rating.Name}
                   </button>
                 </td>
                 <td>{rating.Class}</td>
                 <td>{rating.BlowoutCnt}</td>
-                <td>
+                <td className="auth-required">
                   <div className="buttons-container">
                     <button
+                      className="auth-required"
                       onClick={() => onDelete(rating.id)}
                       style={{
                         backgroundColor: "transparent",
@@ -65,6 +107,7 @@ const RatingsTable: React.FC<RatingsTableProps> = ({
                       />
                     </button>
                     <button
+                      className="auth-required"
                       onClick={() => onUpdate(rating)}
                       style={{
                         backgroundColor: "transparent",

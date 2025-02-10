@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { RatingInput } from "../../models/ratingModel";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useUpdateRatingController = () => {
   const [success, setSuccess] = useState<string | null>(null);
@@ -11,7 +12,7 @@ export const useUpdateRatingController = () => {
     setSuccess(null);
 
     try {
-      await axios.put(`/api/ratings/${id}`, updatedData);
+      await api.put(`/ratings/${id}`, updatedData);
       setSuccess("Рейтинг успешно обновлён");
     } catch (err: any) {
       if (axios.isAxiosError(err)) {

@@ -1,8 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
-import { API_URL } from "../../config";
 import { ParticipantFormData } from "../../models/participantModel";
-import { handleError } from "../errorHandler"; // Импортируем функцию для обработки ошибок
+import { handleError } from "../errorHandler";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useGetCrewMember = (
   ratingID: string,
@@ -18,8 +17,8 @@ export const useGetCrewMember = (
     setError(null);
 
     try {
-      const response = await axios.get<ParticipantFormData>(
-        `${API_URL}/ratings/${ratingID}/crews/${crewID}/members/${participantID}`,
+      const response = await api.get<ParticipantFormData>(
+        `/ratings/${ratingID}/crews/${crewID}/members/${participantID}`,
       );
       setData(response.data); // Сохраняем полученные данные
     } catch (err: any) {

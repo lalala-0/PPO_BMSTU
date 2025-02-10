@@ -3,6 +3,7 @@ import axios from "axios";
 import { API_URL } from "../../config";
 import { ParticipantFormData } from "../../models/participantModel";
 import { handleError } from "../errorHandler"; // Импортируем функцию для обработки ошибок
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useGetCrewMembers = (ratingID: string, crewID: string) => {
   const [data, setData] = useState<ParticipantFormData[] | null>(null); // Массив участников
@@ -14,8 +15,8 @@ export const useGetCrewMembers = (ratingID: string, crewID: string) => {
     setError(null);
 
     try {
-      const response = await axios.get<ParticipantFormData[]>(
-        `${API_URL}/ratings/${ratingID}/crews/${crewID}/members`,
+      const response = await api.get<ParticipantFormData[]>(
+        `/ratings/${ratingID}/crews/${crewID}/members`,
       );
       setData(response.data); // Сохраняем полученные данные
     } catch (err: any) {

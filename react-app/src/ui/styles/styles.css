@@ -87,6 +87,16 @@ button:hover {
   background-color: #266793; /* Темнее при наведении */
 }
 
+/* По умолчанию скрываем кнопки, доступные только авторизованным пользователям */
+.auth-required {
+  display: none;
+}
+
+/* Когда пользователь авторизован, показываем скрытые кнопки */
+.authenticated .auth-required {
+  display: inline-block;
+}
+
 /* Поля фильтра */
 input[type="text"],
 input[type="number"],

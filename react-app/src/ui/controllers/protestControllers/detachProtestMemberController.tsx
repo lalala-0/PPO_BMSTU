@@ -3,6 +3,7 @@ import axios from "axios";
 import { API_URL } from "../../config";
 import { ProtestParticipantDetachInput } from "../../models/protestModel";
 import { handleError } from "../errorHandler";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useDetachProtestMember = (
   ratingID: string,
@@ -19,8 +20,8 @@ export const useDetachProtestMember = (
     setError(null);
 
     try {
-      await axios.delete(
-        `${API_URL}/ratings/${ratingID}/races/${raceID}/protests/${protestID}/members/${protestParticipantDetachInput.sailNum}`,
+      await api.delete(
+        `/ratings/${ratingID}/races/${raceID}/protests/${protestID}/members/${protestParticipantDetachInput.sailNum}`,
       );
     } catch (err: any) {
       handleError(err, setError); // Обработка ошибок через централизованную функцию

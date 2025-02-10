@@ -53,18 +53,21 @@ const RaceView: React.FC = () => {
     <div style={{ padding: "20px" }}>
       <h1>{`Рейтинг: ${ratingInfo.Name}`}</h1>
       <h2>{`Гонка №${raceInfo.number} (${raceInfo.class})`}</h2>
-      <ProtestsTable ratingID={ratingID} raceID={raceID} />{" "}
-      {/* Таблица протестов */}
-      <button onClick={handleCreateProtest}>Создать протест</button>
+      <ProtestsTable /> {/* Таблица протестов */}
+      <button className="auth-required" onClick={handleCreateProtest}>
+        Создать протест
+      </button>
       <div className="buttons-container">
-        <button onClick={handleStartProcedure}>
+        <button className="auth-required" onClick={handleStartProcedure}>
           Начать стартовую процедуру
         </button>
-        <button onClick={handleFinishProcedure}>
+        <button className="auth-required" onClick={handleFinishProcedure}>
           Начать финишную процедуру
         </button>
       </div>
-      <button onClick={handleRaceModalOpen}>Обновить информацию о гонке</button>
+      <button className="auth-required" onClick={handleRaceModalOpen}>
+        Обновить информацию о гонке
+      </button>
       {isRaceModalOpen && (
         <RaceModal
           race={raceInfo}

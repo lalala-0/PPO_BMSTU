@@ -19,6 +19,7 @@ type Services struct {
 	ProtestService     service_interfaces.IProtestService
 	RaceService        service_interfaces.IRaceService
 	RatingService      service_interfaces.IRatingService
+	JWTService         service_interfaces.IJWTService
 }
 
 type Repositories struct {
@@ -68,10 +69,12 @@ func (a *App) mongoRepositoriesInitialization(fields *mongo.MongoConnection) *Re
 
 func (a *App) servicesInitialization(r *Repositories) *Services {
 	passwordHash := password_hash.NewPasswordHash()
+	JWTService := services.NewJWTService()
 
 	s := &Services{
+		JWTService:         JWTService,
 		CrewService:        services.NewCrewService(r.CrewRepository, a.Logger),
-		JudgeService:       services.NewJudgeService(r.JudgeRepository, passwordHash, a.Logger),
+		JudgeService:       services.NewJudgeService(r.JudgeRepository, passwordHash, a.Logger, JWTService),
 		ParticipantService: services.NewParticipantService(r.ParticipantRepository, a.Logger),
 		ProtestService:     services.NewProtestService(r.ProtestRepository, r.CrewResInRaceRepository, r.CrewRepository, a.Logger),
 		RaceService:        services.NewRaceService(r.RaceRepository, r.CrewRepository, r.CrewResInRaceRepository, a.Logger),

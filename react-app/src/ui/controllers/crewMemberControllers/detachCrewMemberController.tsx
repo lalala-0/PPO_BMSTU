@@ -2,7 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom"; // Импортируем useParams
 import { API_URL } from "../../config";
-import { handleError } from "../errorHandler"; // Импортируем функцию для обработки ошибок
+import { handleError } from "../errorHandler";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useDetachCrewMember = () => {
   const { ratingID, crewID } = useParams<{
@@ -24,8 +25,8 @@ export const useDetachCrewMember = () => {
     setError(null);
 
     try {
-      await axios.delete(
-        `${API_URL}/ratings/${ratingID}/crews/${crewID}/members/${participantID}`,
+      await api.delete(
+        `/ratings/${ratingID}/crews/${crewID}/members/${participantID}`,
       );
       setSuccess("Участник успешно удален");
     } catch (err: any) {

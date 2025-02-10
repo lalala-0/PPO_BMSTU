@@ -82,13 +82,14 @@ type RankingResponse struct {
 }
 
 // Функция конвертации
-func FromRatingTableLineModelTiStringData(original models.RatingTableLine) RatingTableLine {
+func FromRatingTableLineModelTiStringData(original models.RatingTableLine, crew models.Crew) RatingTableLine {
 	birthDates := make([]string, len(original.ParticipantBirthDates))
 	for i, date := range original.ParticipantBirthDates {
 		birthDates[i] = date.Format("2006-01-02") // Форматирование даты в строку
 	}
 
 	return RatingTableLine{
+		CrewID:                crew.ID,
 		SailNum:               original.SailNum,
 		ParticipantNames:      original.ParticipantNames,
 		ParticipantBirthDates: birthDates,
@@ -100,10 +101,17 @@ func FromRatingTableLineModelTiStringData(original models.RatingTableLine) Ratin
 	}
 }
 
-func FromRatingTableLinesModelTiStringData(original []models.RatingTableLine) []RatingTableLine {
+func FromRatingTableLinesModelTiStringData(original []models.RatingTableLine, crews []models.Crew) []RatingTableLine {
 	var result []RatingTableLine
 	for _, line := range original {
-		result = append(result, FromRatingTableLineModelTiStringData(line))
+		var crew models.Crew
+		for _, c := range crews {
+			if c.SailNum == line.SailNum {
+				crew = c
+				break
+			}
+		}
+		result = append(result, FromRatingTableLineModelTiStringData(line, crew))
 	}
 	return result
 }

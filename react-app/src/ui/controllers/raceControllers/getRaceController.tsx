@@ -4,6 +4,7 @@ import { RaceFormData } from "../../models/raceModel";
 import { useParams } from "react-router-dom";
 import { API_URL } from "../../config";
 import { handleError } from "../errorHandler";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useGetRace = () => {
   const { ratingID, raceID } = useParams<{
@@ -23,8 +24,8 @@ export const useGetRace = () => {
 
     const fetchRaceData = async () => {
       try {
-        const response = await axios.get<RaceFormData>(
-          `${API_URL}/ratings/${ratingID}/races/${raceID}`,
+        const response = await api.get<RaceFormData>(
+          `/ratings/${ratingID}/races/${raceID}`,
         );
         setRaceInfo(response.data);
         setLoading(false);

@@ -1,22 +1,25 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useFetchProtests } from "../../controllers/protestControllers/getProtestsController";
-import { ProtestFormData } from "../../models/protestModel";
+import { ProtestFormData, StatusMap } from "../../models/protestModel";
+import UpdateProtestModal from "../protestViews/modalUpdateProtest";
+import { useDeleteProtestController } from "../../controllers/protestControllers/deleteProtestController";
 
-interface ProtestsTableProps {
-  ratingID: string;
-  raceID: string;
-}
-
-const ProtestsTable: React.FC<ProtestsTableProps> = ({ ratingID, raceID }) => {
+const ProtestsTable: React.FC = () => {
+  const { ratingID, raceID } = useParams<{
+    ratingID: string;
+    raceID: string;
+  }>();
   const navigate = useNavigate();
+  const { handleDelete } = useDeleteProtestController(); // Функция удаления
 
-  // Состояние фильтров
   const [filters, setFilters] = useState<Record<string, string>>({});
+  const [selectedProtest, setSelectedProtest] =
+    useState<ProtestFormData | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { protests, loading, error } = useFetchProtests(ratingID, raceID);
+  const { protests, loading, error } = useFetchProtests(ratingID!, raceID!);
 
-  // Обработчик изменения фильтров
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev) => ({
       ...prev,
@@ -24,30 +27,52 @@ const ProtestsTable: React.FC<ProtestsTableProps> = ({ ratingID, raceID }) => {
     }));
   };
 
-  // Универсальная фильтрация
-  const filteredProtests: ProtestFormData[] =
-    protests?.filter((protest: ProtestFormData) => {
-      return Object.entries(filters).every(([key, value]) => {
-        if (!value) return true; // Если фильтр пустой, пропускаем
-        const protestValue = (protest as Record<string, any>)[key]; // Доступ к значению по ключу
-        return protestValue
-          ?.toString()
-          .toLowerCase()
-          .includes(value.toLowerCase());
-      });
-    }) || [];
+  // Фильтрация, аналогичная RatingsTable
+  const filteredProtests = protests.filter(
+    (protest) =>
+      (filters.ruleNum
+        ? protest.RuleNum.toString()
+            .toLowerCase()
+            .includes(filters.ruleNum.toLowerCase())
+        : true) &&
+      (filters.reviewDate
+        ? protest.ReviewDate.toLowerCase().includes(
+            filters.reviewDate.toLowerCase(),
+          )
+        : true) &&
+      (filters.status
+        ? StatusMap[Number(protest.Status)]
+            .toLowerCase()
+            .includes(filters.status.toLowerCase())
+        : true) &&
+      (filters.comment
+        ? protest.Comment.toLowerCase().includes(filters.comment.toLowerCase())
+        : true),
+  );
 
   const handleNavigate = (id: string) => {
-    navigate(`/protest/${id}`);
+    navigate(`/ratings/${ratingID}/races/${raceID}/protests/${id}`);
   };
 
-  if (loading) {
-    return <div>Загрузка...</div>;
-  }
+  const handleOpenModal = (protest: ProtestFormData) => {
+    setSelectedProtest(protest);
+    setIsModalOpen(true);
+  };
 
-  if (error) {
-    return <div>Ошибка при загрузке протестов</div>;
-  }
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProtest(null);
+  };
+
+  const handleDeleteProtest = async (protestID: string) => {
+    if (window.confirm("Вы уверены, что хотите удалить этот протест?")) {
+      await handleDelete(ratingID || "", raceID || "", protestID);
+      window.location.reload(); // Перезагрузка после удаления
+    }
+  };
+
+  if (loading) return <div>Загрузка...</div>;
+  if (error) return <div>Ошибка при загрузке протестов</div>;
 
   return (
     <div className="protests-table-container">
@@ -71,30 +96,53 @@ const ProtestsTable: React.FC<ProtestsTableProps> = ({ ratingID, raceID }) => {
                 {label}
               </th>
             ))}
-            <th>Действия</th>
+            <th className="auth-required">Действия</th>
           </tr>
         </thead>
         <tbody>
           {filteredProtests.map((protest) => (
-            <tr key={protest.id}>
-              <td>{protest.ruleNum}</td>
-              <td>{protest.reviewDate}</td>
-              <td>{protest.status}</td>
-              <td>{protest.comment}</td>
-              <td>
+            <tr key={protest.ID}>
+              <td>{protest.RuleNum}</td>
+              <td>{protest.ReviewDate}</td>
+              <td>{StatusMap[Number(protest.Status)]}</td>
+              <td>{protest.Comment}</td>
+              <td className="auth-required">
                 <button
-                  onClick={() => handleNavigate(protest.id)}
+                  onClick={() => handleNavigate(protest.ID)}
                   className="link-button"
                 >
                   Подробнее
                 </button>
-                <button className="update-button">Обновить</button>
-                <button className="delete-button">Удалить</button>
+                <button
+                  className="auth-required"
+                  onClick={() => handleOpenModal(protest)}
+                >
+                  Обновить
+                </button>
+                <button
+                  className="auth-required"
+                  onClick={() => handleDeleteProtest(protest.ID)}
+                >
+                  Удалить
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {isModalOpen && selectedProtest && (
+        <UpdateProtestModal
+          protest={{
+            judgeId: selectedProtest.JudgeID,
+            ruleNum: Number(selectedProtest.RuleNum),
+            reviewDate: selectedProtest.ReviewDate,
+            status: Number(selectedProtest.Status),
+            comment: selectedProtest.Comment,
+          }}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };

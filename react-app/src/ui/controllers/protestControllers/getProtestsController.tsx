@@ -3,6 +3,7 @@ import axios from "axios";
 import { API_URL } from "../../config";
 import { ProtestFormData } from "../../models/protestModel";
 import { handleError } from "../errorHandler";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useFetchProtests = (ratingID: string, raceID: string) => {
   const [protests, setProtests] = useState<ProtestFormData[]>([]);
@@ -15,8 +16,8 @@ export const useFetchProtests = (ratingID: string, raceID: string) => {
       setError(null);
 
       try {
-        const response = await axios.get<ProtestFormData[]>(
-          `${API_URL}/ratings/${ratingID}/races/${raceID}/protests`,
+        const response = await api.get<ProtestFormData[]>(
+          `/ratings/${ratingID}/races/${raceID}/protests`,
         );
         setProtests(response.data);
       } catch (err: any) {

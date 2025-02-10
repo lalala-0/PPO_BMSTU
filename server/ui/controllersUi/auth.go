@@ -49,7 +49,7 @@ func (s *ServicesUI) signinPost(c *gin.Context) {
 		return
 	}
 
-	judge, err := s.Services.JudgeService.Login(data.Login, data.Password)
+	judge, _, err := s.Services.JudgeService.Login(data.Login, data.Password)
 	if err != nil {
 		c.HTML(http.StatusBadRequest, "signin", gin.H{
 			"title":    "Вход",

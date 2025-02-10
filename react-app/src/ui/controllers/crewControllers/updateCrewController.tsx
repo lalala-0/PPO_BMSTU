@@ -4,6 +4,7 @@ import { CrewInput } from "../../models/crewModel";
 import { API_URL } from "../../config";
 import { useParams } from "react-router-dom";
 import { handleError } from "../errorHandler";
+import api from "../api";
 
 export const useUpdateCrew = () => {
   const { ratingID } = useParams<{ ratingID: string }>();
@@ -17,8 +18,8 @@ export const useUpdateCrew = () => {
     setError(null);
 
     try {
-      const response = await axios.put(
-        `${API_URL}/ratings/${ratingID}/crews/${crewID}`,
+      const response = await api.put(
+        `/ratings/${ratingID}/crews/${crewID}`,
         updatedData,
       );
       setSuccess("Номер паруса успешно обновлён");

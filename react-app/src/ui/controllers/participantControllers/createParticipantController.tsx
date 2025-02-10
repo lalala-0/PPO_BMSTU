@@ -6,6 +6,7 @@ import {
   ParticipantFormData,
 } from "../../models/participantModel"; // Импортируем типы для создания участника
 import { handleError } from "../errorHandler"; // Импортируем централизованную обработку ошибок
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useCreateParticipant = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -18,10 +19,7 @@ export const useCreateParticipant = () => {
     setError(null);
 
     try {
-      const { data } = await axios.post(
-        `${API_URL}/participants`,
-        participantData,
-      );
+      const { data } = await api.post(`/participants`, participantData);
       setCreatedParticipant(data); // Сохраняем данные о созданном участнике
       return data;
     } catch (err: any) {

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 import { RaceInput } from "../../models/raceModel"; // Импортируем модель данных
-import { API_URL } from "../../config";
 import { useParams } from "react-router-dom";
 import { handleError } from "../errorHandler"; // Импортируем функцию обработки ошибок
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useUpdateRace = () => {
   const { ratingID } = useParams<{ ratingID: string }>();
@@ -22,10 +22,7 @@ export const useUpdateRace = () => {
     setError(null);
 
     try {
-      await axios.put(
-        `${API_URL}/ratings/${ratingID}/races/${raceID}`,
-        updatedData,
-      );
+      await api.put(`/ratings/${ratingID}/races/${raceID}`, updatedData);
       setSuccess("Гонка успешно обновлена");
     } catch (err: any) {
       handleError(err, setError);

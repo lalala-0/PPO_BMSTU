@@ -1,8 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
 import { CrewParticipantAttachInput } from "../../models/crewModel";
-import { API_URL } from "../../config";
 import { handleError } from "../errorHandler"; // Импортируем функцию
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useAttachCrewMember = (ratingID: string, crewID: string) => {
   const [error, setError] = useState<string | null>(null);
@@ -17,8 +16,8 @@ export const useAttachCrewMember = (ratingID: string, crewID: string) => {
     setError(null);
 
     try {
-      const response = await axios.post(
-        `${API_URL}/ratings/${ratingID}/crews/${crewID}/members`,
+      const response = await api.post(
+        `/ratings/${ratingID}/crews/${crewID}/members`,
         crewParticipantAttachInput,
       );
       setSuccess("Член экипажа успешно добавлен");

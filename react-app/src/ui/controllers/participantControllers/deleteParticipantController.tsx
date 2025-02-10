@@ -2,19 +2,20 @@ import { useState } from "react";
 import axios from "axios";
 import { API_URL } from "../../config";
 import { handleError } from "../errorHandler"; // Импортируем централизованную обработку ошибок
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
-export const useDeleteParticipant = (participantID: string) => {
+export const useDeleteParticipant = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean | null>(null);
 
-  const deleteParticipant = async () => {
+  const deleteParticipant = async (participantID: string) => {
     setLoading(true);
     setError(null);
     setSuccess(null);
 
     try {
-      await axios.delete(`${API_URL}/participants/${participantID}`);
+      await api.delete(`/participants/${participantID}`);
       setSuccess(true); // Участник успешно удален
     } catch (err: any) {
       handleError(err, setError); // Обработка ошибок через централизованную функцию

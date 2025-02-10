@@ -206,10 +206,10 @@ func (r RaceService) MakeFinishProcedure(raceID uuid.UUID, finishersList map[int
 		err = rc
 	}
 
-	rc = r.finalizeRaceResults(raceID)
-	if rc != nil {
-		return rc
-	}
+	//rc = r.finalizeRaceResults(raceID)
+	//if rc != nil {
+	//	return rc
+	//}
 
 	r.logger.Info("SERVICE: Successfully finish procedure")
 	return err

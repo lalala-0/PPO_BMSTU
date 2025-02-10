@@ -1,20 +1,60 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { GetRatingsView, RatingView } from "./ui";
 import { CrewView, RaceView } from "./ui";
 import { ParticipantView } from "./ui";
-// import { GetRatingsView as GetRatingsViewAPI,
-//         GetRatingView as GetRatingViewAPI} from './api';
+import StartProcedure from "./ui/view/raceViews/startView";
+import FinishProcedure from "./ui/view/raceViews/finishView";
+import ProtestView from "./ui/view/protestViews/protestView";
+import Login from "./ui/view/autchViews/login";
+import { isAuthenticated } from "./ui/controllers/autchControllers/isAutchenticated";
+import { logout } from "./ui/controllers/autchControllers/logout";
+import JudgeProfile from "./ui/view/judgeViews/profile";
+import JudgeDashboard from "./ui/view/judgeViews/dashboard";
+
+const Footer: React.FC = () => {
+  return (
+    <footer style={footerStyle}>
+      {isAuthenticated() ? (
+        <>
+          <Link to="/judgeDashboard" style={bottonLinkStyle}>
+            Панель управления
+          </Link>
+          <Link to="/profile" style={bottonLinkStyle}>
+            Профиль
+          </Link>
+          <button
+            onClick={logout}
+            style={{
+              ...bottonLinkStyle,
+              border: "none",
+              background: "none",
+              cursor: "pointer",
+            }}
+          >
+            Выйти
+          </button>
+        </>
+      ) : (
+        <Link to="/login" style={bottonLinkStyle}>
+          Войти
+        </Link>
+      )}
+      <p>&copy; 2025, Все права защищены.</p>
+    </footer>
+  );
+};
 
 const App: React.FC = () => {
+  useEffect(() => {
+    // Обновляем класс "authenticated" при загрузке приложения
+    document.body.classList.toggle("authenticated", isAuthenticated());
+  }, []);
   return (
     <Router>
       {/* Хедер с навигацией */}
       <header style={headerStyle}>
         <nav>
-          <Link to="/" style={linkStyle}>
-            Главная
-          </Link>
           <Link to="/ratings" style={linkStyle}>
             Список рейтингов
           </Link>
@@ -27,19 +67,31 @@ const App: React.FC = () => {
           path="/participants/:participantID"
           element={<ParticipantView />}
         />
+        <Route path="/profile" element={<JudgeProfile />} />
         <Route path="/ratings" element={<GetRatingsView />} />
         <Route path="/ratings/:ratingID" element={<RatingView />} />
         <Route path="/ratings/:ratingID/races/:raceID" element={<RaceView />} />
+        <Route
+          path="/ratings/:ratingID/races/:raceID/startProcedure"
+          element={<StartProcedure />}
+        />
+        <Route
+          path="/ratings/:ratingID/races/:raceID/finishProcedure"
+          element={<FinishProcedure />}
+        />
+        <Route
+          path="/ratings/:ratingID/races/:raceID/protests/:protestID"
+          element={<ProtestView />}
+        />
         <Route path="/ratings/:ratingID/crews/:crewID" element={<CrewView />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/judgeDashboard" element={<JudgeDashboard />} />
 
         {/*<Route path="/api/ratings" element={<GetRatingsViewAPI />} />*/}
         {/*<Route path="/api/ratings/:ratingID" element={<GetRatingViewAPI />} />*/}
       </Routes>
 
-      {/* Нижний элемент (footer) */}
-      <footer style={footerStyle}>
-        <p>&copy; 2025, Все права защищены.</p>
-      </footer>
+      <Footer />
     </Router>
   );
 };
@@ -64,6 +116,15 @@ const linkStyle: React.CSSProperties = {
   textDecoration: "none",
   margin: "0 15px",
   fontSize: "50px",
+  fontFamily: "Spectral SC",
+};
+
+// Стили для ссылок в навигации
+const bottonLinkStyle: React.CSSProperties = {
+  color: "#000000",
+  textDecoration: "none",
+  margin: "0 15px",
+  fontSize: "25px",
   fontFamily: "Spectral SC",
 };
 

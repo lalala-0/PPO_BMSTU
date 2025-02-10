@@ -1,15 +1,18 @@
 import { useState } from "react";
 import axios from "axios";
 import { API_URL } from "../../config";
-import { ProtestInput } from "../../models/protestModel";
-import { ProtestFormData } from "../../models/protestModel";
+import { ProtestInput, ProtestFormData } from "../../models/protestModel";
+import { useParams } from "react-router-dom";
 import { handleError } from "../errorHandler";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
-export const useUpdateProtest = (
-  ratingID: string,
-  raceID: string,
-  protestID: string,
-) => {
+export const useUpdateProtest = () => {
+  const { ratingID, raceID, protestID } = useParams<{
+    ratingID: string;
+    raceID: string;
+    protestID: string;
+  }>();
+
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [updatedProtest, setUpdatedProtest] = useState<ProtestFormData | null>(
@@ -17,18 +20,23 @@ export const useUpdateProtest = (
   );
 
   const updateProtest = async (protestInput: ProtestInput) => {
+    if (!ratingID || !raceID || !protestID) {
+      setError("Недостаточно данных для обновления протеста");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setUpdatedProtest(null);
 
     try {
-      const response = await axios.put<ProtestFormData>(
-        `${API_URL}/ratings/${ratingID}/races/${raceID}/protests/${protestID}`,
+      const response = await api.put<ProtestFormData>(
+        `/ratings/${ratingID}/races/${raceID}/protests/${protestID}`,
         protestInput,
       );
       setUpdatedProtest(response.data);
     } catch (err: any) {
-      handleError(err, setError); // Обработка ошибок через централизованную функцию
+      handleError(err, setError);
     } finally {
       setLoading(false);
     }

@@ -4,6 +4,7 @@ import { CrewFormData } from "../../models/crewModel";
 import { useParams } from "react-router-dom";
 import { API_URL } from "../../config";
 import { handleError } from "../errorHandler";
+import api from "../api";
 
 export const useGetCrew = () => {
   const { ratingID, crewID } = useParams<{
@@ -23,8 +24,8 @@ export const useGetCrew = () => {
 
     const fetchCrewData = async () => {
       try {
-        const response = await axios.get<CrewFormData>(
-          `${API_URL}/ratings/${ratingID}/crews/${crewID}`,
+        const response = await api.get<CrewFormData>(
+          `/ratings/${ratingID}/crews/${crewID}`,
         );
         setCrewInfo(response.data);
         setLoading(false);

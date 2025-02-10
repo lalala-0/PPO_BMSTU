@@ -1,34 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import { API_URL } from "../../config";
 import { ProtestFormData } from "../../models/protestModel";
 import { handleError } from "../errorHandler";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
-export const useGetProtest = (
-  ratingID: string,
-  raceID: string,
-  protestID: string,
-) => {
-  const [loading, setLoading] = useState<boolean>(false);
+export const useGetProtest = () => {
+  const { ratingID, raceID, protestID } = useParams<{
+    ratingID: string;
+    raceID: string;
+    protestID: string;
+  }>();
+
+  const [protestInfo, setProtestInfo] = useState<ProtestFormData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [protestData, setProtestData] = useState<ProtestFormData | null>(null);
 
-  const getProtest = async () => {
-    setLoading(true);
-    setError(null);
-    setProtestData(null);
-
-    try {
-      const response = await axios.get<ProtestFormData>(
-        `${API_URL}/ratings/${ratingID}/races/${raceID}/protests/${protestID}`,
-      );
-      setProtestData(response.data);
-    } catch (err: any) {
-      handleError(err, setError); // Обработка ошибок через централизованную функцию
-    } finally {
+  useEffect(() => {
+    if (!ratingID || !raceID || !protestID) {
+      setError("Недостаточно данных для загрузки протеста");
       setLoading(false);
+      return;
     }
-  };
 
-  return { getProtest, protestData, loading, error };
+    const fetchProtestData = async () => {
+      try {
+        const response = await api.get<ProtestFormData>(
+          `/ratings/${ratingID}/races/${raceID}/protests/${protestID}`,
+        );
+        setProtestInfo(response.data);
+      } catch (err: any) {
+        handleError(err, setError);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProtestData();
+  }, [ratingID, raceID, protestID]);
+
+  return {
+    protestInfo,
+    loading,
+    error,
+  };
 };

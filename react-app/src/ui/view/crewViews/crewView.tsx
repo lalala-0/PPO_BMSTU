@@ -2,19 +2,18 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import CrewMembersTable from "./tableMembers";
 import CrewModal from "./modalInputCrew";
-// import MemberModal from '../crewMemberViews/modalInputMember';
 import { useGetRating } from "../../controllers/ratingControllers/getRatingController";
 import { useGetCrew } from "../../controllers/crewControllers/getCrewController";
 import "../../controllers/crewControllers/updateCrewController";
 import "../../styles/styles.css";
+import AttachCrewMemberModal from "../participantViews/attachParticipantToCrew";
 
 const CrewView: React.FC = () => {
   const { ratingID, crewID } = useParams<{
     ratingID: string;
     crewID: string;
-  }>(); // Явно указываем типы для ratingID и crewID
+  }>();
 
-  // Хуки вызываются всегда, независимо от условий
   const { ratingInfo, loading: ratingLoading } = useGetRating();
   const { crewInfo, loading: crewLoading } = useGetCrew();
 
@@ -27,12 +26,10 @@ const CrewView: React.FC = () => {
   const handleMemberModalOpen = () => setIsMemberModalOpen(true);
   const handleMemberModalClose = () => setIsMemberModalOpen(false);
 
-  // Проверка на наличие параметров URL и возвращение ошибки, если они отсутствуют
   if (!ratingID || !crewID) {
     return <div>Неверные параметры URL!</div>;
   }
 
-  // Теперь можно проверять загрузку и отображать соответствующие сообщения
   if (ratingLoading || crewLoading) {
     return <div>Загрузка...</div>;
   }
@@ -49,8 +46,10 @@ const CrewView: React.FC = () => {
       <CrewMembersTable ratingID={ratingID} crewID={crewID} />
 
       <div className="buttons-container">
-        <button onClick={handleMemberModalOpen}>Добавить участника</button>
-        <button onClick={handleCrewModalOpen}>
+        <button className="auth-required" onClick={handleMemberModalOpen}>
+          Добавить участника
+        </button>
+        <button className="auth-required" onClick={handleCrewModalOpen}>
           Изменить информацию о команде
         </button>
       </div>
@@ -58,19 +57,19 @@ const CrewView: React.FC = () => {
       {isCrewModalOpen && crewID && (
         <CrewModal
           crew={crewInfo}
-          type={"update"}
+          type="update"
           onClose={handleCrewModalClose}
         />
       )}
 
-      {/*{isMemberModalOpen && (*/}
-      {/*    <MemberModal*/}
-      {/*        member={{ id: '', crewId: crewID, name: '', role: '' }}*/}
-      {/*        crewID={crewID}*/}
-      {/*        type={'create'}*/}
-      {/*        onClose={handleMemberModalClose}*/}
-      {/*    />*/}
-      {/*)}*/}
+      {isMemberModalOpen && (
+        <AttachCrewMemberModal
+          ratingID={ratingID}
+          crewID={crewID}
+          onClose={handleMemberModalClose}
+          onSuccess={() => window.location.reload()} // Обновляем страницу после добавления участника
+        />
+      )}
     </div>
   );
 };

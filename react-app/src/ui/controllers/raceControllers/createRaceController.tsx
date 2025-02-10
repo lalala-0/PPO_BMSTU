@@ -1,8 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { RaceInput } from "../../models/raceModel"; // Импортируем модель для данных гонки
-import { API_URL } from "../../config";
 import { handleError } from "../errorHandler"; // Импортируем API_URL
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useCreateRace = () => {
   const [input, setInput] = useState<RaceInput>({
@@ -30,7 +30,7 @@ export const useCreateRace = () => {
     setError(null);
 
     try {
-      await axios.post(`${API_URL}/ratings/${ratingID}/races`, input); // Отправляем данные на сервер
+      await api.post(`/ratings/${ratingID}/races`, input); // Отправляем данные на сервер
       setSuccess("Гонка успешно создана");
       setInput({ date: "", number: 0, class: 0 }); // Сброс формы после успешного создания
     } catch (err: any) {

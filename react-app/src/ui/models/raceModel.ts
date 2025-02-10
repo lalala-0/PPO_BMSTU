@@ -59,7 +59,7 @@ function fromRaceModelToInputData(race: {
   };
 }
 
-const SpecCircumstanceMap: Record<number, string> = {
+export const SpecCircumstanceMap: Record<number, string> = {
   0: "-",
   1: "DNS",
   2: "DNF",

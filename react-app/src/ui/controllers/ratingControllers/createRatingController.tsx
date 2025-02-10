@@ -1,3 +1,4 @@
+import api from "../api"; // Импортируем функцию для обработки ошибок
 import { useState } from "react";
 import axios from "axios";
 import { RatingInput } from "../../models/ratingModel";
@@ -26,7 +27,7 @@ export const useCreateRatingController = () => {
     setSuccess(null);
 
     try {
-      await axios.post("/api/ratings/", updatedData); // Передаем обновленные данные
+      await api.post("/api/ratings/", updatedData); // Передаем обновленные данные
       setSuccess("Рейтинг успешно создан");
       setInput({ name: "", class: 1, blowout_cnt: 0 });
     } catch (err: any) {

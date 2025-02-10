@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { CrewInput } from "../../models/crewModel";
 import { useParams } from "react-router-dom";
-import { API_URL } from "../../config";
+import api, { API_URL } from "../api";
 import { handleError } from "../errorHandler"; // Импортируем функцию
 
 export const useCreateCrew = () => {
@@ -26,8 +26,8 @@ export const useCreateCrew = () => {
     setError(null);
 
     try {
-      const response = await axios.post(
-        `${API_URL}/ratings/${ratingID}/crews`,
+      const response = await api.post(
+        `/ratings/${ratingID}/crews`,
         updatedData,
       ); // Отправляем запрос на создание
       setSuccess("Команда успешно создана");

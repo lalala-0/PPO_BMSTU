@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetCrewMembers } from "../../controllers/crewMemberControllers/getCrewMembersController";
 import { ParticipantFormData } from "../../models/participantModel";
 import { useDetachCrewMember } from "../../controllers/crewMemberControllers/detachCrewMemberController";
+import ParticipantModal from "../participantViews/modalInputParticipant";
 
 interface CrewMembersTableProps {
   crewID: string;
@@ -14,22 +15,23 @@ const CrewMembersTable: React.FC<CrewMembersTableProps> = ({
   ratingID,
 }) => {
   const navigate = useNavigate();
+  const { detachCrewMember } = useDetachCrewMember();
   const {
-    detachCrewMember,
-    success,
-    loading: detachLoading,
-    error: detachError,
-  } = useDetachCrewMember();
+    data: crewMembers,
+    loading,
+    error,
+    getCrewMembers,
+  } = useGetCrewMembers(ratingID, crewID);
 
-  // Состояние фильтров
+  useEffect(() => {
+    getCrewMembers(); // Загружаем участников при монтировании
+  }, [ratingID, crewID]);
+
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [selectedMember, setSelectedMember] =
     useState<ParticipantFormData | null>(null);
   const [modalType, setModalType] = useState<"update" | null>(null);
 
-  const { data, loading, error } = useGetCrewMembers(ratingID, crewID);
-
-  // Обработчик изменения фильтров
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev) => ({
       ...prev,
@@ -37,18 +39,25 @@ const CrewMembersTable: React.FC<CrewMembersTableProps> = ({
     }));
   };
 
-  // Универсальная фильтрация
-  const filteredMembers: ParticipantFormData[] =
-    data?.filter((member: ParticipantFormData) => {
-      return Object.entries(filters).every(([key, value]) => {
-        if (!value) return true; // Если фильтр пустой, пропускаем
-        const memberValue = (member as Record<string, any>)[key]; // Доступ к значению по ключу
-        return memberValue
-          ?.toString()
-          .toLowerCase()
-          .includes(value.toLowerCase());
-      });
-    }) || [];
+  // Фильтрация аналогична RatingsTable
+  const filteredMembers = (crewMembers || []).filter(
+    (member) =>
+      (filters.fio
+        ? member.FIO.toLowerCase().includes(filters.fio.toLowerCase())
+        : true) &&
+      (filters.category
+        ? member.Category.toLowerCase().includes(filters.category.toLowerCase())
+        : true) &&
+      (filters.gender
+        ? member.Gender.toLowerCase().includes(filters.gender.toLowerCase())
+        : true) &&
+      (filters.birthday
+        ? member.Birthday.toLowerCase().includes(filters.birthday.toLowerCase())
+        : true) &&
+      (filters.coach
+        ? member.Coach.toLowerCase().includes(filters.coach.toLowerCase())
+        : true),
+  );
 
   const handleNavigate = (id: string) => {
     navigate(`/participants/${id}`);
@@ -60,9 +69,12 @@ const CrewMembersTable: React.FC<CrewMembersTableProps> = ({
   };
 
   const onDelete = async (id: string) => {
-    if (window.confirm("Вы уверены, что хотите удалить участника?")) {
+    if (
+      window.confirm("Вы уверены, что хотите удалить участника из команды?")
+    ) {
       try {
         await detachCrewMember(id);
+        getCrewMembers(); // Обновляем список после удаления
       } catch (err) {
         alert("Ошибка при удалении участника");
       }
@@ -72,15 +84,11 @@ const CrewMembersTable: React.FC<CrewMembersTableProps> = ({
   const handleModalClose = () => {
     setSelectedMember(null);
     setModalType(null);
+    getCrewMembers(); // Обновляем список после закрытия
   };
 
-  if (loading) {
-    return <div>Загрузка...</div>;
-  }
-
-  if (error) {
-    return <div>Ошибка при загрузке участников</div>;
-  }
+  if (loading) return <div>Загрузка...</div>;
+  if (error) return <div>Ошибка при загрузке участников</div>;
 
   return (
     <div className="crew-table-container">
@@ -105,7 +113,7 @@ const CrewMembersTable: React.FC<CrewMembersTableProps> = ({
                 {label}
               </th>
             ))}
-            <th>Действия</th>
+            <th className="auth-required">Действия</th>
           </tr>
         </thead>
         <tbody>
@@ -116,19 +124,16 @@ const CrewMembersTable: React.FC<CrewMembersTableProps> = ({
                   onClick={() => handleNavigate(member.id)}
                   className="link-button"
                 >
-                  {member.fio}
+                  {member.FIO}
                 </button>
               </td>
-              <td>{member.category}</td>
-              <td>{member.gender}</td>
-              <td>{member.birthday}</td>
-              <td>{member.coach}</td>
-              <td>
+              <td>{member.Category}</td>
+              <td>{member.Gender}</td>
+              <td>{member.Birthday}</td>
+              <td>{member.Coach}</td>
+              <td className="auth-required">
                 <div className="buttons-container">
-                  <button
-                    className="delete-button"
-                    onClick={() => onDelete(member.id)}
-                  >
+                  <button onClick={() => onDelete(member.id)}>
                     <img
                       src="/delete-icon.svg"
                       alt="Удалить"
@@ -136,10 +141,7 @@ const CrewMembersTable: React.FC<CrewMembersTableProps> = ({
                       height="20"
                     />
                   </button>
-                  <button
-                    className="update-button"
-                    onClick={() => onUpdate(member)}
-                  >
+                  <button onClick={() => onUpdate(member)}>
                     <img
                       src="/update-icon.svg"
                       alt="Обновить"
@@ -153,6 +155,14 @@ const CrewMembersTable: React.FC<CrewMembersTableProps> = ({
           ))}
         </tbody>
       </table>
+
+      {modalType === "update" && selectedMember && (
+        <ParticipantModal
+          participant={selectedMember}
+          type="update"
+          onClose={handleModalClose}
+        />
+      )}
     </div>
   );
 };

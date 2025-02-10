@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { API_URL } from "../../config";
 import { handleError } from "../errorHandler"; // Импортируем API_URL
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useDeleteRace = (ratingID: string, raceID: string) => {
   const [loading, setLoading] = useState<boolean>(false); // Для индикации загрузки
@@ -14,7 +15,7 @@ export const useDeleteRace = (ratingID: string, raceID: string) => {
     setSuccess(false);
 
     try {
-      await axios.delete(`${API_URL}/ratings/${ratingID}/races/${raceID}`);
+      await api.delete(`/ratings/${ratingID}/races/${raceID}`);
       setSuccess(true); // Успешное удаление
     } catch (err: any) {
       handleError(err, setError);

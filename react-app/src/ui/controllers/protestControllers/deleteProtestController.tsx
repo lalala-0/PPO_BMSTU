@@ -1,33 +1,27 @@
-import { useState } from "react";
 import axios from "axios";
 import { API_URL } from "../../config";
-import { handleError } from "../errorHandler";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
-export const useDeleteProtest = (
-  ratingID: string,
-  raceID: string,
-  protestID: string,
-) => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isDeleted, setIsDeleted] = useState<boolean>(false);
-
-  const deleteProtest = async () => {
-    setLoading(true);
-    setError(null);
-    setIsDeleted(false);
+export const useDeleteProtestController = () => {
+  const handleDelete = async (
+    ratingID: string,
+    raceID: string,
+    protestID: string,
+  ) => {
+    if (!ratingID || !raceID || !protestID) {
+      alert("Некорректные параметры для удаления протеста");
+      return;
+    }
 
     try {
-      await axios.delete(
-        `${API_URL}/ratings/${ratingID}/races/${raceID}/protests/${protestID}`,
+      await api.delete(
+        `/ratings/${ratingID}/races/${raceID}/protests/${protestID}`,
       );
-      setIsDeleted(true);
-    } catch (err: any) {
-      handleError(err, setError); // Обработка ошибок через централизованную функцию
-    } finally {
-      setLoading(false);
+      alert("Протест успешно удалён");
+    } catch (err) {
+      alert("Ошибка при удалении протеста");
     }
   };
 
-  return { deleteProtest, isDeleted, loading, error };
+  return { handleDelete };
 };

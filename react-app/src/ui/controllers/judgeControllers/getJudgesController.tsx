@@ -1,32 +1,31 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { API_URL } from "../../config";
-import { JudgeFilters, JudgeFormData } from "../../models/judgeModel";
-import { handleError } from "../errorHandler"; // Импортируем централизованную обработку ошибок
+import api from "../api"; // Импортируем API для запросов
+import { JudgeFormData } from "../../models/judgeModel";
 
-export const useGetJudges = (filters: JudgeFilters = {}) => {
+export const useGetJudges = () => {
   const [judges, setJudges] = useState<JudgeFormData[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchJudges = async () => {
     setLoading(true);
     setError(null);
-
     try {
-      const queryParams = new URLSearchParams(filters as any).toString();
-      const { data } = await axios.get(`${API_URL}/judges?${queryParams}`);
-      setJudges(data); // Сохраняем полученные данные судей
+      const { data } = await api.get<JudgeFormData[]>("/judges");
+      setJudges(data);
     } catch (err: any) {
-      handleError(err, setError); // Обработка ошибок через централизованную функцию
+      setError(err.message || "Ошибка при загрузке судей");
     } finally {
-      setLoading(false); // Завершаем процесс загрузки
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchJudges(); // Загружаем данные судей при изменении фильтров
-  }, [filters]);
+    if (judges.length === 0) {
+      // Выполняем запрос только если данные не загружены
+      fetchJudges();
+    }
+  }, [judges]); // Зависимость только от judges, чтобы запрос выполнялся один раз
 
   return { judges, loading, error, fetchJudges };
 };

@@ -6,6 +6,7 @@ import {
   ParticipantFormData,
 } from "../../models/participantModel";
 import { handleError } from "../errorHandler"; // Импортируем функцию для обработки ошибок
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useUpdateCrewMember = (
   ratingID: string,
@@ -21,8 +22,8 @@ export const useUpdateCrewMember = (
     setError(null);
 
     try {
-      const response = await axios.put<ParticipantFormData>(
-        `${API_URL}/ratings/${ratingID}/crews/${crewID}/members/${participantID}`,
+      const response = await api.put<ParticipantFormData>(
+        `/ratings/${ratingID}/crews/${crewID}/members/${participantID}`,
         data,
       );
       setData(response.data); // Сохраняем данные участника

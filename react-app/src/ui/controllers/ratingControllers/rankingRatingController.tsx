@@ -1,19 +1,17 @@
 // src/services/RatingService.ts
-import axios from "axios";
 import { Rating, RankingResponse } from "../../models/ratingModel";
-
-const BASE_URL = "/api/ratings";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const fetchRatingInfo = async (ratingID: string): Promise<Rating> => {
-  const response = await axios.get<Rating>(`${BASE_URL}/${ratingID}`);
+  const response = await api.get<Rating>(`/ratings/${ratingID}`);
   return response.data;
 };
 
 export const fetchRankingData = async (
   ratingID: string,
 ): Promise<RankingResponse> => {
-  const response = await axios.get<RankingResponse>(
-    `${BASE_URL}/${ratingID}/rankings`,
+  const response = await api.get<RankingResponse>(
+    `/ratings/${ratingID}/rankings`,
   );
   return response.data;
 };

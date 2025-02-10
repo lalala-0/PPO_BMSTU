@@ -73,10 +73,10 @@ func (p ParticipantService) UpdateParticipantByID(participantID uuid.UUID, fio s
 		return participant, err
 	}
 
-	if !validFIO(fio) || !validCategory(category) || !validBirthDay(birthDay) || !validFIO(coach) {
-		p.logger.Error("SERVICE: Invalid input data", "fio", fio, "category", category, "birthDate", birthDay, "coach", coach)
-		return participant, fmt.Errorf("SERVICE: Invalid input data")
-	}
+	//if !validFIO(fio) || !validCategory(category) || !validBirthDay(birthDay) || !validFIO(coach) {
+	//	p.logger.Error("SERVICE: Invalid input data", "fio", fio, "category", category, "birthDate", birthDay, "coach", coach)
+	//	return participant, fmt.Errorf("SERVICE: Invalid input data")
+	//}
 
 	participant.FIO = fio
 	participant.Category = category

@@ -1,9 +1,10 @@
 import { useState } from "react";
-import axios from "axios";
-import { API_URL } from "../../config";
-import { ParticipantFormData } from "../../models/participantModel";
-import { ParticipantFilters } from "../../models/participantModel";
+import {
+  ParticipantFormData,
+  ParticipantFilters,
+} from "../../models/participantModel";
 import { handleError } from "../errorHandler"; // Централизованная обработка ошибок
+import api from "../api"; // Импорт API с обработкой ошибок
 
 export const useGetAllParticipants = (filters: ParticipantFilters) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -16,22 +17,20 @@ export const useGetAllParticipants = (filters: ParticipantFilters) => {
     setParticipants([]);
 
     try {
-      const { fio, category, gender, birthday, coach } = filters;
-      const { data } = await axios.get<ParticipantFormData[]>(
-        `${API_URL}/participants`,
-        {
-          params: {
-            fio,
-            category,
-            gender,
-            birthday,
-            coach,
-          },
-        },
+      // Оставляем только те параметры, которые заданы (не `null` и не `undefined`)
+      const params = Object.fromEntries(
+        Object.entries(filters).filter(
+          ([_, value]) => value !== null && value !== undefined && value !== "",
+        ),
       );
+
+      const { data } = await api.get<ParticipantFormData[]>(`/participants`, {
+        params,
+      });
+
       setParticipants(data); // Сохраняем полученных участников
     } catch (err: any) {
-      handleError(err, setError); // Обработка ошибок через централизованную функцию
+      handleError(err, setError); // Обрабатываем ошибку
     } finally {
       setLoading(false); // Завершаем процесс загрузки
     }

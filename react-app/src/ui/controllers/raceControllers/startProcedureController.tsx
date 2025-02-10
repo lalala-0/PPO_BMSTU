@@ -3,6 +3,7 @@ import axios from "axios";
 import { StartInput } from "../../models/raceModel";
 import { API_URL } from "../../config";
 import { handleError } from "../errorHandler"; // Импортируем базовый URL API
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useStartProcedure = (ratingID: string, raceID: string) => {
   const [loading, setLoading] = useState<boolean>(false); // Для индикации загрузки
@@ -15,8 +16,8 @@ export const useStartProcedure = (ratingID: string, raceID: string) => {
     setSuccess(null);
 
     try {
-      const response = await axios.post(
-        `${API_URL}/ratings/${ratingID}/races/${raceID}/start`,
+      const response = await api.post(
+        `/ratings/${ratingID}/races/${raceID}/start`,
         input,
       );
       setSuccess(response.data || "Процедура старта успешно выполнена");

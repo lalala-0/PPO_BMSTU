@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useDeleteRatingController = () => {
   const handleDelete = async (id: string) => {
@@ -8,7 +8,7 @@ export const useDeleteRatingController = () => {
     }
 
     try {
-      await axios.delete(`/api/ratings/${id}/`);
+      await api.delete(`/ratings/${id}/`);
       alert("Рейтинг успешно удалён");
     } catch (err) {
       alert("Ошибка при удалении рейтинга");

@@ -42,12 +42,19 @@ const RatingView: React.FC = () => {
 
   return (
     <div style={{ padding: "20px" }}>
+      <h1>{`Рейтинг: ${ratingInfo.Name}`}</h1>
       <RatingTable rankingTable={rankingTable} races={races} />
       <div className="buttons-container">
-        <button onClick={handleCrewModalOpen}>Создать команду</button>
-        <button onClick={handleRaceModalOpen}>Создать гонку</button>
+        <button className="auth-required" onClick={handleCrewModalOpen}>
+          Создать команду
+        </button>
+        <button className="auth-required" onClick={handleRaceModalOpen}>
+          Создать гонку
+        </button>
       </div>
-      <button onClick={handleRatingModalOpen}>Обновить рейтинг</button>
+      <button className="auth-required" onClick={handleRatingModalOpen}>
+        Обновить рейтинг
+      </button>
 
       {isRatingModalOpen && currentRating && (
         <RatingModal

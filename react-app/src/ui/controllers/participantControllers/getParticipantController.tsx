@@ -3,6 +3,7 @@ import axios from "axios";
 import { API_URL } from "../../config";
 import { ParticipantFormData } from "../../models/participantModel";
 import { handleError } from "../errorHandler"; // Импортируем централизованную обработку ошибок
+import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useGetParticipant = (participantID: string) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -17,8 +18,8 @@ export const useGetParticipant = (participantID: string) => {
     setParticipant(null);
 
     try {
-      const { data } = await axios.get<ParticipantFormData>(
-        `${API_URL}/participants/${participantID}`,
+      const { data } = await api.get<ParticipantFormData>(
+        `/participants/${participantID}`,
       );
       setParticipant(data); // Сохраняем данные об участнике
     } catch (err: any) {

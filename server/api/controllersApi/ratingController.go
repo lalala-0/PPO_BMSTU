@@ -320,8 +320,9 @@ func (s *ServicesAPI) getRankingTable(c *gin.Context) {
 		})
 		return
 	}
+	crews, _ := s.Services.CrewService.GetCrewsDataByRatingID(ratingID)
 
-	resRankingTable := modelsViewApi.FromRatingTableLinesModelTiStringData(rankingTable)
+	resRankingTable := modelsViewApi.FromRatingTableLinesModelTiStringData(rankingTable, crews)
 
 	var resRaces []modelsViewApi.RaceInfo
 	for _, race := range races {

@@ -13,7 +13,7 @@ export interface RatingInput {
 }
 
 export interface RatingTableLine {
-  CrewID: string;
+  crewID: string;
   SailNum: number;
   ParticipantNames: string[];
   ParticipantBirthDates: string[];
