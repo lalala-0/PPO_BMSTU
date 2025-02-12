@@ -1,0 +1,39 @@
+# Используем официальный образ Go
+FROM golang:1.22-alpine as builder
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Копируем go.mod и go.sum
+COPY go.mod go.sum ./
+
+# Устанавливаем зависимости
+RUN go mod tidy
+
+# Копируем исходный код
+COPY . .
+
+# Строим сервер
+RUN go build -o app.out
+
+# Используем более легкий образ для конечного контейнера
+FROM alpine:latest
+
+# Устанавливаем рабочую директорию
+WORKDIR /root/
+
+# Создаем директорию для конфига и копируем его туда
+RUN mkdir -p /root/config
+COPY --from=builder /app/config/config_test.json /root/config/config_test.json
+
+# Создаем директорию для конфига и копируем его туда
+COPY --from=builder /app/server/ui/templates /root/server/ui/templates
+
+# Копируем бинарник с предыдущего этапа
+COPY --from=builder /app/app.out .
+
+# Открываем порт для приложения
+EXPOSE 8081
+
+# Запускаем сервер
+CMD ["./app.out"]

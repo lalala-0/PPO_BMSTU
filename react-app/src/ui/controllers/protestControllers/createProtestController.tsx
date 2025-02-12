@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
-import { API_URL } from "../../config";
+
+
 import { ProtestCreate } from "../../models/protestModel";
 import { ProtestFormData } from "../../models/protestModel";
 import { handleError } from "../errorHandler";

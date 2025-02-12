@@ -3,6 +3,8 @@
 npx prettier --check .
 npx prettier --write .
 
+Включить режим мобильного устройства (Ctrl + Shift + M в Chrome).
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

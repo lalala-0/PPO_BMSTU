@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+
 import { CrewFormData } from "../../models/crewModel";
 import { useParams } from "react-router-dom";
-import { API_URL } from "../../config";
+
 import { handleError } from "../errorHandler";
 import api from "../api";
 

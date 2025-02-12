@@ -1,8 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
 import { CrewInput } from "../../models/crewModel";
 import { useParams } from "react-router-dom";
-import api, { API_URL } from "../api";
+import api from "../api";
 import { handleError } from "../errorHandler"; // Импортируем функцию
 
 export const useCreateCrew = () => {

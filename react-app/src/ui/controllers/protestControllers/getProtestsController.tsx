@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { API_URL } from "../../config";
+
+
 import { ProtestFormData } from "../../models/protestModel";
 import { handleError } from "../errorHandler";
 import api from "../api"; // Импортируем функцию для обработки ошибок

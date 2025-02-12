@@ -1,0 +1,16 @@
+{
+  "dbConnectionFlags": {
+    "host": "localhost",
+    "user": "testuser",
+    "password": "testpassword",
+    "port": "5434",
+    "dbname": "testDB"
+  },
+
+  "mode" : "server",
+  "dbtype": "postgres",
+  "loglevel": "info",
+  "logfile" : "info.log",
+  "port": ":8081",
+  "address": "127.0.0.1"
+}

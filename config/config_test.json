@@ -1,9 +1,9 @@
 {
   "dbConnectionFlags": {
-    "host": "localhost",
+    "host": "postgres",
     "user": "testuser",
     "password": "testpassword",
-    "port": "5434",
+    "port": "5432",
     "dbname": "testDB"
   },
 

@@ -16,8 +16,8 @@ const StartProcedure: React.FC = () => {
   const { ratingInfo, loading: ratingLoading } = useGetRating();
   const { raceInfo, loading: raceLoading } = useGetRace();
   const { loading, error, success, startProcedure } = useStartProcedure(
-    ratingID!,
-    raceID!,
+      ratingID!,
+      raceID!,
   );
   const {
     loading: crewsLoading,
@@ -26,9 +26,16 @@ const StartProcedure: React.FC = () => {
     getCrewsByRatingID,
   } = useGetCrewsByRatingID();
 
-  const [specCircumstance, setSpecCircumstance] = useState<number>(0);
-  const [search, setSearch] = useState<string>("");
-  const [falseStartList, setFalseStartList] = useState<number[]>([]);
+  const [specCircumstance, setSpecCircumstance] = useState<number>(() => {
+    return parseInt(localStorage.getItem("specCircumstance") || "0", 10);
+  });
+  const [search, setSearch] = useState<string>(
+      localStorage.getItem("search") || ""
+  );
+  const [falseStartList, setFalseStartList] = useState<number[]>(() => {
+    const savedFalseStartList = localStorage.getItem("falseStartList");
+    return savedFalseStartList ? JSON.parse(savedFalseStartList) : [];
+  });
   const [availableCrews, setAvailableCrews] = useState<number[]>([]);
 
   useEffect(() => {
@@ -49,8 +56,20 @@ const StartProcedure: React.FC = () => {
     }
   }, [crews]);
 
+  useEffect(() => {
+    localStorage.setItem("specCircumstance", specCircumstance.toString());
+  }, [specCircumstance]);
+
+  useEffect(() => {
+    localStorage.setItem("search", search);
+  }, [search]);
+
+  useEffect(() => {
+    localStorage.setItem("falseStartList", JSON.stringify(falseStartList));
+  }, [falseStartList]);
+
   const handleSpecCircumstanceChange = (
-    e: React.ChangeEvent<HTMLSelectElement>,
+      e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setSpecCircumstance(parseInt(e.target.value));
   };
@@ -61,11 +80,9 @@ const StartProcedure: React.FC = () => {
 
   const toggleFalseStart = (yachtNumber: number) => {
     if (falseStartList.includes(yachtNumber)) {
-      // Убираем из списка фальстартов и возвращаем в доступные яхты
       setFalseStartList(falseStartList.filter((num) => num !== yachtNumber));
       setAvailableCrews([...availableCrews, yachtNumber]);
     } else {
-      // Убираем из доступных яхт и добавляем в фальстарты
       setAvailableCrews(availableCrews.filter((num) => num !== yachtNumber));
       setFalseStartList([...falseStartList, yachtNumber]);
     }
@@ -73,6 +90,9 @@ const StartProcedure: React.FC = () => {
 
   const handleSubmit = () => {
     startProcedure({ specCircumstance, falseStartList });
+    localStorage.removeItem("falseStartList");
+    localStorage.removeItem("search");
+    localStorage.removeItem("specCircumstance");
   };
 
   if (ratingLoading || raceLoading || crewsLoading)
@@ -83,71 +103,71 @@ const StartProcedure: React.FC = () => {
     return <p className="error">Ошибка загрузки яхт: {crewsError}</p>;
 
   return (
-    <div className="start-procedure">
-      <h2>
-        {ratingInfo.Name} - Гонка {raceInfo.number} - СТАРТ
-      </h2>
+      <div className="start-procedure">
+        <h2>
+          {ratingInfo.Name} - Гонка {raceInfo.number} - СТАРТ
+        </h2>
 
-      <label>
-        Наказание за фальшстарт:
-        <select
-          value={specCircumstance}
-          onChange={handleSpecCircumstanceChange}
-        >
-          {Object.entries(SpecCircumstanceMap).map(([key, value]) => (
-            <option key={key} value={key}>
-              {value}
-            </option>
-          ))}
-        </select>
-      </label>
+        <label>
+          Наказание за фальшстарт:
+          <select
+              value={specCircumstance}
+              onChange={handleSpecCircumstanceChange}
+          >
+            {Object.entries(SpecCircumstanceMap).map(([key, value]) => (
+                <option key={key} value={key}>
+                  {value}
+                </option>
+            ))}
+          </select>
+        </label>
 
-      <div className="finish-controls">
-        <div className="yacht-icons">
-          <label>
-            <input
-              type="text"
-              placeholder="Поиск по номеру яхты"
-              value={search}
-              onChange={handleSearchChange}
-              className="search-input"
-            />
-          </label>
-          {availableCrews
-            .filter((num) => num.toString().includes(search))
-            .map((num) => (
-              <div
-                key={num}
-                className="yacht-button"
-                onClick={() => toggleFalseStart(num)}
-              >
-                {num}
-              </div>
-            ))}
-        </div>
-        <div className="false-start-container">
-          <h3>Фальшстарты</h3>
-          <div className="false-start-area">
-            {falseStartList.map((num) => (
-              <div
-                key={num}
-                className="false-start-button"
-                onClick={() => toggleFalseStart(num)}
-              >
-                {num}
-              </div>
-            ))}
+        <div className="finish-controls">
+          <div className="yacht-icons">
+            <label>
+              <input
+                  type="text"
+                  placeholder="Поиск по номеру яхты"
+                  value={search}
+                  onChange={handleSearchChange}
+                  className="search-input"
+              />
+            </label>
+            {availableCrews
+                .filter((num) => num.toString().includes(search))
+                .map((num) => (
+                    <div
+                        key={num}
+                        className="yacht-button"
+                        onClick={() => toggleFalseStart(num)}
+                    >
+                      {num}
+                    </div>
+                ))}
+          </div>
+          <div className="false-start-container">
+            <h3>Фальшстарты</h3>
+            <div className="false-start-area">
+              {falseStartList.map((num) => (
+                  <div
+                      key={num}
+                      className="selected-yacht-button"
+                      onClick={() => toggleFalseStart(num)}
+                  >
+                    {num}
+                  </div>
+              ))}
+            </div>
           </div>
         </div>
+
+        <button onClick={handleSubmit} disabled={loading}>
+          Завершить стартовую процедуру
+        </button>
+
+        {error && <p className="error">Ошибка: {error}</p>}
+        {success && <p className="success">{success}</p>}
       </div>
-
-      <button onClick={handleSubmit} disabled={loading}>
-        Завершить стартовую процедуру
-      </button>
-
-      {error && <p className="error">Ошибка: {error}</p>}
-      {success && <p className="success">{success}</p>}
-    </div>
   );
 };
 

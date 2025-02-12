@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+
 import { RaceFormData } from "../../models/raceModel";
 import { useParams } from "react-router-dom";
-import { API_URL } from "../../config";
+
 import { handleError } from "../errorHandler";
 import api from "../api"; // Импортируем функцию для обработки ошибок
 

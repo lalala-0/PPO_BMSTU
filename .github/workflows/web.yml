@@ -3,10 +3,10 @@ name: Go CI
 on:
   push:
     branches:
-      - main
+      - main  # или другая ветка, которую вы используете
   pull_request:
     branches:
-      - main
+      - main  # или другая ветка, которую вы используете
 
 jobs:
   build:
@@ -16,45 +16,62 @@ jobs:
       - name: Проверка репозитория
         uses: actions/checkout@v2
 
-      # Установка зависимостей для Docker
       - name: Установка Docker
         run: |
           sudo apt-get update
+          sudo apt-get install -y \
+            ca-certificates \
+            curl \
+            gnupg \
+            lsb-release \
+            software-properties-common
+          
+          echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          sudo apt-get update
           sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose
 
-      # Сборка Docker образа
-      - name: Сборка Docker образа
-        run: docker build -t my-go-app .
-
-      # Установка Go
       - name: Установка Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.22.4'
+          go-version: '1.22.4'  # Укажите версию Go, которую вы хотите использовать
 
-      # Установка зависимостей Go
       - name: Установка зависимостей
         run: go mod tidy
 
-      # Линтинг и тесты
+      - name: Установка golangci-lint
+        run: |
+          curl -sSfL https://github.com/golangci/golangci-lint/releases/download/v1.62.2/golangci-lint-1.62.2-linux-amd64.tar.gz | tar -xzv -C /tmp
+          sudo mv /tmp/golangci-lint-1.62.2-linux-amd64/golangci-lint /usr/local/bin/
+
       - name: Запуск линтинга
         run: golangci-lint run ./...
 
-      - name: Запуск тестов
-        run: go test ./...
+      - name: Установка gotestsum
+        run: go install gotest.tools/gotestsum@latest
 
-      # Развертывание на хостинге или в облаке
-      - name: Развертывание в облаке (например, AWS)
-        run: |
-          aws ecs update-service --cluster my-cluster --service my-service --force-new-deployment
+      - name: Создание директории для Allure результатов
+        run: mkdir -p ./tests/allure-results
 
-      # Генерация отчета
-      - name: Генерация Allure отчета
-        run: allure generate ./tests/allure-results --clean -o ./allure-report
+      - name: Запуск Docker Compose для инициализации базы данных
+        run: docker-compose -f docker-compose2.yml up -d
 
-      # Публикация отчета
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
+      - name: Запуск unit тестов (репозитории и сервисы)
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests.xml" -- -parallel 5 ./tests/unit_tests/test_repository/... ./tests/unit_tests/test_service/...
+
+      - name: Запуск integration тестов репозиториев
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integration_tests_repo.xml" -- -parallel 1 ./tests/integration_tests/test_repository/...
+
+      - name: Запуск integration тестов сервисов
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_service.xml" -- -parallel 1 ./tests/integration_tests/test_service/...
+
+      - name: Запуск e2e теста + захват трафика
+        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_e2e.xml" -- -parallel 6 -count 19 ./tests/integration_tests/test_e2e/...
+
+      # Сборка Docker образа
+      - name: Сборка Docker образа
+        run:  docker-compose -f docker-composeWeb.yml build --no-cache
+
+      - name: Запуск контейнеров с сервером и UI
+        run: docker-compose -f docker-composeWeb.yml up -d
+

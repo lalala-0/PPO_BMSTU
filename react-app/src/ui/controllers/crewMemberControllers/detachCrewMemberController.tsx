@@ -1,7 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
+
 import { useParams } from "react-router-dom"; // Импортируем useParams
-import { API_URL } from "../../config";
+
 import { handleError } from "../errorHandler";
 import api from "../api"; // Импортируем функцию для обработки ошибок
 

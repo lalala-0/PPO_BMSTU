@@ -1,0 +1,32 @@
+# Используем более новую версию Node.js
+FROM node:20-alpine as build
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Копируем package.json и yarn.lock, если есть
+COPY package.json yarn.lock ./
+
+# Устанавливаем зависимости с помощью yarn
+RUN yarn install
+
+# Копируем исходный код
+COPY . .
+
+# Строим проект
+RUN DISABLE_ESLINT_PLUGIN=true yarn build
+
+# Используем nginx для сервировки статического контента
+FROM nginx:alpine
+
+# Копируем билд из предыдущего этапа в nginx
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Копируем конфигурацию nginx
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Открываем порт для сервера
+EXPOSE 80
+
+# Запускаем nginx
+CMD ["nginx", "-g", "daemon off;"]

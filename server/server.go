@@ -32,8 +32,8 @@ func RunServer(app *registry.App) (*gin.Engine, error) {
 	gin.SetMode(gin.DebugMode)
 
 	port := app.Config.Port
-	address := app.Config.Address
-	err := router.Run(address + port)
+	//address := app.Config.Address
+	err := router.Run(port)
 	return router, err
 }
 

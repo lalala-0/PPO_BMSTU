@@ -1,7 +1,5 @@
 // deleteCrewByID.ts
 import { useState } from "react";
-import axios from "axios";
-import { API_URL } from "../../config";
 import { handleError } from "../errorHandler";
 import { useParams } from "react-router-dom";
 import api from "../api"; // Импортируем функцию для обработки ошибок

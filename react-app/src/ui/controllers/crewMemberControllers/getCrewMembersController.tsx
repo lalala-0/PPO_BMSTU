@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
-import { API_URL } from "../../config";
+
+
 import { ParticipantFormData } from "../../models/participantModel";
 import { handleError } from "../errorHandler"; // Импортируем функцию для обработки ошибок
 import api from "../api"; // Импортируем функцию для обработки ошибок

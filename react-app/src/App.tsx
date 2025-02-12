@@ -11,88 +11,79 @@ import { isAuthenticated } from "./ui/controllers/autchControllers/isAutchentica
 import { logout } from "./ui/controllers/autchControllers/logout";
 import JudgeProfile from "./ui/view/judgeViews/profile";
 import JudgeDashboard from "./ui/view/judgeViews/dashboard";
+import OceanAnimation from "./ui/view/ocean";
 
 const Footer: React.FC = () => {
   return (
-    <footer style={footerStyle}>
-      {isAuthenticated() ? (
-        <>
-          <Link to="/judgeDashboard" style={bottonLinkStyle}>
-            Панель управления
-          </Link>
-          <Link to="/profile" style={bottonLinkStyle}>
-            Профиль
-          </Link>
-          <button
-            onClick={logout}
-            style={{
-              ...bottonLinkStyle,
-              border: "none",
-              background: "none",
-              cursor: "pointer",
-            }}
-          >
-            Выйти
-          </button>
-        </>
-      ) : (
-        <Link to="/login" style={bottonLinkStyle}>
-          Войти
-        </Link>
-      )}
-      <p>&copy; 2025, Все права защищены.</p>
-    </footer>
+      <footer style={footerStyle}>
+        {isAuthenticated() ? (
+            <>
+              <Link to="/judgeDashboard" style={bottonLinkStyle}>
+                Панель управления
+              </Link>
+              <Link to="/profile" style={bottonLinkStyle}>
+                Профиль
+              </Link>
+              <button
+                  onClick={logout}
+                  style={{
+                    ...bottonLinkStyle,
+                    border: "none",
+                    background: "none",
+                    cursor: "pointer",
+                  }}
+              >
+                Выйти
+              </button>
+            </>
+        ) : (
+            <Link to="/login" style={bottonLinkStyle}>
+              Войти
+            </Link>
+        )}
+        <p>&copy; 2025, Все права защищены.</p>
+      </footer>
   );
 };
 
 const App: React.FC = () => {
   useEffect(() => {
-    // Обновляем класс "authenticated" при загрузке приложения
     document.body.classList.toggle("authenticated", isAuthenticated());
   }, []);
+
   return (
-    <Router>
-      {/* Хедер с навигацией */}
-      <header style={headerStyle}>
-        <nav>
-          <Link to="/ratings" style={linkStyle}>
-            Список рейтингов
-          </Link>
-        </nav>
-      </header>
+      <Router>
+        <header style={headerStyle}>
+          <nav>
+            <Link to="/ratings" style={linkStyle}>
+              Список рейтингов
+            </Link>
+          </nav>
+        </header>
 
-      <Routes>
-        <Route path="/" element={<div>Добро пожаловать!</div>} />
-        <Route
-          path="/participants/:participantID"
-          element={<ParticipantView />}
-        />
-        <Route path="/profile" element={<JudgeProfile />} />
-        <Route path="/ratings" element={<GetRatingsView />} />
-        <Route path="/ratings/:ratingID" element={<RatingView />} />
-        <Route path="/ratings/:ratingID/races/:raceID" element={<RaceView />} />
-        <Route
-          path="/ratings/:ratingID/races/:raceID/startProcedure"
-          element={<StartProcedure />}
-        />
-        <Route
-          path="/ratings/:ratingID/races/:raceID/finishProcedure"
-          element={<FinishProcedure />}
-        />
-        <Route
-          path="/ratings/:ratingID/races/:raceID/protests/:protestID"
-          element={<ProtestView />}
-        />
-        <Route path="/ratings/:ratingID/crews/:crewID" element={<CrewView />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/judgeDashboard" element={<JudgeDashboard />} />
 
-        {/*<Route path="/api/ratings" element={<GetRatingsViewAPI />} />*/}
-        {/*<Route path="/api/ratings/:ratingID" element={<GetRatingViewAPI />} />*/}
-      </Routes>
+        <Routes>
+          <Route path="/" element={
+            <div>
+              <h1>Добро пожаловать!</h1>
+              <OceanAnimation />
+            </div>}
+          />
+          <Route path="/participants/:participantID" element={<ParticipantView />} />
+          <Route path="/profile" element={<JudgeProfile />} />
+          <Route path="/ratings" element={<GetRatingsView />} />
+          <Route path="/ratings/:ratingID" element={<RatingView />} />
+          <Route path="/ratings/:ratingID/races/:raceID" element={<RaceView />} />
+          <Route path="/ratings/:ratingID/races/:raceID/startProcedure" element={<StartProcedure />} />
+          <Route path="/ratings/:ratingID/races/:raceID/finishProcedure" element={<FinishProcedure />} />
+          <Route path="/ratings/:ratingID/races/:raceID/protests/:protestID" element={<ProtestView />} />
+          <Route path="/ratings/:ratingID/crews/:crewID" element={<CrewView />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/judgeDashboard" element={<JudgeDashboard />} />
+        </Routes>
 
-      <Footer />
-    </Router>
+        <Footer />
+      </Router>
   );
 };
 

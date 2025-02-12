@@ -119,4 +119,9 @@ https://ru.pinterest.com/vylegzhaninaalena/sailraces/
 
 ## Макет приложения в figma
 
+# Сборка докер образа
+```
+docker-compose -f docker-composeWeb.yml build --no-cache  
+docker-compose -f docker-composeWeb.yml up  
 
+```
