@@ -38,12 +38,12 @@ services:
     environment:
       - REACT_APP_API_URL=http://nginx:80/api
 
-  react-ui-test:
-    build:
-      context: ./react-app
-      dockerfile: DockerfileReactTests
-    networks:
-      - app-network
+#  react-ui-test:
+#    build:
+#      context: ./react-app
+#      dockerfile: DockerfileReactTests
+#    networks:
+#      - app-network
 
 networks:
   app-network:
