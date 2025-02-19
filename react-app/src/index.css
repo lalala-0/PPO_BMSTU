@@ -5,37 +5,9 @@
   padding: 20px;
 }
 
-/* Заголовок */
-header {
-  background-color: #282c34;
-  padding: 10px;
-  color: white;
-}
-
 /* Контент */
 main {
   margin-top: 20px;
-}
-
-/* Подвал */
-footer {
-  margin-top: 40px;
-  font-size: 14px;
-  color: #555;
-}
-
-/* Кнопки */
-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
 }
 
 .yacht-button {
@@ -66,15 +38,6 @@ button:hover {
   text-align: center;
   margin-top: 10px;
 }
-
-.error {
-  color: red;
-}
-
-.success {
-  color: green;
-}
-
 /* Гибкий контейнер с кнопками */
 .finish-controls {
   display: grid;
@@ -145,4 +108,208 @@ button:hover {
   .yacht-button {
     width: 100%;
   }
+}
+/* Основные стили */
+body {
+  font-family: "Spectral SC", serif;
+  background-color: #ffffff;
+  color: #000000;
+  margin: 0;
+  padding: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #e4e4e4;
+}
+
+th {
+  background-color: #d9d9d9;
+  color: #000000;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #cdddf4;
+}
+
+tr:nth-child(odd) {
+  background-color: #cddef5;
+}
+
+tr:hover {
+  background-color: #c7d5f5;
+}
+
+td {
+  background-color: #ffffff;
+}
+
+/* Контейнер для кнопок */
+.buttons-container {
+  display: flex;
+  justify-content: center; /* Центрирование кнопок по горизонтали */
+  gap: 10px; /* Отступы между кнопками */
+  margin-top: 20px; /* Отступ сверху */
+  margin-bottom: 20px; /* Отступ сверху */
+}
+
+/* Кнопки */
+button {
+  padding: 10px 20px;
+  background-color: #266793;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%; /* Ширина кнопки */
+  font-family: "Spectral SC", serif;
+  margin-top: 5px; /* Отступ сверху */
+  margin-bottom: 5px; /* Отступ сверху */
+}
+
+button:hover {
+  background-color: #1f5b74;
+}
+
+/* Специфическая стилизация для кнопки добавления нового рейтинга */
+.add-rating-button {
+  padding: 10px 20px;
+  background-color: #2a71a1;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 5px;
+  font-family: "Spectral SC", serif;
+  width: 100%; /* Ширина кнопки на всю ширину таблицы */
+  font-weight: bold;
+}
+
+.add-rating-button:hover {
+  background-color: #266793; /* Темнее при наведении */
+}
+
+/* По умолчанию скрываем кнопки, доступные только авторизованным пользователям */
+.auth-required {
+  display: none;
+}
+
+/* Когда пользователь авторизован, показываем скрытые кнопки */
+.authenticated .auth-required {
+  display: inline-block;
+}
+
+/* Поля фильтра */
+input[type="text"],
+input[type="number"],
+select {
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #c4d1d7;
+  border-radius: 4px;
+  width: 100%;
+  background-color: #cddef5;
+  box-sizing: border-box;
+  font-family: "Spectral SC", serif;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: #2a71a1;
+  outline: none;
+}
+
+/* Модальные окна */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+}
+
+.modal-content input[type="text"],
+.modal-content select,
+.modal-content input[type="number"] {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* Стили для поиска */
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: #2a71a1;
+  outline: none;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+}
+.error-message p {
+  margin: 0;
+}
+.error-message button {
+  background: none;
+  border: none;
+  color: #0056b3;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.footer {
+  background-color: #C5D1D7;
+  text-align: center;
+  padding: 40px 0;
+  width: 100%;
+}
+
+.footer-link {
+  color: #000000;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 25px;
+  font-family: "Spectral SC", serif;
+}
+
+.footer-button {
+  color: #000000;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 25px;
+  font-family: "Spectral SC", serif;
+  border: none;
+  background: none;
+  cursor: pointer;
 }

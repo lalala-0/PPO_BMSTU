@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 import { CrewInput, CrewFormData } from "../../models/crewModel";
 import { useCreateCrew } from "../../controllers/crewControllers/createCrewController";
 import { useUpdateCrew } from "../../controllers/crewControllers/updateCrewController";
+import ratingView from "../ratingViews/ratingView";
 
 interface CrewModalProps {
+  ratingID: string;
   crew: CrewFormData;
   type: "update" | "create";
   onClose: () => void;
 }
 
-const CrewModal: React.FC<CrewModalProps> = ({ crew, type, onClose }) => {
+const CrewModal: React.FC<CrewModalProps> = ({ ratingID, crew, type, onClose }) => {
   const [localCrew, setLocalCrew] = useState<CrewFormData>(crew); // Используем CrewInput для состояния
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // Состояние для отображения ошибки
   const { handleSubmit } = useCreateCrew();
@@ -41,9 +43,9 @@ const CrewModal: React.FC<CrewModalProps> = ({ crew, type, onClose }) => {
 
     try {
       if (type === "update") {
-        await handleUpdate(crew.id, crewData);
+        await handleUpdate(ratingID, crew.id, crewData);
       } else {
-        await handleSubmit(crewData);
+        await handleSubmit(ratingID, crewData);
       }
       onClose();
     } catch (error: any) {

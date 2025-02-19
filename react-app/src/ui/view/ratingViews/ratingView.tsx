@@ -6,7 +6,7 @@ import RatingModal from "./modalInputRating";
 import CrewModal from "../crewViews/modalInputCrew";
 import RaceModal from "../raceViews/modalInputRace";
 import { useGetRating } from "../../controllers/ratingControllers/getRatingController";
-import "../../styles/styles.css";
+
 
 const RatingView: React.FC = () => {
   const { ratingInfo, rankingTable, races, loading } = useGetRating();
@@ -66,6 +66,7 @@ const RatingView: React.FC = () => {
 
       {isCrewModalOpen && ratingID && (
         <CrewModal
+          ratingID={ratingID}
           crew={{ id: "", ratingId: ratingID, SailNum: 1, Class: "" }} // Передаем ratingID как строку
           type={"create"} // Передаем тип действия в CrewModal
           onClose={handleCrewModalClose}

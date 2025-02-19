@@ -16,6 +16,18 @@ jobs:
       - name: Проверка репозитория
         uses: actions/checkout@v2
 
+      - name: Установка Yarn
+        run: |
+          curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+          echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+          sudo apt-get update && sudo apt-get install yarn
+
+      - name: Установка зависимостей и запуск тестов для React
+        run: |
+          cd ./react-app
+          yarn install   # Установка зависимостей
+          yarn test      # Запуск тестов
+
       - name: Установка Docker
         run: |
           sudo apt-get update
@@ -27,13 +39,30 @@ jobs:
             software-properties-common
           
           echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - 
           sudo apt-get update
           sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose
 
-      # Сборка Docker образа
-      - name: Сборка Docker образа
-        run:  docker-compose -f docker-composeWeb.yml build --no-cache
+      - name: Логин в Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}  # Замените на ваш секрет
+          password: ${{ secrets.DOCKER_PASSWORD }}  # Замените на ваш секрет
 
-      - name: Запуск контейнеров с сервером и UI
-        run: docker-compose -f docker-composeWeb.yml up -d
+      - name: Сборка Docker образов
+        run: docker-compose -f docker-composeWeb.yml build --no-cache
+
+      # Отправка образов в Docker Hub
+      - name: Отправка образов в Docker Hub
+        run: |
+          # Отправляем образ для Go-сервера
+          docker tag ppo_bmstu-go-server:latest lalalala0/ppo_bmstu-go-server:latest
+          docker push lalalala0/ppo_bmstu-go-server:latest
+          
+          # Отправляем образ для React UI
+          docker tag ppo_bmstu-react-ui:latest lalalala0/ppo_bmstu-react-ui:latest
+          docker push lalalala0/ppo_bmstu-react-ui:latest
+
+          # Отправляем кастомный образ PostgreSQL
+          docker tag ppo_bmstu-postgres-db:latest lalalala0/ppo_bmstu-postgres-db:latest
+          docker push lalalala0/ppo_bmstu-postgres-db:latest

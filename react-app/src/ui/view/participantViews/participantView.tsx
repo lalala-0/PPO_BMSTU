@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetParticipant } from "../../controllers/participantControllers/getParticipantController";
 import ParticipantModal from "./modalInputParticipant";
-import "../../styles/styles.css";
+
 
 const ParticipantView: React.FC = () => {
   const { participantID } = useParams<{ participantID: string }>();

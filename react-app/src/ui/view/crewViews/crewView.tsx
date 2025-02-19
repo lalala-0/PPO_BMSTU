@@ -5,7 +5,7 @@ import CrewModal from "./modalInputCrew";
 import { useGetRating } from "../../controllers/ratingControllers/getRatingController";
 import { useGetCrew } from "../../controllers/crewControllers/getCrewController";
 import "../../controllers/crewControllers/updateCrewController";
-import "../../styles/styles.css";
+
 import AttachCrewMemberModal from "../participantViews/attachParticipantToCrew";
 
 const CrewView: React.FC = () => {
@@ -56,6 +56,7 @@ const CrewView: React.FC = () => {
 
       {isCrewModalOpen && crewID && (
         <CrewModal
+          ratingID={ratingID}
           crew={crewInfo}
           type="update"
           onClose={handleCrewModalClose}

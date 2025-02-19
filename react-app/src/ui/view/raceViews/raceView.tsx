@@ -4,7 +4,7 @@ import ProtestsTable from "./tableProtests"; // Таблица протесто�
 import RaceModal from "./modalInputRace"; // Модальное окно для обновления информации о гонке
 import { useGetRating } from "../../controllers/ratingControllers/getRatingController";
 import { useGetRace } from "../../controllers/raceControllers/getRaceController";
-import "../../styles/styles.css";
+
 
 const RaceView: React.FC = () => {
   const { ratingID, raceID } = useParams<{

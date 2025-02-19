@@ -73,7 +73,7 @@ const CrewMembersTable: React.FC<CrewMembersTableProps> = ({
       window.confirm("Вы уверены, что хотите удалить участника из команды?")
     ) {
       try {
-        await detachCrewMember(id);
+        await detachCrewMember(ratingID, crewID, id);
         getCrewMembers(); // Обновляем список после удаления
       } catch (err) {
         alert("Ошибка при удалении участника");

@@ -33,7 +33,7 @@ const RatingTable: React.FC<RatingTableProps> = ({ rankingTable, races }) => {
     const CrewID = crewToDelete.crewID;
 
     try {
-      await deleteCrewController.deleteCrewByID(CrewID);
+      await deleteCrewController.deleteCrewByID(ratingID || '', CrewID);
       const updatedTable = tableData.filter((line) => line.SailNum !== sailNum);
       setTableData(updatedTable);
     } catch (err) {

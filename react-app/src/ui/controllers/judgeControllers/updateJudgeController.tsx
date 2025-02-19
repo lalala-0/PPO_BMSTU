@@ -1,6 +1,4 @@
 import { useState } from "react";
-
-
 import { JudgeInput, JudgeFormData } from "../../models/judgeModel"; // Импортируйте типы
 import { handleError } from "../errorHandler"; // Импортируем централизованную обработку ошибок
 import api from "../api"; // Импортируем функцию для обработки ошибок

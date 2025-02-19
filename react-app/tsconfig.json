@@ -5,17 +5,22 @@
     "types": ["vitest/globals"],
     "allowJs": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext", // Установите esnext для поддержки import/export
     "moduleResolution": "node",
-    "resolveJsonModule": true,
     "isolatedModules": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "noEmit": false, // Уберите noEmit, чтобы TypeScript генерировал файлы
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "./src",  // Чтобы не прописывать пути относительно корня проекта
+    "paths": {
+      "../api": ["./ui/controllers/api.ts"],
+      "../errorHandler": ["./ui/controllers/errorHandler.ts"]
+    }
   },
   "include": ["src", "node_modules/vitest/globals.d.ts"]
 }

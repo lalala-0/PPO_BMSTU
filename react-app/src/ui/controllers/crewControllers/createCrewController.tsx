@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { CrewInput } from "../../models/crewModel";
-import { useParams } from "react-router-dom";
 import api from "../api";
 import { handleError } from "../errorHandler"; // Импортируем функцию
 
 export const useCreateCrew = () => {
-  const { ratingID } = useParams<{ ratingID: string }>();
   const [input, setInput] = useState<CrewInput>({ sailNum: 0 }); // Инициализация данных для создания команды
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -19,15 +17,15 @@ export const useCreateCrew = () => {
     }));
   };
 
-  const handleSubmit = async (updatedData: CrewInput) => {
+  const handleSubmit = async (ratingID: string, updatedData: CrewInput) => {
     setLoading(true);
     setSuccess(null);
     setError(null);
 
     try {
       const response = await api.post(
-        `/ratings/${ratingID}/crews`,
-        updatedData,
+          `/ratings/${ratingID}/crews`,
+          updatedData
       ); // Отправляем запрос на создание
       setSuccess("Команда успешно создана");
       setInput({ sailNum: 0 }); // Сброс после успешного создания

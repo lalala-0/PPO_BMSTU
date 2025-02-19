@@ -5,7 +5,7 @@ import RatingModal from "./modalInputRating";
 import Filters from "../filters";
 import { useDeleteRatingController } from "../../controllers/ratingControllers/deleteRatingController";
 import { Rating } from "../../models/ratingModel";
-import "../../styles/styles.css";
+
 
 const RatingsContainer = () => {
   const [ratings, setRatings] = useState<Rating[]>([]);

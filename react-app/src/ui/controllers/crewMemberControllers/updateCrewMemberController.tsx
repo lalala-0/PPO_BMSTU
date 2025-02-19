@@ -1,6 +1,4 @@
 import { useState } from "react";
-
-
 import {
   ParticipantInput,
   ParticipantFormData,
@@ -9,15 +7,16 @@ import { handleError } from "../errorHandler"; // Импортируем фун�
 import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useUpdateCrewMember = (
-  ratingID: string,
-  crewID: string,
-  participantID: string,
 ) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ParticipantFormData | null>(null);
 
-  const updateCrewMember = async (data: ParticipantInput) => {
+  const updateCrewMember = async (
+      ratingID: string,
+      crewID: string,
+      participantID: string,
+      data: ParticipantInput) => {
     setLoading(true);
     setError(null);
 

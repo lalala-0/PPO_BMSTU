@@ -4,15 +4,12 @@ import { handleError } from "../errorHandler";
 import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useGetCrewMember = (
-  ratingID: string,
-  crewID: string,
-  participantID: string,
 ) => {
   const [data, setData] = useState<ParticipantFormData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getCrewMember = async () => {
+  const getCrewMember = async (  ratingID: string, crewID: string, participantID: string) => {
     setLoading(true);
     setError(null);
 

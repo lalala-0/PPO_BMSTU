@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Rating } from "../../models/ratingModel";
 
+
 interface RatingsTableProps {
   ratings: Rating[];
   onDelete: (id: string) => void;

@@ -1,20 +1,13 @@
 import { useState } from "react";
-
-import { useParams } from "react-router-dom"; // Импортируем useParams
-
 import { handleError } from "../errorHandler";
 import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useDetachCrewMember = () => {
-  const { ratingID, crewID } = useParams<{
-    ratingID: string;
-    crewID: string;
-  }>(); // Получаем параметры из URL
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const detachCrewMember = async (participantID: string) => {
+  const detachCrewMember = async (ratingID: string, crewID: string, participantID: string) => {
     if (!ratingID || !crewID || !participantID) {
       setError("Недостаточно данных для выполнения запроса");
       return;

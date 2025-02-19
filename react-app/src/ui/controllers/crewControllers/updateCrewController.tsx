@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { CrewInput } from "../../models/crewModel";
-import { useParams } from "react-router-dom";
 import { handleError } from "../errorHandler";
 import api from "../api";
 
 export const useUpdateCrew = () => {
-  const { ratingID } = useParams<{ ratingID: string }>();
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleUpdate = async (crewID: string, updatedData: CrewInput) => {
+  const handleUpdate = async (ratingID: string, crewID: string, updatedData: CrewInput) => {
     setLoading(true);
     setSuccess(null);
     setError(null);

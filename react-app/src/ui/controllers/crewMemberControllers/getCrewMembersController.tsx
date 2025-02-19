@@ -1,6 +1,4 @@
 import { useState } from "react";
-
-
 import { ParticipantFormData } from "../../models/participantModel";
 import { handleError } from "../errorHandler"; // Импортируем функцию для обработки ошибок
 import api from "../api"; // Импортируем функцию для обработки ошибок
