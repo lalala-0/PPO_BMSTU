@@ -1,36 +1,30 @@
 version: "3.8"
 
 services:
-  postgres:
-    image: lalalala0/ppo_bmstu-postgres-db:latest  # Используем кастомный образ PostgreSQL
+  postgres-db:
+    build: ./db  # Указываем путь к Dockerfile
     environment:
-      POSTGRES_USER: testuser          # Имя пользователя
-      POSTGRES_DB: testDB             # Имя базы данных
+      POSTGRES_USER: testuser
+      POSTGRES_DB: testDB
       POSTGRES_PASSWORD: testpassword
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "5434:5432"                   # Порт
-    volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql # Монтируем файл init.sql
-      - ./db/data/:/docker-entrypoint-initdb.d/data/        # Директория с CSV-файлами
-      - ./db/load_data.sql:/docker-entrypoint-initdb.d/load_data.sql  # Скрипт загрузки данных
+      - "5434:5432"
     networks:
       - app-network
 
   go-server:
-    image: lalalala0/ppo_bmstu-go-server:latest  # Используем кастомный образ
     build:
       context: .
       dockerfile: DockerfileGO  # Указываем конкретный Dockerfile для Go-сервера
     depends_on:
-      - postgres
+      - postgres-db
     ports:
       - "8081:8081"
     networks:
       - app-network
 
   react-ui:
-    image: lalalala0/ppo_bmstu-react-ui:latest  # Используем кастомный образ
     build:
       context: ./react-app
       dockerfile: DockerfileReact
@@ -40,6 +34,13 @@ services:
       - app-network
     environment:
       - REACT_APP_API_URL=http://nginx:80/api
+
+#  react-ui-test:
+#    build:
+#      context: ./react-app
+#      dockerfile: DockerfileReactTests
+#    networks:
+#      - app-network
 
 networks:
   app-network:
