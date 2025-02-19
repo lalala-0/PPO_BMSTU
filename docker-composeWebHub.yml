@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   postgres:
-    build: ./db  # Указываем путь к Dockerfile
+    image: lalalala0/ppo_bmstu-postgres-db:latest  # Используем образ из Docker Hub
     environment:
       POSTGRES_USER: testuser
       POSTGRES_DB: testDB
@@ -14,9 +14,7 @@ services:
       - app-network
 
   go-server:
-    build:
-      context: .
-      dockerfile: DockerfileGO  # Указываем конкретный Dockerfile для Go-сервера
+    image: lalalala0/ppo_bmstu-go-server:latest  # Используем образ из Docker Hub
     depends_on:
       - postgres
     ports:
@@ -25,22 +23,13 @@ services:
       - app-network
 
   react-ui:
-    build:
-      context: ./react-app
-      dockerfile: DockerfileReact
+    image: lalalala0/ppo_bmstu-react-ui:latest  # Используем образ из Docker Hub
     ports:
       - "3001:80"
     networks:
       - app-network
     environment:
-      - REACT_APP_API_URL=http://nginx:80/api
-
-#  react-ui-test:
-#    build:
-#      context: ./react-app
-#      dockerfile: DockerfileReactTests
-#    networks:
-#      - app-network
+      - REACT_APP_API_URL=http://go-server:8081/api
 
 networks:
   app-network:
