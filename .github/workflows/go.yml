@@ -1,110 +1,110 @@
-name: Go CI
-
-on:
-  push:
-    branches:
-      - main  # или другая ветка, которую вы используете
-  pull_request:
-    branches:
-      - main  # или другая ветка, которую вы используете
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Проверка репозитория
-        uses: actions/checkout@v2
-
-      - name: Установка Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            ca-certificates \
-            curl \
-            gnupg \
-            lsb-release \
-            software-properties-common
-          
-          echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-          sudo apt-get update
-          sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose
-
-      - name: Установка Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: '1.22.4'  # Укажите версию Go, которую вы хотите использовать
-
-      - name: Установка зависимостей
-        run: go mod tidy
-
-      - name: Установка golangci-lint
-        run: |
-          curl -sSfL https://github.com/golangci/golangci-lint/releases/download/v1.62.2/golangci-lint-1.62.2-linux-amd64.tar.gz | tar -xzv -C /tmp
-          sudo mv /tmp/golangci-lint-1.62.2-linux-amd64/golangci-lint /usr/local/bin/
-
-      - name: Запуск линтинга
-        run: golangci-lint run ./...
-
-      - name: Установка gotestsum
-        run: go install gotest.tools/gotestsum@latest
-
-      - name: Создание директории для Allure результатов
-        run: mkdir -p ./tests/allure-results
-
-      - name: Запуск Docker Compose для инициализации базы данных
-        run: docker-compose -f docker-compose2.yml up -d
-
-      - name: Запуск unit тестов (репозитории и сервисы)
-        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests.xml" -- -parallel 5 ./tests/unit_tests/test_repository/... ./tests/unit_tests/test_service/...
-
-      - name: Запуск integration тестов репозиториев
-        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integration_tests_repo.xml" -- -parallel 1 ./tests/integration_tests/test_repository/...
-
-      - name: Запуск integration тестов сервисов
-        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_service.xml" -- -parallel 1 ./tests/integration_tests/test_service/...
-
-      - name: Запуск e2e теста + захват трафика
-        run: |
-          # Установка директории для артефактов
-          mkdir -p artifacts
-          # Запуск tcpdump с таймаутом
-          echo "Starting tcpdump..."
-          sudo timeout 10s tcpdump -i any -w artifacts/traffic.pcap &
-          # Запуск тестов
-          gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_e2e.xml" -- -parallel 6 -count 19 ./tests/integration_tests/test_e2e/...
-          # Ожидание завершения tcpdump
-          wait
-          # Вывод информации о захваченном трафике
-          echo "TCPDUMP LOG:"
-          tcpdump -r artifacts/traffic.pcap -n -A
-
-      - name: Upload traffic artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: traffic-pcap
-          path: artifacts/traffic.pcap
-
-      - name: Upload test reports artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-reports
-          path: ./tests/allure-results/*
-
-      # Установка Allure для генерации отчетов
-      - name: Установка Allure
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-      - run: npm install -g allure-commandline --save-dev
-
-      - name: Генерация Allure отчета
-        run: allure generate ./tests/allure-results --clean -o ./allure-report
-
-      # Публикация отчета в GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
+#name: Go CI
+#
+#on:
+#  push:
+#    branches:
+#      - main  # или другая ветка, которую вы используете
+#  pull_request:
+#    branches:
+#      - main  # или другая ветка, которую вы используете
+#
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Проверка репозитория
+#        uses: actions/checkout@v2
+#
+#      - name: Установка Docker
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y \
+#            ca-certificates \
+#            curl \
+#            gnupg \
+#            lsb-release \
+#            software-properties-common
+#
+#          echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+#          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+#          sudo apt-get update
+#          sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose
+#
+#      - name: Установка Go
+#        uses: actions/setup-go@v2
+#        with:
+#          go-version: '1.22.4'  # Укажите версию Go, которую вы хотите использовать
+#
+#      - name: Установка зависимостей
+#        run: go mod tidy
+#
+#      - name: Установка golangci-lint
+#        run: |
+#          curl -sSfL https://github.com/golangci/golangci-lint/releases/download/v1.62.2/golangci-lint-1.62.2-linux-amd64.tar.gz | tar -xzv -C /tmp
+#          sudo mv /tmp/golangci-lint-1.62.2-linux-amd64/golangci-lint /usr/local/bin/
+#
+#      - name: Запуск линтинга
+#        run: golangci-lint run ./...
+#
+#      - name: Установка gotestsum
+#        run: go install gotest.tools/gotestsum@latest
+#
+#      - name: Создание директории для Allure результатов
+#        run: mkdir -p ./tests/allure-results
+#
+#      - name: Запуск Docker Compose для инициализации базы данных
+#        run: docker-compose -f docker-compose2.yml up -d
+#
+#      - name: Запуск unit тестов (репозитории и сервисы)
+#        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/unit_tests.xml" -- -parallel 5 ./tests/unit_tests/test_repository/... ./tests/unit_tests/test_service/...
+#
+#      - name: Запуск integration тестов репозиториев
+#        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integration_tests_repo.xml" -- -parallel 1 ./tests/integration_tests/test_repository/...
+#
+#      - name: Запуск integration тестов сервисов
+#        run: gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_service.xml" -- -parallel 1 ./tests/integration_tests/test_service/...
+#
+#      - name: Запуск e2e теста + захват трафика
+#        run: |
+#          # Установка директории для артефактов
+#          mkdir -p artifacts
+#          # Запуск tcpdump с таймаутом
+#          echo "Starting tcpdump..."
+#          sudo timeout 10s tcpdump -i any -w artifacts/traffic.pcap &
+#          # Запуск тестов
+#          gotestsum --format=standard-quiet --junitfile="./tests/allure-results/integrationt_tests_e2e.xml" -- -parallel 6 -count 19 ./tests/integration_tests/test_e2e/...
+#          # Ожидание завершения tcpdump
+#          wait
+#          # Вывод информации о захваченном трафике
+#          echo "TCPDUMP LOG:"
+#          tcpdump -r artifacts/traffic.pcap -n -A
+#
+#      - name: Upload traffic artifact
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: traffic-pcap
+#          path: artifacts/traffic.pcap
+#
+#      - name: Upload test reports artifact
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: test-reports
+#          path: ./tests/allure-results/*
+#
+#      # Установка Allure для генерации отчетов
+#      - name: Установка Allure
+#        uses: actions/setup-node@v2
+#        with:
+#          node-version: '16'
+#      - run: npm install -g allure-commandline --save-dev
+#
+#      - name: Генерация Allure отчета
+#        run: allure generate ./tests/allure-results --clean -o ./allure-report
+#
+#      # Публикация отчета в GitHub Pages
+#      - name: Deploy to GitHub Pages
+#        uses: peaceiris/actions-gh-pages@v3
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          publish_dir: ./allure-report
