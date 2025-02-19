@@ -26,13 +26,8 @@ jobs:
         run: |
           cd ./react-app
           yarn install   # Установка зависимостей
-
-#      - name: Запуск линтинга для React
-#        run: |
-#          yarn lint      # Запуск тестов
-
-      - name: Запуск тестов для React
-        run: yarn test      # Запуск тестов
+          yarn test      # Запуск тестов
+      #   yarn lint      # Запуск тестов
 
       - name: Установка Docker
         run: |
