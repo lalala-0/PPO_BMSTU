@@ -60,13 +60,10 @@ jobs:
       - name: Отправка образов в Docker Hub
         run: |
           # Отправляем образ для Go-сервера
-          docker tag ppo_bmstu-go-server:latest lalalala0/ppo_bmstu-go-server:latest
-          docker push lalalala0/ppo_bmstu-go-server:latest
+          docker push ***/ppo_bmstu-go-server:latest
           
           # Отправляем образ для React UI
-          docker tag ppo_bmstu-react-ui:latest lalalala0/ppo_bmstu-react-ui:latest
-          docker push lalalala0/ppo_bmstu-react-ui:latest
-
+          docker push ***/ppo_bmstu-react-ui:latest
+      
           # Отправляем кастомный образ PostgreSQL
-          docker tag ppo_bmstu-postgres-db:latest lalalala0/ppo_bmstu-postgres-db:latest
-          docker push lalalala0/ppo_bmstu-postgres-db:latest
+          docker push ***/ppo_bmstu-postgres-db:latest
