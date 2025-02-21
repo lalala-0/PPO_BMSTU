@@ -18,9 +18,6 @@ const ParticipantTable: React.FC = () => {
 
   const {
     deleteParticipant,
-    loading: loadingDelete,
-    error: deleteError,
-    success: deleteSuccess,
   } = useDeleteParticipant(); // Хук для удаления
 
   // Фильтры
@@ -58,7 +55,7 @@ const ParticipantTable: React.FC = () => {
       try {
         deleteParticipant(id);
         getParticipants(); // Обновляем список после удаления
-      } catch (err) {
+      } catch {
         alert("Ошибка при удалении участника");
       }
     }
@@ -94,16 +91,16 @@ const ParticipantTable: React.FC = () => {
     <div>
       {/* Таблица участников */}
       <h2>Участники</h2>
-      <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-        <table>
+      <div className={"tableContent"}>
+        <table >
           <thead>
             <tr>
-              <th style={{ position: "sticky", top: 0 }}>ФИО</th>
-              <th style={{ position: "sticky", top: 0 }}>Категория</th>
-              <th style={{ position: "sticky", top: 0 }}>Пол</th>
-              <th style={{ position: "sticky", top: 0 }}>Дата рождения</th>
-              <th style={{ position: "sticky", top: 0 }}>Тренер</th>
-              <th style={{ position: "sticky", top: 0 }}>Действия</th>
+              <th className={"stickyHeader"}>ФИО</th>
+              <th className={"stickyHeader"}>Категория</th>
+              <th className={"stickyHeader"}>Пол</th>
+              <th className={"stickyHeader"}>Дата рождения</th>
+              <th className={"stickyHeader"}>Тренер</th>
+              <th className={"stickyHeader"}>Действия</th>
             </tr>
             <tr>
               <th>

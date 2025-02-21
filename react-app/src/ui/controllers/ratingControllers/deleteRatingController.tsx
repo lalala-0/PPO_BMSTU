@@ -10,7 +10,7 @@ export const useDeleteRatingController = () => {
     try {
       await api.delete(`/ratings/${id}/`);
       alert("Рейтинг успешно удалён");
-    } catch (err) {
+    } catch {
       alert("Ошибка при удалении рейтинга");
     }
   };

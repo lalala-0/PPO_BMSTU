@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ProtestInput, StatusMap } from "../../models/protestModel";
+import { ProtestInput } from "../../models/protestModel";
 import { useUpdateProtest } from "../../controllers/protestControllers/updateProtestController";
 
 interface UpdateProtestModalProps {

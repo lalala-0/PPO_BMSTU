@@ -75,7 +75,7 @@ const CrewMembersTable: React.FC<CrewMembersTableProps> = ({
       try {
         await detachCrewMember(ratingID, crewID, id);
         getCrewMembers(); // Обновляем список после удаления
-      } catch (err) {
+      } catch {
         alert("Ошибка при удалении участника");
       }
     }

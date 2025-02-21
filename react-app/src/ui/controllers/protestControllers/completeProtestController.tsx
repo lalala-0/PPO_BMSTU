@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import { ProtestFormData, ProtestComplete } from "../../models/protestModel";
 import { handleError } from "../errorHandler";
+import api from "../api";
 
 export const useCompleteProtest = () => {
   const { ratingID, raceID, protestID } = useParams<{
@@ -32,7 +32,7 @@ export const useCompleteProtest = () => {
     setProtestData(null);
 
     try {
-      const response = await axios.patch<ProtestFormData>(
+      const response = await api.post(
         `/ratings/${ratingID}/races/${raceID}/protests/${protestID}/complete`,
         protestCompleteData,
       );

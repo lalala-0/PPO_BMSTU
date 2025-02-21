@@ -2,6 +2,7 @@ import api from "../api"; // Путь к твоему мокированному
 import { act } from "react-dom/test-utils";
 import { render } from "@testing-library/react";
 import {useGetCrewsByRatingID} from "../../ui/controllers/crewControllers/getCrewsController";
+import React from "react";
 
 // Мокаем api.get
 jest.mock("../api");

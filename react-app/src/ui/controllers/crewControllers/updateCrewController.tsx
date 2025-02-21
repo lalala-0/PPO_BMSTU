@@ -14,7 +14,7 @@ export const useUpdateCrew = () => {
     setError(null);
 
     try {
-      const response = await api.put(
+      await api.put(
         `/ratings/${ratingID}/crews/${crewID}`,
         updatedData,
       );

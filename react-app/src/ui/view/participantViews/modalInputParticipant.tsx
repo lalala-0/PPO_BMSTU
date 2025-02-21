@@ -26,8 +26,8 @@ const ParticipantModal: React.FC<ParticipantModalProps> = ({
     birthday: participant.Birthday,
     coach: participant.Coach,
   });
-  const { createParticipant, loading: creating } = useCreateParticipant();
-  const { updateParticipant, loading: updating } = useUpdateParticipant(
+  const { createParticipant } = useCreateParticipant();
+  const { updateParticipant } = useUpdateParticipant(
     participant.id,
   );
 

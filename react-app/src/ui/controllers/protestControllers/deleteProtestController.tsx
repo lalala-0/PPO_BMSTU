@@ -18,7 +18,7 @@ export const useDeleteProtestController = () => {
         `/ratings/${ratingID}/races/${raceID}/protests/${protestID}`,
       );
       alert("Протест успешно удалён");
-    } catch (err) {
+    } catch {
       alert("Ошибка при удалении протеста");
     }
   };

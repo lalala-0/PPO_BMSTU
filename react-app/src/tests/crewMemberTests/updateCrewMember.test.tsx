@@ -2,6 +2,7 @@ import { render, act, screen } from "@testing-library/react";
 import { useUpdateCrewMember } from "../../ui/controllers/crewMemberControllers/updateCrewMemberController";
 import api from "../api";
 import {ParticipantFormData, ParticipantInput} from "../../ui/models/participantModel";
+import React from "react";
 
 // Компонент-обертка для тестирования хука
 const UpdateCrewMemberWrapper = ({

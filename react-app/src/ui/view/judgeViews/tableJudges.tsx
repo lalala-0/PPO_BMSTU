@@ -18,9 +18,6 @@ const JudgeTable: React.FC = () => {
   } = useGetJudges();
   const {
     deleteJudge,
-    loading: loadingDelete,
-    error: deleteError,
-    success: deleteSuccess,
   } = useDeleteJudge(); // Хук для удаления судьи
 
   const [fioFilter, setFioFilter] = useState("");
@@ -53,7 +50,7 @@ const JudgeTable: React.FC = () => {
     if (window.confirm("Вы уверены, что хотите удалить судью?")) {
       try {
         deleteJudge(id);
-      } catch (err) {
+      } catch  {
         alert("Ошибка при удалении судьи");
       }
     }
@@ -76,15 +73,15 @@ const JudgeTable: React.FC = () => {
     <div>
       {/* Таблица судей */}
       <h2>Судьи</h2>
-      <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+      <div className={"tableContent"}>
         <table>
           <thead>
             <tr>
-              <th style={{ position: "sticky", top: 0 }}>ФИО</th>
-              <th style={{ position: "sticky", top: 0 }}>Логин</th>
-              <th style={{ position: "sticky", top: 0 }}>Роль</th>
-              <th style={{ position: "sticky", top: 0 }}>Должность</th>
-              <th style={{ position: "sticky", top: 0 }}>Действия</th>
+              <th className={"stickyHeader"}>ФИО</th>
+              <th className={"stickyHeader"}>Логин</th>
+              <th className={"stickyHeader"}>Роль</th>
+              <th className={"stickyHeader"}>Должность</th>
+              <th className={"stickyHeader"}>Действия</th>
             </tr>
             <tr>
               <th>

@@ -2,6 +2,7 @@ import { render, act, screen } from "@testing-library/react";
 import { useCreateJudge } from "../../ui/controllers/judgeControllers/createJudgeController";
 import api from "../api";
 import {JudgeInput} from "../../ui/models/judgeModel";
+import React from "react";
 
 // Компонент-обертка для тестирования хука
 const CreateJudgeWrapper = ({ judgeData }: { judgeData: JudgeInput }) => {

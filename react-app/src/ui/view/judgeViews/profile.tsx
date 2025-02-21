@@ -31,11 +31,6 @@ const JudgeProfile: React.FC = () => {
     setIsModalOpen(true); // Открываем модальное окно для обновления информации
   };
 
-  const handleCreate = () => {
-    setModalType("create");
-    setIsModalOpen(true); // Открываем модальное окно для создания нового судьи
-  };
-
   const handleCloseModal = () => {
     setIsModalOpen(false); // Закрываем модальное окно
   };

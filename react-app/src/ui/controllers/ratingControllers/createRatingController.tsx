@@ -1,7 +1,6 @@
-import api from "../api"; // Импортируем функцию для обработки ошибок
 import { useState } from "react";
-import axios from "axios";
-import { RatingInput } from "../../models/ratingModel";
+import api from "../api"; // Импортируем свой API
+import { RatingInput } from "../../models/ratingModel"; // Импортируем модель данных
 
 export const useCreateRatingController = () => {
   const [input, setInput] = useState<RatingInput>({
@@ -13,7 +12,7 @@ export const useCreateRatingController = () => {
   const [loading, setLoading] = useState<boolean>(false); // Для индикации загрузки
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+      e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setInput((prevInput) => ({
@@ -27,29 +26,28 @@ export const useCreateRatingController = () => {
     setSuccess(null);
 
     try {
-      await api.post("/ratings/", updatedData); // Передаем обновленные данные
+      console.log("Submitting data:", updatedData); // Логируем отправляемые данные для дебага
+      const response = await api.post("/ratings/", updatedData); // Передаем обновленные данные
+      console.log("Server response:", response); // Логируем ответ от сервера
+
       setSuccess("Рейтинг успешно создан");
-      setInput({ name: "", class: 1, blowout_cnt: 0 });
+      setInput({ name: "", class: 1, blowout_cnt: 0 }); // Сброс состояния после успешного создания
     } catch (err: any) {
-      if (axios.isAxiosError(err)) {
-        if (err.response) {
-          // Ошибки от сервера (HTTP 4xx или 5xx)
-          const serverMessage =
+      // Стандартная обработка ошибок
+      if (err?.response) {
+        // Ошибки от сервера (HTTP 4xx или 5xx)
+        const serverMessage =
             err.response.data?.message || "Неизвестная ошибка от сервера";
-          alert(`Ошибка: ${serverMessage} (код: ${err.response.status})`);
-        } else if (err.request) {
-          // Проблемы с сетью
-          alert("Ошибка сети. Проверьте подключение к интернету.");
-        } else {
-          // Ошибка при настройке запроса
-          alert(`Ошибка запроса: ${err.message}`);
-        }
+        alert(`Ошибка: ${serverMessage} (код: ${err.response.status})`);
+      } else if (err?.request) {
+        // Проблемы с сетью
+        alert("Ошибка сети. Проверьте подключение к интернету.");
       } else {
-        // Непредвиденная ошибка
-        alert("Произошла неизвестная ошибка.");
+        // Ошибка при настройке запроса
+        alert(`Ошибка запроса: ${err.message}`);
       }
     } finally {
-      setLoading(false);
+      setLoading(false); // Завершаем процесс загрузки
     }
   };
 

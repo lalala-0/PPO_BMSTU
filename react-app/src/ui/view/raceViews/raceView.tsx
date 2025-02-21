@@ -5,12 +5,8 @@ import RaceModal from "./modalInputRace"; // Модальное окно для 
 import { useGetRating } from "../../controllers/ratingControllers/getRatingController";
 import { useGetRace } from "../../controllers/raceControllers/getRaceController";
 
-
 const RaceView: React.FC = () => {
-  const { ratingID, raceID } = useParams<{
-    ratingID: string;
-    raceID: string;
-  }>();
+  const { ratingID, raceID } = useParams<{ ratingID: string; raceID: string }>();
   const navigate = useNavigate();
 
   const { ratingInfo, loading: ratingLoading } = useGetRating();
@@ -50,32 +46,32 @@ const RaceView: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>{`Рейтинг: ${ratingInfo.Name}`}</h1>
-      <h2>{`Гонка №${raceInfo.number} (${raceInfo.class})`}</h2>
-      <ProtestsTable /> {/* Таблица протестов */}
-      <button className="auth-required" onClick={handleCreateProtest}>
-        Создать протест
-      </button>
-      <div className="buttons-container">
-        <button className="auth-required" onClick={handleStartProcedure}>
-          Начать стартовую процедуру
+      <div style={{ padding: "20px" }}>
+        <h1>{`Рейтинг: ${ratingInfo.Name}`}</h1>
+        <h2>{`Гонка №${raceInfo.number} (${raceInfo.class})`}</h2>
+        <ProtestsTable /> {/* Таблица протестов */}
+        <button className="auth-required" onClick={handleCreateProtest}>
+          Создать протест
         </button>
-        <button className="auth-required" onClick={handleFinishProcedure}>
-          Начать финишную процедуру
+        <div className="buttons-container">
+          <button className="auth-required" onClick={handleStartProcedure}>
+            Начать стартовую процедуру
+          </button>
+          <button className="auth-required" onClick={handleFinishProcedure}>
+            Начать финишную процедуру
+          </button>
+        </div>
+        <button className="auth-required" onClick={handleRaceModalOpen}>
+          Обновить информацию о гонке
         </button>
+        {isRaceModalOpen && (
+            <RaceModal
+                race={raceInfo}
+                type={"update"}
+                onClose={handleRaceModalClose}
+            />
+        )}
       </div>
-      <button className="auth-required" onClick={handleRaceModalOpen}>
-        Обновить информацию о гонке
-      </button>
-      {isRaceModalOpen && (
-        <RaceModal
-          race={raceInfo}
-          type={"update"}
-          onClose={handleRaceModalClose}
-        />
-      )}
-    </div>
   );
 };
 

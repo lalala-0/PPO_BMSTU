@@ -1,6 +1,7 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
 import { useCreateCrew } from "../../ui/controllers/crewControllers/createCrewController";
 import api from "../api";
+import React from "react";
 
 jest.mock("../api"); // Мокаем api.get
 

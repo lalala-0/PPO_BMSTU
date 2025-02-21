@@ -1,7 +1,6 @@
 // deleteCrewByID.ts
 import { useState } from "react";
 import { handleError } from "../errorHandler";
-import { useParams } from "react-router-dom";
 import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useDeleteCrew = () => {

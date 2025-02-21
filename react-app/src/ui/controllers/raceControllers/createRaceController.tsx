@@ -11,7 +11,7 @@ export const useCreateRace = () => {
     class: 0,
   });
   const [success, setSuccess] = useState<string | null>(null);
-  const [err, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false); // Для индикации загрузки
 
   const handleChange = (

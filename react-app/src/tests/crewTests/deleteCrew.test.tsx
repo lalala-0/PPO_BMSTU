@@ -1,6 +1,8 @@
 import { render, act } from "@testing-library/react";
 import { useDeleteCrew } from "../../ui/controllers/crewControllers/deleteCrewController";
 import api from "../api";
+import React from "react";
+
 jest.mock("../api"); // Мокаем api.get
 
 const DeleteCrewWrapper = ({ ratingID, crewID }: { ratingID: string, crewID: string }) => {

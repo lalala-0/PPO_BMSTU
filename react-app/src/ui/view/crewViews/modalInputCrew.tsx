@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { CrewInput, CrewFormData } from "../../models/crewModel";
+import { CrewFormData } from "../../models/crewModel";
 import { useCreateCrew } from "../../controllers/crewControllers/createCrewController";
 import { useUpdateCrew } from "../../controllers/crewControllers/updateCrewController";
-import ratingView from "../ratingViews/ratingView";
 
 interface CrewModalProps {
   ratingID: string;

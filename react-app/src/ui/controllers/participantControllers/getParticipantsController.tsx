@@ -20,7 +20,7 @@ export const useGetAllParticipants = (filters: ParticipantFilters) => {
       // Оставляем только те параметры, которые заданы (не `null` и не `undefined`)
       const params = Object.fromEntries(
         Object.entries(filters).filter(
-          ([_, value]) => value !== null && value !== undefined && value !== "",
+          ([, value]) => value !== null && value !== undefined && value !== "",
         ),
       );
 

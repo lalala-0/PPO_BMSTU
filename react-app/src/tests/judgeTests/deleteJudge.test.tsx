@@ -2,6 +2,7 @@ import api from "../api"; // Путь к твоему мокированному
 import { act } from "react-dom/test-utils";
 import { render } from "@testing-library/react";
 import {useDeleteJudge} from "../../ui/controllers/judgeControllers/deleteJudgeController";
+import React from "react";
 
 // Мокаем api.delete
 jest.mock("../api");

@@ -2,6 +2,7 @@ import { render, act, screen } from "@testing-library/react";
 import { useGetJudges } from "../../ui/controllers/judgeControllers/getJudgesController";
 import api from "../api";
 import {JudgeFormData} from "../../ui/models/judgeModel";
+import React from "react";
 
 // Компонент-обертка для тестирования хука
 const GetJudgesWrapper = () => {

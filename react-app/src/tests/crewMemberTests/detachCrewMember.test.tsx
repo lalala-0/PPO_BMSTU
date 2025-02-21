@@ -1,6 +1,7 @@
 import { render, act, screen } from "@testing-library/react";
 import { useDetachCrewMember } from "../../ui/controllers/crewMemberControllers/detachCrewMemberController";
 import api from "../api";
+import React from "react";
 
 // Компонент для теста
 const DetachCrewMemberWrapper = ({

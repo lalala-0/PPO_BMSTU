@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { RatingTableLine, RaceInfo } from "../../models/ratingModel";
 import { useDeleteCrew } from "../../controllers/crewControllers/deleteCrewController";
-import { useUpdateCrew } from "../../controllers/crewControllers/updateCrewController";
 
 interface RatingTableProps {
   rankingTable: RatingTableLine[];
@@ -68,150 +67,133 @@ const RatingTable: React.FC<RatingTableProps> = ({ rankingTable, races }) => {
     setFilters((prevFilters) => ({ ...prevFilters, [key]: value }));
   };
 
-  const filteredData = tableData.filter((line) => {
-    return (
-      (filters.sailNum === "" ||
-        line.SailNum.toString().includes(filters.sailNum)) &&
-      (filters.participantName === "" ||
-        line.ParticipantNames[0]
-          .toLowerCase()
-          .includes(filters.participantName.toLowerCase())) &&
-      (filters.pointsSum === "" ||
-        line.PointsSum.toString().includes(filters.pointsSum)) &&
-      (filters.rank === "" || line.Rank.toString().includes(filters.rank)) &&
-      (filters.coachName === "" ||
-        line.CoachNames[0]
-          .toLowerCase()
-          .includes(filters.coachName.toLowerCase()))
-    );
-  });
+  // Использование useMemo для фильтрации данных
+  const filteredData = useMemo(() => {
+    return tableData.filter((line) => {
+      return (
+          (filters.sailNum === "" ||
+              line.SailNum.toString().includes(filters.sailNum)) &&
+          (filters.participantName === "" ||
+              line.ParticipantNames[0]
+                  .toLowerCase()
+                  .includes(filters.participantName.toLowerCase())) &&
+          (filters.pointsSum === "" ||
+              line.PointsSum.toString().includes(filters.pointsSum)) &&
+          (filters.rank === "" || line.Rank.toString().includes(filters.rank)) &&
+          (filters.coachName === "" ||
+              line.CoachNames[0]
+                  .toLowerCase()
+                  .includes(filters.coachName.toLowerCase()))
+      );
+    });
+  }, [tableData, filters]);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <div
-        style={{
-          maxWidth: "100%",
-          overflowX: "auto",
-          border: "1px solid #ccc",
-        }}
-      >
-        <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-          <table
-            style={{
-              tableLayout: "auto",
-              width: "100%",
-              borderCollapse: "collapse",
-            }}
-          >
-            <thead
-              style={{
-                position: "sticky",
-                top: 0,
-                backgroundColor: "#fff",
-                zIndex: 1,
-              }}
-            >
+      <div className={"table-container"}>
+          <div className={"tableContent"}>
+            <table className={"table"}>
+              <thead>
               <tr>
-                <th>
+                <th className={"stickyHeader"}>
                   <input
-                    type="text"
-                    placeholder="Поиск по номеру паруса"
-                    value={filters.sailNum}
-                    onChange={(e) =>
-                      handleFilterChange("sailNum", e.target.value)
-                    }
-                    style={{ width: "100%" }}
+                      type="text"
+                      placeholder="Поиск по номеру паруса"
+                      value={filters.sailNum}
+                      onChange={(e) => handleFilterChange("sailNum", e.target.value)}
                   />
                   Номер паруса
                 </th>
-                <th>
+                <th className={"stickyHeader"}>
                   <input
-                    type="text"
-                    placeholder="Поиск по имени"
-                    value={filters.participantName}
-                    onChange={(e) =>
-                      handleFilterChange("participantName", e.target.value)
-                    }
-                    style={{ width: "100%" }}
+                      type="text"
+                      placeholder="Поиск по имени"
+                      value={filters.participantName}
+                      onChange={(e) =>
+                          handleFilterChange("participantName", e.target.value)
+                      }
                   />
                   Имя участника
                 </th>
-                <th>Дата рождения</th>
+                <th className={"stickyHeader"}>
+                  Дата рождения
+                </th>
                 {races.map((race) => (
-                  <th key={race.RaceID}>
-                    <button onClick={() => handleRaceNavigation(race.RaceID)}>
-                      {`Гонка ${race.RaceNum}`}
-                    </button>
-                  </th>
+                    <th className={"stickyHeader"} key={race.RaceID}>
+                      <button onClick={() => handleRaceNavigation(race.RaceID)}>
+                        {`Гонка ${race.RaceNum}`}
+                      </button>
+                    </th>
                 ))}
-                <th>
+                <th className={"stickyHeader"}>
                   <input
-                    type="text"
-                    placeholder="Поиск по баллам"
-                    value={filters.rank}
-                    onChange={(e) => handleFilterChange("rank", e.target.value)}
-                    style={{ width: "100%" }}
+                      type="text"
+                      placeholder="Поиск по баллам"
+                      value={filters.rank}
+                      onChange={(e) => handleFilterChange("rank", e.target.value)}
                   />
                   Сумма баллов
                 </th>
-                <th>
+                <th className={"stickyHeader"}>
                   <input
-                    type="text"
-                    placeholder="Поиск по рангу"
-                    value={filters.rank}
-                    onChange={(e) => handleFilterChange("rank", e.target.value)}
-                    style={{ width: "100%" }}
+                      type="text"
+                      placeholder="Поиск по рангу"
+                      value={filters.rank}
+                      onChange={(e) => handleFilterChange("rank", e.target.value)}
                   />
                   Ранг
                 </th>
-                <th>
+                <th className={"stickyHeader"}>
                   <input
-                    type="text"
-                    placeholder="Поиск по тренеру"
-                    value={filters.coachName}
-                    onChange={(e) =>
-                      handleFilterChange("coachName", e.target.value)
-                    }
-                    style={{ width: "100%" }}
+                      type="text"
+                      placeholder="Поиск по тренеру"
+                      value={filters.coachName}
+                      onChange={(e) =>
+                          handleFilterChange("coachName", e.target.value)
+                      }
                   />
                   Имя тренера
                 </th>
-                <th className="auth-required">Действия</th>
+                <th className={"stickyHeader"}>
+                  <th className={"auth-required"}>Действия</th>
+                  </th>
               </tr>
-            </thead>
-            <tbody>
+              </thead>
+              <tbody>
               {filteredData.map((line) => (
-                <tr key={line.SailNum}>
-                  <td>
-                    <button onClick={() => handleCrewNavigation(line.SailNum)}>
-                      {line.SailNum}
-                    </button>
-                  </td>
-                  <td>{line.ParticipantNames[0]}</td>
-                  <td>{line.ParticipantBirthDates[0]}</td>
-                  {races.map((race) => (
-                    <td key={race.RaceID}>
-                      {line.ResInRace[race.RaceNum] || "Нет данных"}
+                  <tr key={line.SailNum}>
+                    <td>
+                      <button onClick={() => handleCrewNavigation(line.SailNum)}>
+                        {line.SailNum}
+                      </button>
                     </td>
-                  ))}
-                  <td>{line.PointsSum}</td>
-                  <td>{line.Rank}</td>
-                  <td>{line.CoachNames[0]}</td>
-                  <td className="auth-required">
-                    <button
-                      className="auth-required"
-                      onClick={() => onDelete(line.SailNum)}
-                    >
-                      Удалить
-                    </button>
-                  </td>
-                </tr>
+                    <td>{line.ParticipantNames[0]}</td>
+                    <td>{line.ParticipantBirthDates[0]}</td>
+                    {races.map((race) => (
+                        <td key={race.RaceID}>
+                          {line.ResInRace[race.RaceNum] || "Нет данных"}
+                        </td>
+                    ))}
+                    <td>{line.PointsSum}</td>
+                    <td>{line.Rank}</td>
+                    <td>{line.CoachNames[0]}</td>
+                    <td className={"auth-required"}>
+                      <button
+                          onClick={() => onDelete(line.SailNum)}
+                      >
+                        <img
+                            src="/delete-icon.svg"
+                            alt="Удалить"
+                            width="20"
+                            height="20"
+                        />
+                      </button>
+                    </td>
+                  </tr>
               ))}
-            </tbody>
-          </table>
-        </div>
+              </tbody>
+            </table>
+          </div>
       </div>
-    </div>
   );
 };
 

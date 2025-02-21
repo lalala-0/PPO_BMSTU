@@ -2,6 +2,7 @@ import { render } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
 import { useUpdateCrew } from "../../ui/controllers/crewControllers/updateCrewController"; // Путь к твоему хук-файлу
 import api from "../api"; // Путь к твоему мокированному API
+import React from "react";
 
 // Мокаем api.put
 jest.mock("../api");

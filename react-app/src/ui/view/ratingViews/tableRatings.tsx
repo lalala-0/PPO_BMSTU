@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Rating } from "../../models/ratingModel";
 
-
 interface RatingsTableProps {
   ratings: Rating[];
   onDelete: (id: string) => void;
@@ -10,10 +9,10 @@ interface RatingsTableProps {
 }
 
 const RatingsTable: React.FC<RatingsTableProps> = ({
-  ratings,
-  onDelete,
-  onUpdate,
-}) => {
+                                                     ratings,
+                                                     onDelete,
+                                                     onUpdate,
+                                                   }) => {
   const navigate = useNavigate();
 
   // Состояния для фильтров
@@ -27,111 +26,95 @@ const RatingsTable: React.FC<RatingsTableProps> = ({
 
   // Фильтрация данных
   const filteredRatings = ratings.filter(
-    (rating) =>
-      rating.Name.toLowerCase().includes(nameFilter.toLowerCase()) &&
-      rating.Class.toLowerCase().includes(classFilter.toLowerCase()) &&
-      (blowoutFilter === "" ||
-        rating.BlowoutCnt.toString().includes(blowoutFilter)),
+      (rating) =>
+          rating.Name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+          rating.Class.toLowerCase().includes(classFilter.toLowerCase()) &&
+          (blowoutFilter === "" ||
+              rating.BlowoutCnt.toString().includes(blowoutFilter)),
   );
 
   return (
-    <div style={{ maxWidth: "100%" }}>
-      {/* Скроллируемый контейнер для таблицы */}
-      <div
-        style={{ maxHeight: "500px", overflowY: "auto", marginBottom: "20px" }}
-      >
-        <table style={{ tableLayout: "auto", width: "100%" }}>
-          <thead>
+      <div className="table-container">
+        {/* Скроллируемый контейнер для таблицы */}
+        <div className="tableContent">
+          <table className="table">
+            <thead>
             <tr>
-              <th>
+              <th className={"stickyHeader"}>
                 Имя
                 <input
-                  type="text"
-                  placeholder="Поиск по имени"
-                  value={nameFilter}
-                  onChange={(e) => setNameFilter(e.target.value)}
-                  style={{ width: "100%", marginTop: "5px" }}
+                    type="text"
+                    placeholder="Поиск по имени"
+                    value={nameFilter}
+                    onChange={(e) => setNameFilter(e.target.value)}
                 />
               </th>
-              <th>
+              <th className={"stickyHeader"}>
                 Класс
                 <input
-                  type="text"
-                  placeholder="Поиск по классу"
-                  value={classFilter}
-                  onChange={(e) => setClassFilter(e.target.value)}
-                  style={{ width: "100%", marginTop: "5px" }}
+                    type="text"
+                    placeholder="Поиск по классу"
+                    value={classFilter}
+                    onChange={(e) => setClassFilter(e.target.value)}
                 />
               </th>
-              <th>
+              <th className={"stickyHeader"}>
                 Кол-во выбрасываемых результатов
                 <input
-                  type="number"
-                  placeholder="Поиск по кол-ву выбрасываемых результатов"
-                  value={blowoutFilter}
-                  onChange={(e) => setBlowoutFilter(e.target.value)}
-                  style={{ width: "100%", marginTop: "5px" }}
+                    type="number"
+                    placeholder="Поиск по кол-ву выбрасываемых результатов"
+                    value={blowoutFilter}
+                    onChange={(e) => setBlowoutFilter(e.target.value)}
                 />
               </th>
-              <th className="auth-required">Действия</th>
+              <th className={"stickyHeader"}>
+                <th className="auth-required">Действия</th>
+              </th>
             </tr>
-          </thead>
-          <tbody>
+            </thead>
+            <tbody>
             {filteredRatings.map((rating) => (
-              <tr key={rating.id}>
-                <td>
-                  <button
-                    onClick={() => handleNavigate(rating.id)}
-                    className="add-rating-button"
-                  >
-                    {rating.Name}
-                  </button>
-                </td>
-                <td>{rating.Class}</td>
-                <td>{rating.BlowoutCnt}</td>
-                <td className="auth-required">
-                  <div className="buttons-container">
+                <tr key={rating.id}>
+                  <td>
                     <button
-                      className="auth-required"
-                      onClick={() => onDelete(rating.id)}
-                      style={{
-                        backgroundColor: "transparent",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
+                        onClick={() => handleNavigate(rating.id)}
+                        className="add-rating-button"
                     >
-                      <img
-                        src="/delete-icon.svg"
-                        alt="Удалить"
-                        width="20"
-                        height="20"
-                      />
+                      {rating.Name}
                     </button>
-                    <button
-                      className="auth-required"
-                      onClick={() => onUpdate(rating)}
-                      style={{
-                        backgroundColor: "transparent",
-                        border: "none",
-                        cursor: "pointer",
-                        marginLeft: "10px",
-                      }}
-                    >
-                      <img
-                        src="/update-icon.svg"
-                        alt="Обновить"
-                        width="20"
-                        height="20"
-                      />
-                    </button>
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                  <td>{rating.Class}</td>
+                  <td>{rating.BlowoutCnt}</td>
+                  <td className="auth-required">
+                    <div className="buttons-container">
+                      <button
+                          onClick={() => onDelete(rating.id)}
+                      >
+                        <img
+                            src="/delete-icon.svg"
+                            alt="Удалить"
+                            width="20"
+                            height="20"
+                        />
+                      </button>
+                      <button
+                          onClick={() => onUpdate(rating)}
+                      >
+                        <img
+                            src="/update-icon.svg"
+                            alt="Обновить"
+                            width="20"
+                            height="20"
+                        />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
             ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
   );
 };
 

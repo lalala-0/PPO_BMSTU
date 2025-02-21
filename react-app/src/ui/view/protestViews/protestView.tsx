@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useGetRating } from "../../controllers/ratingControllers/getRatingController";
 import { useGetRace } from "../../controllers/raceControllers/getRaceController";
 import { useGetProtest } from "../../controllers/protestControllers/getProtestController";
@@ -6,6 +6,7 @@ import { useState } from "react";
 import { StatusMap } from "../../models/protestModel";
 import UpdateProtestModal from "./modalUpdateProtest";
 import { CompleteProtestModal } from "./modalComplete";
+import React from "react";
 
 const ProtestView: React.FC = () => {
   const { ratingID, raceID, protestID } = useParams<{
@@ -42,6 +43,7 @@ const ProtestView: React.FC = () => {
   if (!ratingInfo || !raceInfo || !protestInfo) {
     return <div>Информация не найдена!</div>;
   }
+  const showCompleteButton = Number(protestInfo.Status) === 1; // Предположим, что 3 - это статус завершённого протеста
 
   return (
     <div style={{ padding: "20px" }}>
@@ -65,9 +67,11 @@ const ProtestView: React.FC = () => {
       </div>
 
       <div className="buttons-container">
-        <button className="auth-required" onClick={handleCompleteModalOpen}>
-          Завершить рассмотрение
-        </button>
+        {showCompleteButton && (
+            <button className="auth-required" onClick={handleCompleteModalOpen}>
+              Завершить рассмотрение
+            </button>
+        )}
         <button className="auth-required" onClick={handleProtestModalOpen}>
           Обновить информацию
         </button>

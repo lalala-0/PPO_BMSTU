@@ -23,7 +23,7 @@ export const useCreateCrew = () => {
     setError(null);
 
     try {
-      const response = await api.post(
+      await api.post(
           `/ratings/${ratingID}/crews`,
           updatedData
       ); // Отправляем запрос на создание

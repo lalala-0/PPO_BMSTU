@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import RatingsTable from "./tableRatings";
 import RatingModal from "./modalInputRating";
-import Filters from "../filters";
 import { useDeleteRatingController } from "../../controllers/ratingControllers/deleteRatingController";
 import { Rating } from "../../models/ratingModel";
 
 
 const RatingsContainer = () => {
   const [ratings, setRatings] = useState<Rating[]>([]);
-  const [filters, setFilters] = useState({
+  const [filters] = useState({
     name: "",
     class: "",
     blowoutCnt: "",
@@ -31,10 +30,6 @@ const RatingsContainer = () => {
 
     fetchRatings();
   }, []);
-
-  const handleFilterChange = (key: string, value: string) => {
-    setFilters((prevFilters) => ({ ...prevFilters, [key]: value }));
-  };
 
   const filteredRatings = ratings.filter((rating) => {
     const { name, class: classFilter, blowoutCnt } = filters;

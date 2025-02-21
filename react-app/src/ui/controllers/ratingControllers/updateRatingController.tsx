@@ -1,8 +1,6 @@
 import { useState } from "react";
-
 import { RatingInput } from "../../models/ratingModel";
-import api from "../api";
-import axios from "axios"; // Импортируем функцию для обработки ошибок
+import api from "../api"; // Используем свой API
 
 export const useUpdateRatingController = () => {
   const [success, setSuccess] = useState<string | null>(null);
@@ -16,25 +14,20 @@ export const useUpdateRatingController = () => {
       await api.put(`/ratings/${id}`, updatedData);
       setSuccess("Рейтинг успешно обновлён");
     } catch (err: any) {
-      if (axios.isAxiosError(err)) {
-        if (err.response) {
-          // Ошибки от сервера (HTTP 4xx или 5xx)
-          const serverMessage =
+      // Проверяем на наличие поля response, если это ошибка с ответом от сервера
+      if (err?.response) {
+        const serverMessage =
             err.response.data?.message || "Неизвестная ошибка от сервера";
-          alert(`Ошибка: ${serverMessage} (код: ${err.response.status})`);
-        } else if (err.request) {
-          // Проблемы с сетью
-          alert("Ошибка сети. Проверьте подключение к интернету.");
-        } else {
-          // Ошибка при настройке запроса
-          alert(`Ошибка запроса: ${err.message}`);
-        }
+        alert(`Ошибка: ${serverMessage} (код: ${err.response.status})`);
+      } else if (err?.request) {
+        // Если нет ответа от сервера, но запрос был отправлен
+        alert("Ошибка сети. Проверьте подключение к интернету.");
       } else {
-        // Непредвиденная ошибка
-        alert("Произошла неизвестная ошибка.");
+        // Ошибка при настройке запроса
+        alert(`Ошибка запроса: ${err.message}`);
       }
     } finally {
-      setLoading(false);
+      setLoading(false); // Завершаем процесс загрузки
     }
   };
 

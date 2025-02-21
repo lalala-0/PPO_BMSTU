@@ -1,6 +1,7 @@
-import { render, act, screen } from "@testing-library/react";
+import { render, act } from "@testing-library/react";
 import {useAttachCrewMember} from "../../ui/controllers/crewMemberControllers/attachCrewMemberController";
 import api from "../api";
+import React from "react";
 
 // Компонент для теста
 const AttachCrewMemberWrapper = ({ ratingID, crewID }: { ratingID: string, crewID: string }) => {
@@ -52,7 +53,6 @@ describe("useAttachCrewMember controller", () => {
     test("ошибка при добавлении члена экипажа", async () => {
         const mockRatingID = "rating123";
         const mockCrewID = "crew123";
-        const mockCrewParticipant = { memberID: "member123" };
 
         // Мокаем ошибку в API
         (api.post as jest.Mock).mockRejectedValue(new Error("Ошибка добавления"));

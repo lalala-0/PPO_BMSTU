@@ -2,6 +2,7 @@ import { render, act, screen } from "@testing-library/react";
 import { useGetCrewMember } from "../../ui/controllers/crewMemberControllers/getCrewMemberController";
 import api from "../api";
 import {ParticipantFormData} from "../../ui/models/participantModel";
+import React from "react";
 
 // Компонент для теста
 const GetCrewMemberWrapper = ({

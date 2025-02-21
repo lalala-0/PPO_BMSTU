@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-
 import { Rating } from "../../models/ratingModel";
-import axios from "axios";
+import api from "../api";
 
 export const useGetRatingsController = () => {
   const [ratings, setRatings] = useState<Rating[]>([]);
@@ -11,12 +10,12 @@ export const useGetRatingsController = () => {
     const params = new URLSearchParams(filters).toString();
     const url = params ? `http://go-server:8081/api/ratings?${params}` : "http://go-server:8081/api/ratings";
 
-    axios
+    api
       .get(url)
       .then((response) => {
         setRatings(response.data);
       })
-      .catch((err) => {
+      .catch(() => {
         setError("Ошибка при получении данных");
       });
   };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useFetchProtests } from "../../controllers/protestControllers/getProtestsController";
 import { ProtestFormData, StatusMap } from "../../models/protestModel";
@@ -15,40 +15,50 @@ const ProtestsTable: React.FC = () => {
 
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [selectedProtest, setSelectedProtest] =
-    useState<ProtestFormData | null>(null);
+      useState<ProtestFormData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { protests, loading, error } = useFetchProtests(ratingID!, raceID!);
+  const [filteredProtests, setFilteredProtests] = useState<ProtestFormData[]>([]);
+
+  // Эффект для установки начальных протестов, когда они загружены
+  useEffect(() => {
+    if (!loading && protests.length > 0) {
+      setFilteredProtests(protests);
+    }
+  }, [loading, protests]);
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    setFilters((prev) => {
+      const newFilters = { ...prev, [key]: value };
+      // Фильтруем протесты после изменения фильтра
+      const updatedFilteredProtests = protests.filter(
+          (protest) =>
+              (newFilters.ruleNum
+                  ? protest.RuleNum.toString()
+                      .toLowerCase()
+                      .includes(newFilters.ruleNum.toLowerCase())
+                  : true) &&
+              (newFilters.reviewDate
+                  ? protest.ReviewDate.toLowerCase().includes(
+                      newFilters.reviewDate.toLowerCase()
+                  )
+                  : true) &&
+              (newFilters.status
+                  ? StatusMap[Number(protest.Status)]
+                      .toLowerCase()
+                      .includes(newFilters.status.toLowerCase())
+                  : true) &&
+              (newFilters.comment
+                  ? protest.Comment.toLowerCase().includes(
+                      newFilters.comment.toLowerCase()
+                  )
+                  : true)
+      );
+      setFilteredProtests(updatedFilteredProtests);
+      return newFilters;
+    });
   };
-
-  // Фильтрация, аналогичная RatingsTable
-  const filteredProtests = protests.filter(
-    (protest) =>
-      (filters.ruleNum
-        ? protest.RuleNum.toString()
-            .toLowerCase()
-            .includes(filters.ruleNum.toLowerCase())
-        : true) &&
-      (filters.reviewDate
-        ? protest.ReviewDate.toLowerCase().includes(
-            filters.reviewDate.toLowerCase(),
-          )
-        : true) &&
-      (filters.status
-        ? StatusMap[Number(protest.Status)]
-            .toLowerCase()
-            .includes(filters.status.toLowerCase())
-        : true) &&
-      (filters.comment
-        ? protest.Comment.toLowerCase().includes(filters.comment.toLowerCase())
-        : true),
-  );
 
   const handleNavigate = (id: string) => {
     navigate(`/ratings/${ratingID}/races/${raceID}/protests/${id}`);
@@ -67,7 +77,10 @@ const ProtestsTable: React.FC = () => {
   const handleDeleteProtest = async (protestID: string) => {
     if (window.confirm("Вы уверены, что хотите удалить этот протест?")) {
       await handleDelete(ratingID || "", raceID || "", protestID);
-      window.location.reload(); // Перезагрузка после удаления
+      // Обновляем список протестов после удаления
+      setFilteredProtests((prevProtests) =>
+          prevProtests.filter((protest) => protest.ID !== protestID)
+      );
     }
   };
 
@@ -75,9 +88,9 @@ const ProtestsTable: React.FC = () => {
   if (error) return <div>Ошибка при загрузке протестов</div>;
 
   return (
-    <div className="protests-table-container">
-      <table className="protests-table">
-        <thead>
+      <div className="protests-table-container">
+        <table className="protests-table">
+          <thead>
           <tr>
             {[
               { key: "ruleNum", label: "Номер правила" },
@@ -85,65 +98,75 @@ const ProtestsTable: React.FC = () => {
               { key: "status", label: "Статус" },
               { key: "comment", label: "Комментарий" },
             ].map(({ key, label }) => (
-              <th key={key}>
-                <input
-                  type="text"
-                  placeholder={`Поиск по ${label.toLowerCase()}`}
-                  value={filters[key] || ""}
-                  onChange={(e) => handleFilterChange(key, e.target.value)}
-                  style={{ width: "100%" }}
-                />
-                {label}
-              </th>
+                <th key={key}>
+                  <input
+                      type="text"
+                      placeholder={`Поиск по ${label.toLowerCase()}`}
+                      value={filters[key] || ""}
+                      onChange={(e) => handleFilterChange(key, e.target.value)}
+                      style={{ width: "100%" }}
+                  />
+                  {label}
+                </th>
             ))}
-            <th className="auth-required">Действия</th>
+            <th>Действия</th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           {filteredProtests.map((protest) => (
-            <tr key={protest.ID}>
-              <td>{protest.RuleNum}</td>
-              <td>{protest.ReviewDate}</td>
-              <td>{StatusMap[Number(protest.Status)]}</td>
-              <td>{protest.Comment}</td>
-              <td className="auth-required">
-                <button
-                  onClick={() => handleNavigate(protest.ID)}
-                  className="link-button"
-                >
-                  Подробнее
-                </button>
-                <button
-                  className="auth-required"
-                  onClick={() => handleOpenModal(protest)}
-                >
-                  Обновить
-                </button>
-                <button
-                  className="auth-required"
-                  onClick={() => handleDeleteProtest(protest.ID)}
-                >
-                  Удалить
-                </button>
-              </td>
-            </tr>
+              <tr key={protest.ID}>
+                <td>{protest.RuleNum}</td>
+                <td>{protest.ReviewDate}</td>
+                <td>{StatusMap[Number(protest.Status)]}</td>
+                <td>{protest.Comment}</td>
+                <td>
+                  <button
+                      onClick={() => handleNavigate(protest.ID)}
+                      className="link-button"
+                  >
+                    Подробнее
+                  </button>
+                  <div className="buttons-container">
+                    <button
+                        onClick={() => handleOpenModal(protest)}
+                    >
+                      <img
+                          src="/update-icon.svg"
+                          alt="Обновить"
+                          width="20"
+                          height="20"
+                      />
+                    </button>
+                    <button
+                        onClick={() => handleDeleteProtest(protest.ID)}
+                    >
+                      <img
+                          src="/delete-icon.svg"
+                          alt="Удалить"
+                          width="20"
+                          height="20"
+                      />
+                    </button>
+                  </div>
+                </td>
+              </tr>
           ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
 
-      {isModalOpen && selectedProtest && (
-        <UpdateProtestModal
-          protest={{
-            judgeId: selectedProtest.JudgeID,
-            ruleNum: Number(selectedProtest.RuleNum),
-            reviewDate: selectedProtest.ReviewDate,
-            status: Number(selectedProtest.Status),
-            comment: selectedProtest.Comment,
-          }}
-          onClose={handleCloseModal}
-        />
-      )}
-    </div>
+        {isModalOpen && selectedProtest && (
+            <UpdateProtestModal
+                protest={{
+                  judgeId: selectedProtest.JudgeID,
+                  ruleNum: Number(selectedProtest.RuleNum),
+                  reviewDate: selectedProtest.ReviewDate,
+                  status: Number(selectedProtest.Status),
+                  comment: selectedProtest.Comment,
+                }}
+                onClose={handleCloseModal}
+            />
+        )}
+      </div>
   );
 };
 

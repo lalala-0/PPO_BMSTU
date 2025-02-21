@@ -2,6 +2,7 @@ import { render, act, screen } from "@testing-library/react";
 import { useUpdateJudge } from "../../ui/controllers/judgeControllers/updateJudgeController";
 import api from "../api";
 import {JudgeFormData} from "../../ui/models/judgeModel";
+import React from "react";
 
 // Компонент-обертка для тестирования хука
 const UpdateJudgeWrapper = ({ judgeID }: { judgeID: string }) => {

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useCompleteProtest } from "../../controllers/protestControllers/completeProtestController";
+import React from "react";
 
 interface CompleteProtestModalProps {
   isOpen: boolean;

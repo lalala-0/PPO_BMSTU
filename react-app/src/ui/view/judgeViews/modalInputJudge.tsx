@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { useUpdateJudge } from "../../controllers/judgeControllers/updateJudgeController";
 import { useCreateJudge } from "../../controllers/judgeControllers/createJudgeController";
 import { JudgeInput } from "../../models/judgeModel";

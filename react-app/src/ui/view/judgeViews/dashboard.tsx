@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import JudgeTable from "./tableJudges";
 import ParticipantTable from "./tableParticipants";
 

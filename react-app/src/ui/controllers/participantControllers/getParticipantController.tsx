@@ -1,6 +1,4 @@
 import { useCallback, useState } from "react";
-
-
 import { ParticipantFormData } from "../../models/participantModel";
 import { handleError } from "../errorHandler"; // Импортируем централизованную обработку ошибок
 import api from "../api"; // Импортируем функцию для обработки ошибок
