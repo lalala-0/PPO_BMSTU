@@ -123,5 +123,11 @@ https://ru.pinterest.com/vylegzhaninaalena/sailraces/
 ```
 docker-compose -f docker-composeWeb.yml build --no-cache  
 docker-compose -f docker-composeWeb.yml up  
-
 ```
+
+# Сборка докер образа из образов в docker hub
+```
+docker-compose -f docker-composeWeb.yml pull  
+docker-compose -f docker-composeWebHub.yml up  
+```
+

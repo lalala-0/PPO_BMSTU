@@ -15,6 +15,8 @@ services:
 
   go-server:
     image: lalalala0/ppo_bmstu-go-server:latest  # Используем образ из Docker Hub
+    environment:
+      - CONFIG_FILE=config_test.json
     depends_on:
       - postgres
     ports:

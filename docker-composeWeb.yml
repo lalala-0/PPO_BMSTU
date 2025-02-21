@@ -19,6 +19,8 @@ services:
       dockerfile: DockerfileGO  # Указываем конкретный Dockerfile для Go-сервера
     depends_on:
       - postgres
+    environment:
+      - CONFIG_FILE=config_test.json
     ports:
       - "8081:8081"
     networks:

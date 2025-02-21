@@ -27,7 +27,7 @@ jobs:
           cd ./react-app
           yarn install   # Установка зависимостей
           yarn test      # Запуск тестов
-      #   yarn lint      # Запуск тестов
+          yarn lint      # Запуск тестов
 
       - name: Установка Docker
         run: |

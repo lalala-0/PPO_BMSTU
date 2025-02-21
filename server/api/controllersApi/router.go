@@ -119,7 +119,7 @@ func SetupRouter(services *registry.Services, router *gin.Engine) {
 		protestsGroup.Use(s.JWTMiddleware())
 		{
 			protestsGroup.POST("/", s.createProtest)
-			protestsGroup.PATCH("/:protestID/complete", s.completeProtest)
+			protestsGroup.POST("/:protestID/complete", s.completeProtest)
 			protestsGroup.DELETE("/:protestID", s.deleteProtest)
 			protestsGroup.PUT("/:protestID", s.updateProtest)
 			protestsGroup.POST("/:protestID/members", s.attachProtestMember)

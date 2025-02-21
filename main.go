@@ -14,7 +14,13 @@ func main() {
 	app := registry.App{}
 
 	// Чтение конфигурационного файла
-	configFile := "config_test.json"
+	configFile := os.Getenv("CONFIG_FILE")
+	if configFile == "" {
+		// Если переменная окружения не установлена, использовать файл по умолчанию
+		configFile = "config.json" // Для локального запуска
+	}
+
+	log.Print("Используется конфигурационный файл:", configFile)
 	if len(os.Args) > 1 { // Если переданы аргументы командной строки
 		configFile = os.Args[1] // Использовать файл конфигурации, переданный в качестве аргумента
 	}
