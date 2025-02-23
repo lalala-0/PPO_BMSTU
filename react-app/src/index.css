@@ -94,19 +94,27 @@ main {
     font-size: 16px;
   }
 
+  /* Контейнер кнопок финиша */
   .finish-controls {
     display: flex;
-    flex-direction: column;
+    /*flex-direction: column;*/
     gap: 10px;
   }
 
+  /* Адаптация элементов списка */
   .sortable-item {
     padding: 8px;
     font-size: 14px;
   }
 
   .yacht-button {
-    width: 100%;
+    width: 60%;
+  }
+
+  /* Контейнеры для старта и финиша на мобильных устройствах */
+  .start-controls,
+  .finish-controls {
+    padding: 10px;
   }
 }
 /* Основные стили */
@@ -348,4 +356,33 @@ select:focus {
 .authRequired {
   /* Стили для кнопок "Действия" и "Удалить" */
   text-align: center;
+}
+
+.headerH1 {
+  background-color: #D9D9D9;
+  text-align: left;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.headerH2 {
+  background-color: rgba(217, 217, 217, 0.7);
+  text-align: left;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.headerH3 {
+  background-color: rgba(217, 217, 217, 0.4);
+  text-align: left;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.headerH1, .headerH2, .headerH3 {
+  margin: 0;
+  padding: 0;
 }

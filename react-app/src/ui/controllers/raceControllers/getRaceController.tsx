@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-
 import { RaceFormData } from "../../models/raceModel";
 import { useParams } from "react-router-dom";
 

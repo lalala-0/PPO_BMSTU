@@ -1,6 +1,4 @@
 import { useState } from "react";
-
-
 import { ProtestParticipantDetachInput } from "../../models/protestModel";
 import { handleError } from "../errorHandler";
 import api from "../api"; // Импортируем функцию для обработки ошибок
@@ -21,7 +19,7 @@ export const useDetachProtestMember = (
 
     try {
       await api.delete(
-        `/ratings/${ratingID}/races/${raceID}/protests/${protestID}/members/${protestParticipantDetachInput.sailNum}`,
+        `/ratings/${protestParticipantDetachInput.ratingID}/races/${raceID}/protests/${protestID}/members/${protestParticipantDetachInput.sailNum}`,
       );
     } catch (err: any) {
       handleError(err, setError); // Обработка ошибок через централизованную функцию

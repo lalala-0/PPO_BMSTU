@@ -36,9 +36,9 @@ func FromRaceModelsToStringData(races []models.Race) ([]RaceFormData, error) {
 }
 
 type RaceInput struct {
-	Date   string `form:"date"   binding:"required"`
-	Number int    `form:"number" binding:"required"`
-	Class  int    `form:"class"  binding:""`
+	Date   string `json:"date"   binding:"required"`
+	Number int    `json:"number" binding:"required"`
+	Class  int    `json:"class"  binding:""`
 }
 
 func FromRaceModelToInputData(race *models.Race) (RaceInput, error) {

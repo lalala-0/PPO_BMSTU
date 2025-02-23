@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-
 import { useParams } from "react-router-dom";
-
 import { ProtestFormData } from "../../models/protestModel";
 import { handleError } from "../errorHandler";
 import api from "../api"; // Импортируем функцию для обработки ошибок

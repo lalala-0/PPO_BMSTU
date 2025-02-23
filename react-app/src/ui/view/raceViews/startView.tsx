@@ -104,10 +104,15 @@ const StartProcedure: React.FC = () => {
 
   return (
       <div className="start-procedure">
-        <h2>
-          {ratingInfo.Name} - Гонка {raceInfo.number} - СТАРТ
+        <h1 className={"headerH1"}>
+          {ratingInfo.Name}
+        </h1>
+        <h2 className={"headerH2"}>
+          Гонка {raceInfo.number}
         </h2>
-
+        <h3 className={"headerH3"}>
+          Стартовая процедура
+        </h3>
         <label>
           Наказание за фальшстарт:
           <select

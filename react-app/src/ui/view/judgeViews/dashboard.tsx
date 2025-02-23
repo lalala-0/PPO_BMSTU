@@ -5,7 +5,7 @@ import ParticipantTable from "./tableParticipants";
 const JudgeDashboard: React.FC = () => {
   return (
     <div className="judge-dashboard">
-      <h1>Панель судьи</h1>
+      <h1 className={"headerH1"}>Панель судьи</h1>
 
       {/* Таблица судей */}
       <JudgeTable />

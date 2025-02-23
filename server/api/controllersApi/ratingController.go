@@ -205,6 +205,10 @@ func (s *ServicesAPI) updateRating(c *gin.Context) {
 		return
 	}
 
+	if input.Class == 0 {
+		input.Class = 1
+	}
+
 	updatedRating, err := s.Services.RatingService.UpdateRatingByID(ratingID, input.Name, input.Class, input.BlowoutCnt)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, modelsViewApi.BadRequestError{

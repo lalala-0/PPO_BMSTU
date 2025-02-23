@@ -13,7 +13,11 @@ export default [
   pluginReact.configs.flat.recommended,
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": "off" // Отключает предупреждения о "any"
+      "@typescript-eslint/no-explicit-any": "off", // Отключает предупреждения о "any"
+      // Пример правила для блокировки прямого доступа к DOM
+      'no-restricted-globals': ['error', 'event', 'fdescribe'],
+      'no-unsafe-finally': 'warn',
+      
     }
   }
 ];

@@ -3,6 +3,7 @@ import { Rating } from "../../models/ratingModel";
 import { classOptions } from "../../models/classOptions";
 import { useUpdateRatingController } from "../../controllers/ratingControllers/updateRatingController";
 import { useCreateRatingController } from "../../controllers/ratingControllers/createRatingController";
+import { useParams } from "react-router-dom";
 
 interface RatingModalProps {
   rating: Rating;
@@ -11,42 +12,54 @@ interface RatingModalProps {
 }
 
 const RatingModal: React.FC<RatingModalProps> = ({ rating, type, onClose }) => {
-  const [localRating, setLocalRating] = useState<Rating>(rating);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Состояние для отображения ошибки
+  const { ratingID } = useParams<{ ratingID: string }>();
+
+  const [localRating, setLocalRating] = useState<Rating>({
+    id: rating.id || "",
+    Name: rating.Name || "",
+    Class: rating.Class || classOptions[0].value.toString(),
+    BlowoutCnt: rating.BlowoutCnt || 0,
+  });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const { handleUpdate } = useUpdateRatingController();
   const { handleSubmit } = useCreateRatingController();
 
+  // Восстановление данных формы из localStorage
   useEffect(() => {
-    if (type === "create") {
-      setLocalRating({
-        ...rating,
-        Class: classOptions[0].value.toString(), // Значение по умолчанию
-        BlowoutCnt: 0, // Значение по умолчанию
-      });
+    const storedRating = localStorage.getItem(`rating-${ratingID}`);
+    if (storedRating) {
+      setLocalRating(JSON.parse(storedRating));
     } else {
-      setLocalRating(rating); // Для обновления используем переданный рейтинг
+      setLocalRating({
+        id: rating.id || "",
+        Name: rating.Name || "",
+        Class: rating.Class || classOptions[0].value.toString(),
+        BlowoutCnt: rating.BlowoutCnt || 0,
+      });
     }
-  }, [type, rating]);
+  }, [ratingID, rating]);
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalRating((prev) => ({ ...prev, Name: e.target.value }));
-  };
-
-  const handleClassChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLocalRating((prev) => ({ ...prev, Class: e.target.value }));
-  };
-
-  const handleBlowoutCntChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 0;
-    setLocalRating((prev) => ({ ...prev, BlowoutCnt: value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setLocalRating((prev) => {
+      const updatedRating = {
+        ...prev,
+        [name]: name === "BlowoutCnt" ? parseInt(value) : value,
+      };
+      // Сохраняем состояние в localStorage
+      localStorage.setItem(`rating-${ratingID}`, JSON.stringify(updatedRating));
+      return updatedRating;
+    });
   };
 
   const handleSave = async () => {
     setErrorMessage(null); // Сбрасываем сообщение об ошибке
+
     const ratingData = {
       name: localRating.Name,
       class: parseInt(localRating.Class),
-      blowout_cnt: localRating.BlowoutCnt, // Приводим ключ в соответствие с сервером
+      blowout_cnt: localRating.BlowoutCnt,
     };
 
     try {
@@ -56,10 +69,12 @@ const RatingModal: React.FC<RatingModalProps> = ({ rating, type, onClose }) => {
         await handleSubmit(ratingData);
       }
       onClose();
+      // После сохранения очищаем состояние из localStorage
+      localStorage.removeItem(`rating-${ratingID}`);
     } catch (error: any) {
       if (error.response && error.response.data) {
         setErrorMessage(
-          error.response.data.message || "Ошибка при сохранении данных",
+            error.response.data.message || "Ошибка при сохранении данных"
         );
       } else {
         setErrorMessage("Произошла ошибка. Попробуйте позже.");
@@ -67,48 +82,47 @@ const RatingModal: React.FC<RatingModalProps> = ({ rating, type, onClose }) => {
     }
   };
 
-  const handleClose = () => {
-    onClose();
-    console.log("Модальное окно закрыто");
-  };
-
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h3>
-          {type === "update" ? "Обновить рейтинг" : "Создать новый рейтинг"}
-        </h3>
-        {errorMessage && (
-          <div className="error-message">
-            <p>{errorMessage}</p>
-            <button onClick={() => setErrorMessage(null)}>Закрыть</button>
+      <div className="modal-overlay">
+        <div className="modal-content">
+          <h3>{type === "update" ? "Обновить рейтинг" : "Создать новый рейтинг"}</h3>
+          {errorMessage && (
+              <div className="error-message">
+                <p>{errorMessage}</p>
+                <button onClick={() => setErrorMessage(null)}>Закрыть</button>
+              </div>
+          )}
+          <input
+              type="text"
+              name="Name"
+              value={localRating.Name}
+              onChange={handleChange}
+              placeholder="Название рейтинга"
+          />
+          <select
+              name="Class"
+              value={localRating.Class}
+              onChange={handleChange}
+          >
+            {classOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+            ))}
+          </select>
+          <input
+              type="number"
+              name="BlowoutCnt"
+              value={localRating.BlowoutCnt}
+              onChange={handleChange}
+              placeholder="Количество выбрасываемых результатов"
+          />
+          <div className="buttons-container">
+            <button onClick={handleSave}>Сохранить изменения</button>
+            <button onClick={onClose}>Отмена</button>
           </div>
-        )}
-        <input
-          type="text"
-          value={localRating.Name}
-          onChange={handleNameChange}
-          placeholder="Название рейтинга"
-        />
-        <select value={localRating.Class} onChange={handleClassChange}>
-          {classOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <input
-          type="number"
-          value={localRating.BlowoutCnt}
-          onChange={handleBlowoutCntChange}
-          placeholder="Количество срывов"
-        />
-        <div className="buttons-container">
-          <button onClick={handleSave}>Сохранить изменения</button>
-          <button onClick={handleClose}>Отмена</button>
         </div>
       </div>
-    </div>
   );
 };
 

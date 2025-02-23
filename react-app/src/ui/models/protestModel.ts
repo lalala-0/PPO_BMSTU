@@ -24,13 +24,14 @@ export interface ProtestCreate {
   ruleNum: number;
   reviewDate: string;
   comment: string;
-  protesteeSailNum: number;
-  protestorSailNum: number;
-  witnessesSailNum: number[];
+  protestee: number;
+  protestor: number;
+  witnesses: number[];
 }
 
 export interface ProtestParticipantDetachInput {
   sailNum: number;
+  ratingID: string,
 }
 
 export interface ProtestParticipantAttachInput {
@@ -55,8 +56,9 @@ export const StatusMap: Record<number, string> = {
 };
 
 export interface ProtestCrewFormData {
+  ratingID: string,
+  class: string,
   sailNum: number;
   role: number;
-  teamName: string; // Например, название команды
-  protestID: string; // ID протеста, к которому относится команда
+  id: string;
 }

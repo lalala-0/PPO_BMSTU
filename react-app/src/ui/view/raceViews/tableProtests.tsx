@@ -11,12 +11,15 @@ const ProtestsTable: React.FC = () => {
     raceID: string;
   }>();
   const navigate = useNavigate();
-  const { handleDelete } = useDeleteProtestController(); // Функция удаления
+  const { handleDelete } = useDeleteProtestController();
 
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [selectedProtest, setSelectedProtest] =
       useState<ProtestFormData | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(() => {
+    const saved = localStorage.getItem("isModalOpen");
+    return saved ? JSON.parse(saved) : false;
+  });
 
   const { protests, loading, error } = useFetchProtests(ratingID!, raceID!);
   const [filteredProtests, setFilteredProtests] = useState<ProtestFormData[]>([]);
@@ -27,6 +30,11 @@ const ProtestsTable: React.FC = () => {
       setFilteredProtests(protests);
     }
   }, [loading, protests]);
+
+  // Обновляем локальное хранилище, когда модальное окно открыто или закрыто
+  useEffect(() => {
+    localStorage.setItem("isModalOpen", JSON.stringify(isModalOpen));
+  }, [isModalOpen]);
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev) => {
@@ -88,27 +96,26 @@ const ProtestsTable: React.FC = () => {
   if (error) return <div>Ошибка при загрузке протестов</div>;
 
   return (
-      <div className="protests-table-container">
+      <div className="tableContent">
         <table className="protests-table">
           <thead>
           <tr>
-            {[
-              { key: "ruleNum", label: "Номер правила" },
+            {[{ key: "ruleNum", label: "Номер правила" },
               { key: "reviewDate", label: "Дата рассмотрения" },
               { key: "status", label: "Статус" },
-              { key: "comment", label: "Комментарий" },
-            ].map(({ key, label }) => (
-                <th key={key}>
-                  <input
-                      type="text"
-                      placeholder={`Поиск по ${label.toLowerCase()}`}
-                      value={filters[key] || ""}
-                      onChange={(e) => handleFilterChange(key, e.target.value)}
-                      style={{ width: "100%" }}
-                  />
-                  {label}
-                </th>
-            ))}
+              { key: "comment", label: "Комментарий" }]
+                .map(({ key, label }) => (
+                    <th key={key}>
+                      <input
+                          type="text"
+                          placeholder={`Поиск по ${label.toLowerCase()}`}
+                          value={filters[key] || ""}
+                          onChange={(e) => handleFilterChange(key, e.target.value)}
+                          style={{ width: "100%" }}
+                      />
+                      {label}
+                    </th>
+                ))}
             <th>Действия</th>
           </tr>
           </thead>
@@ -127,9 +134,7 @@ const ProtestsTable: React.FC = () => {
                     Подробнее
                   </button>
                   <div className="buttons-container">
-                    <button
-                        onClick={() => handleOpenModal(protest)}
-                    >
+                    <button onClick={() => handleOpenModal(protest)}>
                       <img
                           src="/update-icon.svg"
                           alt="Обновить"
@@ -137,9 +142,7 @@ const ProtestsTable: React.FC = () => {
                           height="20"
                       />
                     </button>
-                    <button
-                        onClick={() => handleDeleteProtest(protest.ID)}
-                    >
+                    <button onClick={() => handleDeleteProtest(protest.ID)}>
                       <img
                           src="/delete-icon.svg"
                           alt="Удалить"

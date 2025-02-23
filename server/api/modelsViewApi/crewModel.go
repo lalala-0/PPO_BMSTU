@@ -39,10 +39,10 @@ func FromCrewModelsToStringData(crews []models.Crew) ([]CrewFormData, error) {
 
 type ProtestCrewFormData struct {
 	ID       uuid.UUID `json:"id"`
-	RatingID uuid.UUID `json:"rating-id"`
-	SailNum  int       `form:"name"`
-	Class    string    `form:"class"`
-	Role     string    `form:"role"`
+	RatingID uuid.UUID `json:"ratingID"`
+	SailNum  int       `json:"sailNum"`
+	Class    string    `json:"class"`
+	Role     string    `json:"role"`
 }
 
 func FromProtestParticipantModelToStringData(crew *models.Crew, role int) (ProtestCrewFormData, error) {

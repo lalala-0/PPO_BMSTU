@@ -59,13 +59,13 @@ func FromProtestModelToInputData(protest *models.Protest) (ProtestInput, error) 
 //}
 
 type ProtestCreate struct {
-	JudgeID          uuid.UUID `json:"judge-id"`
-	RuleNum          int       `form:"ruleNum" binding:"required"`
-	ReviewDate       string    `form:"reviewDate" binding:"required"`
-	Comment          string    `form:"comment" binding:""`
-	ProtesteeSailNum int       `form:"protestee" binding:"required"`
-	ProtestorSailNum int       `form:"protestor" binding:"required"`
-	WitnessesSailNum []int     `form:"witnesses" binding:"required"`
+	JudgeID          uuid.UUID `json:"judgeId"`
+	RuleNum          int       `json:"ruleNum" binding:"required"`
+	ReviewDate       string    `json:"reviewDate" binding:"required"`
+	Comment          string    `json:"comment" binding:""`
+	ProtesteeSailNum int       `json:"protestee" binding:"required"`
+	ProtestorSailNum int       `json:"protestor" binding:"required"`
+	WitnessesSailNum []int     `json:"witnesses" binding:"required"`
 }
 
 type ProtestParticipantDetachInput struct {

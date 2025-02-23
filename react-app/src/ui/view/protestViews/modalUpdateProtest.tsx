@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ProtestInput } from "../../models/protestModel";
 import { useUpdateProtest } from "../../controllers/protestControllers/updateProtestController";
+import {useParams} from "react-router-dom";
 
 interface UpdateProtestModalProps {
   onClose: () => void;
@@ -13,6 +14,11 @@ const UpdateProtestModal: React.FC<UpdateProtestModalProps> = ({
 }) => {
   const { updateProtest, loading } = useUpdateProtest();
   const [formData, setFormData] = useState<ProtestInput>(protest);
+  const { ratingID, raceID, protestID } = useParams<{
+    ratingID: string;
+    raceID: string;
+    protestID: string;
+  }>();
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -28,7 +34,7 @@ const UpdateProtestModal: React.FC<UpdateProtestModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateProtest(formData);
+    await updateProtest(ratingID || '', raceID || '', protestID || '', formData);
     onClose();
   };
 

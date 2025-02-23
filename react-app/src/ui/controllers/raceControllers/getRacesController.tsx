@@ -1,6 +1,5 @@
 // getRacesByRatingID.ts
 import { useState } from "react";
-
 import { RaceFormData } from "../../models/raceModel"; // Импортируем модель для гонок
 import api from "../api"; // Импортируем функцию для обработки ошибок
 import { handleError } from "../errorHandler"; // Импортируем функцию для обработки ошибок

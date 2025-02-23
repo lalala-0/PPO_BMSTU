@@ -1,5 +1,3 @@
-
-
 import api from "../api"; // Импортируем функцию для обработки ошибок
 
 export const useDeleteProtestController = () => {

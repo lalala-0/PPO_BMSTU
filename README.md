@@ -127,7 +127,7 @@ docker-compose -f docker-composeWeb.yml up
 
 # Сборка докер образа из образов в docker hub
 ```
-docker-compose -f docker-composeWeb.yml pull  
+docker-compose -f docker-composeWebHub.yml pull  
 docker-compose -f docker-composeWebHub.yml up  
 ```
 

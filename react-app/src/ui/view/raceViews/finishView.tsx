@@ -22,7 +22,7 @@ interface SortableItemProps {
 
 const SortableItem: React.FC<SortableItemProps> = ({ yachtNumber }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: yachtNumber });
+      useSortable({ id: yachtNumber });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -30,15 +30,15 @@ const SortableItem: React.FC<SortableItemProps> = ({ yachtNumber }) => {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className="sortable-item"
-    >
-      {yachtNumber}
-    </div>
+      <div
+          ref={setNodeRef}
+          style={style}
+          {...attributes}
+          {...listeners}
+          className="sortable-item"
+      >
+        {yachtNumber}
+      </div>
   );
 };
 
@@ -52,8 +52,8 @@ const FinishProcedure: React.FC = () => {
   const { ratingInfo, loading: ratingLoading } = useGetRating();
   const { raceInfo, loading: raceLoading } = useGetRace();
   const { loading, error, success, finishProcedure } = useFinishProcedure(
-    ratingID!,
-    raceID!,
+      ratingID!,
+      raceID!
   );
   const {
     loading: crewsLoading,
@@ -74,7 +74,7 @@ const FinishProcedure: React.FC = () => {
   useEffect(() => {
     if (crews) {
       setAvailableYachts(
-        crews.map((crew) => crew.SailNum).sort((a, b) => a - b),
+          crews.map((crew) => crew.SailNum).sort((a, b) => a - b)
       );
     }
   }, [crews]);
@@ -92,7 +92,7 @@ const FinishProcedure: React.FC = () => {
   const handleSelectYacht = (yachtNumber: number) => {
     setFinisherList((prevList) => [...prevList, yachtNumber]);
     setAvailableYachts((prevYachts) =>
-      prevYachts.filter((num) => num !== yachtNumber),
+        prevYachts.filter((num) => num !== yachtNumber)
     );
     setSearch("");
   };
@@ -122,62 +122,60 @@ const FinishProcedure: React.FC = () => {
     return <p className="error">Ошибка загрузки данных</p>;
 
   return (
-    <div className="finish-procedure">
-      <h2>
-        {ratingInfo.Name} - Гонка {raceInfo.number} - ФИНИШ
-      </h2>
-      <div className="finish-controls">
-        <div className="yacht-icons">
-          <label>
-            <input
-              type="text"
-              placeholder="Поиск по номеру яхты"
-              value={search}
-              onChange={handleSearchChange}
-              className="search-input"
-            />
-          </label>
-          {availableYachts
-            .filter((num) => num.toString().includes(search))
-            .map((num) => (
-              <div
-                key={num}
-                className="yacht-button"
-                onClick={() => handleSelectYacht(num)}
+      <div className="finish-procedure">
+        <h1 className={"headerH1"}>{ratingInfo.Name}</h1>
+        <h2 className={"headerH2"}>Гонка {raceInfo.number}</h2>
+        <h3 className={"headerH3"}>Финишная процедура</h3>
+
+        <div className="finish-controls">
+          <div className="yacht-icons">
+            <label>
+              <input
+                  type="text"
+                  placeholder="Поиск по номеру яхты"
+                  value={search}
+                  onChange={handleSearchChange}
+                  className="search-input"
+              />
+            </label>
+            {availableYachts
+                .filter((num) => num.toString().includes(search))
+                .map((num) => (
+                    <div
+                        key={num}
+                        className="yacht-button"
+                        onClick={() => handleSelectYacht(num)}
+                    >
+                      {num}
+                    </div>
+                ))}
+          </div>
+
+          <div className="finish-list">
+            <h3>Номера яхт в порядке финиша</h3>
+            <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext
+                  items={finisherList}
+                  strategy={verticalListSortingStrategy}
               >
-                {num}
-              </div>
-            ))}
+                {finisherList.map((num) => (
+                    <SortableItem key={num} yachtNumber={num} />
+                ))}
+              </SortableContext>
+            </DndContext>
+          </div>
         </div>
 
-        <div className="finish-list">
-          <h3>Номера яхт в порядке финиша</h3>
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={finisherList}
-              strategy={verticalListSortingStrategy}
-            >
-              {finisherList.map((num) => (
-                <SortableItem key={num} yachtNumber={num} />
-              ))}
-            </SortableContext>
-          </DndContext>
-        </div>
+        <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="submit-button"
+        >
+          Завершить финишную процедуру
+        </button>
+        {error && <p className="error">Ошибка: {error}</p>}
+        {success && <p className="success">{success}</p>}
       </div>
-
-      <button
-        onClick={handleSubmit}
-        disabled={loading}
-        className="submit-button"
-      >
-        Завершить финишную процедуру
-      </button>
-      {error && <p className="error">Ошибка: {error}</p>}
-      {success && <p className="success">{success}</p>}
-    </div>
   );
 };
 

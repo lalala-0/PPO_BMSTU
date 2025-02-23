@@ -41,7 +41,7 @@ const JudgeProfile: React.FC = () => {
 
   return (
     <div>
-      <h1>Профиль судьи</h1>
+      <h1 className={"headerH1"}>Профиль судьи</h1>
       <div>
         <p>
           <strong>ФИО:</strong> {judge.fio}

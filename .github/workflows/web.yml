@@ -22,12 +22,12 @@ jobs:
           echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
           sudo apt-get update && sudo apt-get install yarn
 
-      - name: Установка зависимостей для React
+      - name: Установка зависимостей для React, запуск тестов и линтинга
         run: |
           cd ./react-app
           yarn install   # Установка зависимостей
-          yarn test      # Запуск тестов
-          yarn lint      # Запуск тестов
+          yarn test ...  # Запуск тестов
+          yarn lint      # Запуск линтинга
 
       - name: Установка Docker
         run: |

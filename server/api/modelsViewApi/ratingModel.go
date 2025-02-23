@@ -35,9 +35,9 @@ func FromRatingModelsToStringData(ratings []models.Rating) ([]RatingFormData, er
 }
 
 type RatingInput struct {
-	Name       string `form:"name" binding:"required"`
-	Class      int    `form:"class" binding:"required"`
-	BlowoutCnt int    `form:"blowout_cnt" binding:""`
+	Name       string `json:"name" binding:"required"`
+	Class      int    `json:"class" binding:""`
+	BlowoutCnt int    `json:"blowout_cnt" binding:""`
 }
 
 func FromRatingModelToInputData(rating *models.Rating) (RatingInput, error) {

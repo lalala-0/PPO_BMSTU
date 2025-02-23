@@ -1,27 +1,14 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
 import { ProtestFormData, ProtestComplete } from "../../models/protestModel";
 import { handleError } from "../errorHandler";
 import api from "../api";
 
 export const useCompleteProtest = () => {
-  const { ratingID, raceID, protestID } = useParams<{
-    ratingID: string;
-    raceID: string;
-    protestID: string;
-  }>();
-
-  const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [protestData, setProtestData] = useState<ProtestFormData | null>(null);
 
-  useEffect(() => {
-    if (!ratingID || !raceID || !protestID) {
-      setError("Недостаточно данных для завершения протеста.");
-    }
-  }, [ratingID, raceID, protestID]);
-
-  const completeProtest = async (protestCompleteData: ProtestComplete) => {
+  const completeProtest = async (ratingID : string, raceID: string, protestID: string, protestCompleteData: ProtestComplete) => {
     if (!ratingID || !raceID || !protestID) {
       setError("Недостаточно данных.");
       return;

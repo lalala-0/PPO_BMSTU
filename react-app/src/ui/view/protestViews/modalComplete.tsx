@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useCompleteProtest } from "../../controllers/protestControllers/completeProtestController";
 import React from "react";
+import {useParams} from "react-router-dom";
 
 interface CompleteProtestModalProps {
   isOpen: boolean;
@@ -14,9 +15,13 @@ export const CompleteProtestModal: React.FC<CompleteProtestModalProps> = ({
   const { completeProtest, loading, error } = useCompleteProtest();
   const [resPoints, setResPoints] = useState<number>(0);
   const [comment, setComment] = useState<string>("");
-
+  const { ratingID, raceID, protestID } = useParams<{
+    ratingID: string;
+    raceID: string;
+    protestID: string;
+  }>();
   const handleSubmit = async () => {
-    await completeProtest({ resPoints, comment });
+    await completeProtest(ratingID || '', raceID || '', protestID || '', { resPoints, comment });
     onClose(); // Закрываем модалку после завершения
   };
 

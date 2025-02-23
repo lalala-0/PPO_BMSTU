@@ -5,7 +5,6 @@ import RatingModal from "./modalInputRating";
 import { useDeleteRatingController } from "../../controllers/ratingControllers/deleteRatingController";
 import { Rating } from "../../models/ratingModel";
 
-
 const RatingsContainer = () => {
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [filters] = useState({
@@ -18,6 +17,14 @@ const RatingsContainer = () => {
   const [error, setError] = useState<string | null>(null); // Для хранения ошибки
 
   useEffect(() => {
+    // Восстановление состояния из localStorage
+    const storedModalState = localStorage.getItem("modalState");
+    if (storedModalState) {
+      const parsedState = JSON.parse(storedModalState);
+      setIsModalOpen(parsedState.isModalOpen);
+      setSelectedRating(parsedState.selectedRating);
+    }
+
     const fetchRatings = async () => {
       try {
         const response = await axios.get("api/ratings");
@@ -34,9 +41,9 @@ const RatingsContainer = () => {
   const filteredRatings = ratings.filter((rating) => {
     const { name, class: classFilter, blowoutCnt } = filters;
     return (
-      rating.Name.toLowerCase().includes(name.toLowerCase()) &&
-      (classFilter ? rating.Class.toString().includes(classFilter) : true) &&
-      (blowoutCnt ? rating.BlowoutCnt.toString().includes(blowoutCnt) : true)
+        rating.Name.toLowerCase().includes(name.toLowerCase()) &&
+        (classFilter ? rating.Class.toString().includes(classFilter) : true) &&
+        (blowoutCnt ? rating.BlowoutCnt.toString().includes(blowoutCnt) : true)
     );
   });
 
@@ -55,48 +62,51 @@ const RatingsContainer = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedRating(null);
+    // Сохраняем состояние в localStorage
+    localStorage.removeItem("modalState");
+  };
+
+  const openModal = (rating: Rating | null) => {
+    setSelectedRating(rating);
+    setIsModalOpen(true);
+    // Сохраняем состояние в localStorage
+    localStorage.setItem("modalState", JSON.stringify({ isModalOpen: true, selectedRating: rating }));
   };
 
   return (
-    <div>
-      {/* Таблица */}
-      <RatingsTable
-        ratings={filteredRatings}
-        onDelete={handleDeleteRating}
-        onUpdate={(rating) => {
-          setSelectedRating(rating);
-          setIsModalOpen(true);
-        }}
-      />
-
-      {/* Кнопка для создания нового рейтинга */}
-      <button
-        className="auth-required"
-        onClick={() => {
-          setSelectedRating({ id: "", Name: "", Class: "", BlowoutCnt: 0 });
-          setIsModalOpen(true);
-        }}
-      >
-        Создать новый рейтинг
-      </button>
-
-      {/* Модальное окно */}
-      {isModalOpen && selectedRating && (
-        <RatingModal
-          rating={selectedRating}
-          type={selectedRating.id ? "update" : "create"}
-          onClose={closeModal}
+      <div>
+        {/* Таблица */}
+        <RatingsTable
+            ratings={filteredRatings}
+            onDelete={handleDeleteRating}
+            onUpdate={(rating) => openModal(rating)}
         />
-      )}
 
-      {/* Сообщение об ошибке */}
-      {error && (
-        <div className="error-message">
-          <p>{error}</p>
-          <button onClick={() => setError(null)}>Закрыть</button>
-        </div>
-      )}
-    </div>
+        {/* Кнопка для создания нового рейтинга */}
+        <button
+            className="auth-required"
+            onClick={() => openModal({ id: "", Name: "", Class: "", BlowoutCnt: 0 })}
+        >
+          Создать новый рейтинг
+        </button>
+
+        {/* Модальное окно */}
+        {isModalOpen && selectedRating && (
+            <RatingModal
+                rating={selectedRating}
+                type={selectedRating.id ? "update" : "create"}
+                onClose={closeModal}
+            />
+        )}
+
+        {/* Сообщение об ошибке */}
+        {error && (
+            <div className="error-message">
+              <p>{error}</p>
+              <button onClick={() => setError(null)}>Закрыть</button>
+            </div>
+        )}
+      </div>
   );
 };
 

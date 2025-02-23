@@ -1,6 +1,4 @@
 import { useState } from "react";
-
-
 import { handleError } from "../errorHandler"; // Импортируем API_URL
 import api from "../api"; // Импортируем функцию для обработки ошибок
 

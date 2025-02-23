@@ -91,8 +91,8 @@ const CrewMembersTable: React.FC<CrewMembersTableProps> = ({
   if (error) return <div>Ошибка при загрузке участников</div>;
 
   return (
-    <div className="crew-table-container">
-      <table className="crew-table">
+    <div className="tableContent">
+      <table className="table">
         <thead>
           <tr>
             {[

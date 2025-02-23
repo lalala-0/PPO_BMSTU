@@ -16,8 +16,12 @@ const CrewModal: React.FC<CrewModalProps> = ({ ratingID, crew, type, onClose }) 
   const { handleSubmit } = useCreateCrew();
   const { handleUpdate } = useUpdateCrew();
 
+  // Восстановление состояния из localStorage при открытии модалки
   useEffect(() => {
-    if (type === "create") {
+    const storedCrew = localStorage.getItem(`crew-${ratingID}`);
+    if (storedCrew) {
+      setLocalCrew(JSON.parse(storedCrew));
+    } else if (type === "create") {
       setLocalCrew({
         ...crew,
         SailNum: 1,
@@ -25,15 +29,22 @@ const CrewModal: React.FC<CrewModalProps> = ({ ratingID, crew, type, onClose }) 
     } else {
       setLocalCrew(crew); // Для обновления используем переданный рейтинг
     }
-  }, [type, crew]);
+  }, [type, crew, ratingID]);
 
+  // Обработчик изменения значения номера паруса
   const handleSailNumChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalCrew((prev) => ({
-      ...prev,
-      SailNum: parseInt(e.target.value) || 0,
-    }));
+    setLocalCrew((prev) => {
+      const newCrew = {
+        ...prev,
+        SailNum: parseInt(e.target.value) || 0,
+      };
+      // Сохраняем изменённое состояние в localStorage
+      localStorage.setItem(`crew-${ratingID}`, JSON.stringify(newCrew));
+      return newCrew;
+    });
   };
 
+  // Сохранение данных
   const handleSave = async () => {
     setErrorMessage(null); // Сбрасываем сообщение об ошибке
     const crewData = {
@@ -47,10 +58,12 @@ const CrewModal: React.FC<CrewModalProps> = ({ ratingID, crew, type, onClose }) 
         await handleSubmit(ratingID, crewData);
       }
       onClose();
+      // После закрытия очищаем данные из localStorage
+      localStorage.removeItem(`crew-${ratingID}`);
     } catch (error: any) {
       if (error.response && error.response.data) {
         setErrorMessage(
-          error.response.data.error || "Ошибка при сохранении данных",
+            error.response.data.error || "Ошибка при сохранении данных"
         );
       } else {
         setErrorMessage("Произошла ошибка. Попробуйте позже.");
@@ -58,35 +71,35 @@ const CrewModal: React.FC<CrewModalProps> = ({ ratingID, crew, type, onClose }) 
     }
   };
 
+  // Обработчик закрытия модалки
   const handleClose = () => {
     onClose();
-    console.log("Модальное окно закрыто");
+    // После закрытия очищаем данные из localStorage
+    localStorage.removeItem(`crew-${ratingID}`);
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h3>
-          {type === "update" ? "Обновить команду" : "Создать новую команду"}
-        </h3>
-        {errorMessage && (
-          <div className="error-message">
-            <p>{errorMessage}</p>
-            <button onClick={() => setErrorMessage(null)}>Закрыть</button>
+      <div className="modal-overlay">
+        <div className="modal-content">
+          <h3>{type === "update" ? "Обновить команду" : "Создать новую команду"}</h3>
+          {errorMessage && (
+              <div className="error-message">
+                <p>{errorMessage}</p>
+                <button onClick={() => setErrorMessage(null)}>Закрыть</button>
+              </div>
+          )}
+          <input
+              type="number"
+              value={localCrew.SailNum}
+              onChange={handleSailNumChange}
+              placeholder="Номер паруса"
+          />
+          <div className="buttons-container">
+            <button onClick={handleSave}>Сохранить изменения</button>
+            <button onClick={handleClose}>Отмена</button>
           </div>
-        )}
-        <input
-          type="number"
-          value={localCrew.SailNum}
-          onChange={handleSailNumChange}
-          placeholder="Номер паруса"
-        />
-        <div className="buttons-container">
-          <button onClick={handleSave}>Сохранить изменения</button>
-          <button onClick={handleClose}>Отмена</button>
         </div>
       </div>
-    </div>
   );
 };
 
